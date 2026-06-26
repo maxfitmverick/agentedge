@@ -3,876 +3,658 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AgentEdge — AI Platform for Real Estate Professionals</title>
+<title>AgentEdge CRM — AI-Powered Real Estate Platform</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --navy:#0B1B2B;--navy-mid:#1A2E42;
+  --navy:#0B1B2B;--navy-mid:#1A2E42;--navy-light:#243D56;
   --gold:#C9923A;--gold-light:#E8B86D;--gold-pale:#FDF3E3;
   --cream:#FAF8F4;--white:#fff;
-  --g100:#F4F2EE;--g200:#E4E1DA;--g400:#9E9B94;--g600:#6B6860;--g800:#2E2C2A;
-  --green:#2D6A4F;--green-light:#EAF4EE;--red:#c0392b;
+  --g100:#F4F2EE;--g200:#E4E1DA;--g300:#CCC9C0;--g400:#9E9B94;--g600:#6B6860;--g800:#2E2C2A;
+  --green:#2D6A4F;--green-light:#EAF4EE;--green-mid:#52B788;
+  --red:#c0392b;--red-light:#FDECEA;
+  --blue:#2563EB;--blue-light:#EFF6FF;
+  --purple:#7C3AED;--purple-light:#F5F3FF;
+  --orange:#EA580C;--orange-light:#FFF7ED;
   --fd:'DM Serif Display',Georgia,serif;--fb:'Inter',system-ui,sans-serif;
 }
 html{scroll-behavior:smooth}
-body{font-family:var(--fb);background:var(--cream);color:var(--navy);line-height:1.6;overflow-x:hidden}
-img{max-width:100%}
+body{font-family:var(--fb);background:var(--cream);color:var(--navy);line-height:1.6;overflow:hidden;height:100vh}
 
-/* ── SPINNER ── */
+/* SPINNER */
 .spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;flex-shrink:0;display:inline-block}
 @keyframes sp{to{transform:rotate(360deg)}}
 
-/* ── BUTTONS ── */
-.btn-gold{background:var(--gold);color:#fff;font-size:15px;font-weight:600;padding:13px 26px;border-radius:8px;border:none;cursor:pointer;font-family:var(--fb);transition:background .15s;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
-.btn-gold:hover{background:var(--gold-light)}
-.btn-navy{background:var(--navy);color:#fff;font-size:14px;font-weight:600;padding:11px 22px;border-radius:8px;border:none;cursor:pointer;font-family:var(--fb);transition:background .15s;display:inline-flex;align-items:center;gap:8px}
-.btn-navy:hover{background:var(--navy-mid)}
-.btn-ghost{background:transparent;color:rgba(255,255,255,.75);font-size:15px;font-weight:500;padding:13px 26px;border-radius:8px;border:1px solid rgba(255,255,255,.2);cursor:pointer;font-family:var(--fb);text-decoration:none;transition:all .15s}
-.btn-ghost:hover{border-color:rgba(255,255,255,.5);color:#fff}
-.btn-outline{background:transparent;color:var(--navy);font-size:14px;font-weight:500;padding:9px 18px;border-radius:8px;border:1.5px solid var(--g200);cursor:pointer;font-family:var(--fb);transition:all .15s;text-decoration:none}
-.btn-outline:hover{border-color:var(--navy);background:var(--navy);color:#fff}
-
-/* ── MARKETING NAV ── */
-.m-nav{position:sticky;top:0;z-index:50;background:rgba(250,248,244,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--g200);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:64px}
-.m-logo{font-family:var(--fd);font-size:22px;color:var(--navy);text-decoration:none}
-.m-logo span{color:var(--gold)}
-.m-nav-links{display:flex;gap:1.75rem}
-.m-nav-links a{font-size:14px;color:var(--g600);text-decoration:none;font-weight:500;transition:color .15s}
-.m-nav-links a:hover{color:var(--navy)}
-.m-nav-r{display:flex;gap:10px;align-items:center}
-
-/* ── HERO ── */
-.hero{background:var(--navy);padding:96px 2rem 80px;text-align:center;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(201,146,58,.18),transparent 70%);pointer-events:none}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(201,146,58,.15);border:1px solid rgba(201,146,58,.3);color:var(--gold-light);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:6px 16px;border-radius:999px;margin-bottom:2rem}
-.hero h1{font-family:var(--fd);font-size:clamp(34px,6vw,64px);color:#fff;line-height:1.1;letter-spacing:-1px;max-width:820px;margin:0 auto 1.5rem}
-.hero h1 em{font-style:italic;color:var(--gold-light)}
-.hero-sub{font-size:18px;color:rgba(255,255,255,.6);max-width:560px;margin:0 auto 2.5rem;line-height:1.65}
-.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:3.5rem}
-.hero-stats{display:flex;gap:3rem;justify-content:center;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.1);padding-top:2.5rem}
-.stat-n{font-family:var(--fd);font-size:36px;color:var(--gold-light);display:block}
-.stat-l{font-size:13px;color:rgba(255,255,255,.45);margin-top:2px}
-
-/* ── SECTIONS ── */
-section{padding:88px 2rem}
-.inner{max-width:1080px;margin:0 auto}
-.eye{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:.75rem}
-.eye-w{color:var(--gold-light)}
-.sec-h{font-family:var(--fd);font-size:clamp(26px,4vw,42px);color:var(--navy);line-height:1.15;letter-spacing:-.5px;margin-bottom:1rem}
-.sec-h-w{color:#fff}
-.sec-p{font-size:17px;color:var(--g600);max-width:540px;line-height:1.65}
-.sec-p-w{color:rgba(255,255,255,.5)}
-
-/* ── BEFORE/AFTER ── */
-.ba-wrap{background:var(--white)}
-.ba-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:2.5rem}
-.ba-card{border-radius:14px;padding:1.75rem;border:1px solid var(--g200)}
-.ba-card.before{background:var(--g100)}
-.ba-card.after{background:var(--green-light);border-color:rgba(45,106,79,.2)}
-.ba-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:1rem;display:flex;align-items:center;gap:6px}
-.ba-card.before .ba-label{color:var(--red)}
-.ba-card.after .ba-label{color:var(--green)}
-.ba-content{font-size:14px;line-height:1.7;color:var(--g800);white-space:pre-wrap;font-family:monospace}
-.ba-arrow{display:flex;align-items:center;justify-content:center;font-size:32px;color:var(--g400)}
-
-/* ── CALCULATOR ── */
-.calc-wrap{background:var(--navy)}
-.calc-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:2.5rem;max-width:720px;margin:2.5rem auto 0}
-.calc-row{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem}
-.calc-field{display:flex;flex-direction:column;gap:8px}
-.calc-field label{font-size:13px;font-weight:600;color:rgba(255,255,255,.6)}
-.calc-field input[type=range]{width:100%;accent-color:var(--gold)}
-.calc-val{font-family:var(--fd);font-size:28px;color:var(--gold-light);text-align:center}
-.calc-desc{font-size:12px;color:rgba(255,255,255,.4);text-align:center;margin-top:2px}
-.calc-result{background:rgba(201,146,58,.15);border:1px solid rgba(201,146,58,.3);border-radius:14px;padding:1.75rem;text-align:center;margin-top:1.5rem}
-.calc-result-num{font-family:var(--fd);font-size:52px;color:var(--gold-light);display:block;line-height:1}
-.calc-result-label{font-size:15px;color:rgba(255,255,255,.6);margin-top:.5rem}
-.calc-result-sub{font-size:13px;color:rgba(255,255,255,.4);margin-top:.5rem}
-
-/* ── PAIN POINTS ── */
-.pain-wrap{background:var(--white)}
-.pain-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:1px;background:var(--g200);border:1px solid var(--g200);border-radius:16px;overflow:hidden;margin-top:3rem}
-.pain-card{background:var(--white);padding:2rem 1.75rem;transition:background .15s}
-.pain-card:hover{background:var(--gold-pale)}
-.pain-ico{width:44px;height:44px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem}
-.pain-ico svg{width:22px;height:22px;stroke:var(--gold-light);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.pain-card h3{font-size:16px;font-weight:600;color:var(--navy);margin-bottom:.5rem}
-.pain-card p{font-size:14px;color:var(--g600);line-height:1.6;margin-bottom:1rem}
-.fix-tag{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--green);background:var(--green-light);padding:4px 10px;border-radius:6px}
-
-/* ── HOW ── */
-.how-wrap{background:var(--navy)}
-.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2rem;margin-top:3.5rem}
-.step-n{font-family:var(--fd);font-size:48px;color:rgba(201,146,58,.2);line-height:1;margin-bottom:1rem}
-.step h3{font-size:16px;font-weight:600;color:#fff;margin-bottom:.5rem}
-.step p{font-size:14px;color:rgba(255,255,255,.45);line-height:1.6}
-
-/* ── TEASER PLATFORM ── */
-.teaser-wrap{background:var(--cream)}
-.teaser-platform{background:var(--white);border:1px solid var(--g200);border-radius:20px;overflow:hidden;display:grid;grid-template-columns:220px 1fr;min-height:560px;margin-top:2.5rem}
-.t-sidebar{background:var(--navy);padding:1.25rem 0}
-.t-sidebar-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3);padding:0 1.25rem;margin-bottom:.75rem}
-.t-nav{display:flex;align-items:center;gap:10px;padding:.7rem 1.25rem;cursor:pointer;border-left:3px solid transparent;transition:all .15s}
-.t-nav:hover{background:rgba(255,255,255,.06)}
-.t-nav.active{background:rgba(201,146,58,.12);border-left-color:var(--gold)}
-.t-nav svg{width:16px;height:16px;stroke:rgba(255,255,255,.35);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;transition:stroke .15s}
-.t-nav.active svg,.t-nav:hover svg{stroke:var(--gold-light)}
-.t-nav span{font-size:13px;color:rgba(255,255,255,.45);transition:color .15s}
-.t-nav.active span,.t-nav:hover span{color:#fff}
-.t-panels{overflow:hidden}
-.t-panel{display:none;flex-direction:column;height:100%}
-.t-panel.active{display:flex}
-.t-ptop{padding:1.5rem 1.75rem 1.25rem;border-bottom:1px solid var(--g100)}
-.t-ptop h2{font-size:18px;font-weight:600;color:var(--navy);margin-bottom:.25rem}
-.t-ptop p{font-size:13px;color:var(--g600)}
-.t-pbody{padding:1.25rem 1.75rem;flex:1;overflow-y:auto}
-.t-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem}
-.t-fields.full{grid-template-columns:1fr}
-.t-field{display:flex;flex-direction:column;gap:4px}
-.t-field label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--g400)}
-.t-field input,.t-field select,.t-field textarea{font-size:14px;padding:8px 11px;border-radius:7px;border:1px solid var(--g200);background:var(--cream);color:var(--navy);font-family:var(--fb);resize:vertical;transition:border-color .15s}
-.t-field input:focus,.t-field select:focus,.t-field textarea:focus{outline:none;border-color:var(--gold)}
-.t-field textarea{min-height:64px}
-.t-run{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:8px;border:none;background:var(--navy);color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:background .15s}
-.t-run:hover{background:var(--navy-mid)}
-.t-run:disabled{opacity:.45;cursor:not-allowed}
-.gate-wrap{position:relative;margin-top:1.25rem}
-.gate-blur{background:var(--cream);border:1px solid var(--g200);border-radius:10px;padding:1.25rem;filter:blur(5px);user-select:none;pointer-events:none;max-height:150px;overflow:hidden;font-size:13px;color:var(--g800);line-height:1.7}
-.gate-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:1.5rem;text-align:center;background:rgba(250,248,244,.65);backdrop-filter:blur(2px);border-radius:10px}
-.gate-lock{width:40px;height:40px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center}
-.gate-lock svg{width:20px;height:20px;stroke:var(--gold-light);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.gate-title{font-size:14px;font-weight:600;color:var(--navy)}
-.gate-sub{font-size:12px;color:var(--g600);max-width:220px;line-height:1.5}
-.gate-cta{background:var(--gold);color:#fff;font-size:13px;font-weight:600;padding:9px 18px;border-radius:7px;border:none;cursor:pointer;font-family:var(--fb)}
-.gate-cta:hover{background:var(--gold-light)}
-.gate-note{font-size:11px;color:var(--g400)}
-
-/* ── PRICING ── */
-.pricing-wrap{background:var(--white)}
-.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:3rem}
-.p-card{border:1px solid var(--g200);border-radius:20px;padding:2.25rem}
-.p-card.pop{background:var(--navy);border-color:transparent}
-.p-pill{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:999px;margin-bottom:1rem}
-.p-pill.a{background:var(--gold-pale);color:var(--gold)}
-.p-pill.b{background:rgba(201,146,58,.2);color:var(--gold-light)}
-.p-pill.c{background:rgba(201,146,58,.1);color:var(--gold-light)}
-.p-card h3{font-family:var(--fd);font-size:24px;color:var(--navy);margin-bottom:.25rem}
-.p-card.pop h3{color:#fff}
-.p-tag{font-size:13px;color:var(--g600);margin-bottom:1.5rem}
-.p-card.pop .p-tag{color:rgba(255,255,255,.45)}
-.p-amt{font-family:var(--fd);font-size:44px;color:var(--navy)}
-.p-card.pop .p-amt{color:var(--gold-light)}
-.p-per{font-size:13px;color:var(--g400)}
-.p-sub{font-size:12px;color:var(--g400);margin-top:4px;margin-bottom:1.5rem}
-.p-feats{list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:2rem}
-.p-feats li{font-size:13px;color:var(--g600);display:flex;align-items:center;gap:9px}
-.p-card.pop .p-feats li{color:rgba(255,255,255,.65)}
-.chk{width:17px;height:17px;flex-shrink:0;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center}
-.p-card.pop .chk{background:rgba(201,146,58,.2)}
-.chk svg{width:9px;height:9px;stroke:var(--green);fill:none;stroke-width:2.5}
-.p-card.pop .chk svg{stroke:var(--gold-light)}
-.p-btn{display:block;width:100%;text-align:center;padding:12px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--fb);border:none;transition:all .15s}
-.p-btn.o{border:1.5px solid var(--g200);color:var(--navy);background:transparent}
-.p-btn.o:hover{border-color:var(--navy);background:var(--navy);color:#fff}
-.p-btn.f{background:var(--gold);color:#fff}
-.p-btn.f:hover{background:var(--gold-light)}
-
-/* ── TESTIMONIALS ── */
-.proof-wrap{background:var(--cream)}
-.t-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:3rem}
-.t-card{background:var(--white);border:1px solid var(--g200);border-radius:14px;padding:1.75rem}
-.stars{color:var(--gold);font-size:14px;letter-spacing:2px;margin-bottom:1rem}
-.t-card p{font-size:15px;color:var(--g800);line-height:1.65;margin-bottom:1.25rem;font-style:italic}
-.t-auth{display:flex;align-items:center;gap:10px}
-.t-av{width:38px;height:38px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--gold-light);flex-shrink:0}
-.t-name{font-size:14px;font-weight:600;color:var(--navy)}
-.t-role{font-size:12px;color:var(--g400)}
-
-/* ── CTA / FOOTER ── */
-.cta-wrap{background:var(--navy);text-align:center;padding:96px 2rem}
-.cta-wrap .sec-h{color:#fff;max-width:620px;margin:0 auto 1rem}
-.cta-wrap > .inner > p{font-size:17px;color:rgba(255,255,255,.5);max-width:440px;margin:0 auto 2.5rem}
-.cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.cta-note{font-size:12px;color:rgba(255,255,255,.3);margin-top:1rem}
-footer{background:var(--g800);padding:3rem 2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
-.f-logo{font-family:var(--fd);font-size:20px;color:#fff}
-.f-logo span{color:var(--gold-light)}
-.f-links{display:flex;gap:1.5rem;flex-wrap:wrap}
-.f-links a{font-size:13px;color:rgba(255,255,255,.4);text-decoration:none}
-.f-copy{font-size:12px;color:rgba(255,255,255,.2)}
-
-/* ════════ AUTH MODAL ════════ */
-.auth-modal{position:fixed;inset:0;z-index:1000;background:rgba(11,27,43,.88);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:1.5rem}
-.auth-modal.open{display:flex}
-.auth-box{background:#fff;border-radius:20px;padding:2.5rem 2rem;width:100%;max-width:400px;position:relative}
-.auth-close{position:absolute;top:1.25rem;right:1.25rem;background:none;border:none;cursor:pointer;color:var(--g400);font-size:22px;line-height:1}
-.auth-logo{font-family:var(--fd);font-size:24px;color:var(--navy);text-align:center;margin-bottom:.25rem}
+/* AUTH */
+.auth-screen{position:fixed;inset:0;z-index:9999;background:var(--navy);display:flex;align-items:center;justify-content:center;padding:1.5rem}
+.auth-screen.hide{display:none}
+.auth-box{background:#fff;border-radius:20px;padding:2.5rem 2rem;width:100%;max-width:420px}
+.auth-logo{font-family:var(--fd);font-size:26px;color:var(--navy);text-align:center;margin-bottom:.25rem}
 .auth-logo span{color:var(--gold)}
-.auth-sub{font-size:13px;color:var(--g600);text-align:center;margin-bottom:1.75rem}
+.auth-tagline{font-size:13px;color:var(--g600);text-align:center;margin-bottom:2rem}
+.auth-tabs{display:flex;border-bottom:1px solid var(--g200);margin-bottom:1.5rem}
+.auth-tab{flex:1;padding:.75rem;text-align:center;font-size:14px;font-weight:500;color:var(--g400);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+.auth-tab.active{color:var(--navy);border-bottom-color:var(--gold)}
 .a-field{display:flex;flex-direction:column;gap:5px;margin-bottom:.9rem}
 .a-field label{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--g400)}
 .a-field input,.a-field select{font-size:15px;padding:11px 14px;border-radius:10px;border:1px solid var(--g200);background:var(--cream);color:var(--navy);font-family:var(--fb);width:100%;transition:border-color .15s}
 .a-field input:focus,.a-field select:focus{outline:none;border-color:var(--gold)}
-.a-btn{width:100%;padding:13px;border-radius:10px;border:none;background:var(--navy);color:#fff;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--fb);margin-top:.75rem;transition:background .15s}
+.a-btn{width:100%;padding:13px;border-radius:10px;border:none;background:var(--navy);color:#fff;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--fb);margin-top:.5rem;transition:background .15s}
 .a-btn:hover{background:var(--navy-mid)}
 .a-err{font-size:13px;color:var(--red);text-align:center;margin-top:.75rem;display:none}
 .a-err.show{display:block}
-.a-switch{font-size:13px;color:var(--g600);text-align:center;margin-top:1.25rem}
-.a-switch button{background:none;border:none;color:var(--gold);font-weight:600;cursor:pointer;font-family:var(--fb);font-size:13px}
 
-/* ════════ DASHBOARD ════════ */
-#dashboard{display:none;position:fixed;inset:0;z-index:900;flex-direction:column;background:var(--cream)}
-#dashboard.open{display:flex}
-.d-nav{height:62px;background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.06)}
-.d-logo{font-family:var(--fd);font-size:20px;color:#fff}
-.d-logo span{color:var(--gold-light)}
-.d-nav-r{display:flex;align-items:center;gap:12px}
-.d-plan{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:rgba(201,146,58,.2);color:var(--gold-light);padding:4px 10px;border-radius:999px}
-.d-logout{font-size:13px;color:rgba(255,255,255,.4);background:none;border:none;cursor:pointer;font-family:var(--fb)}
-.d-logout:hover{color:#fff}
-.d-body{display:flex;flex:1;overflow:hidden}
+/* APP SHELL */
+#app{display:none;height:100vh;flex-direction:column}
+#app.show{display:flex}
 
-/* Sidebar */
-.d-sidebar{width:230px;background:#fff;border-right:1px solid var(--g200);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
-.d-sidebar-head{padding:1.25rem 1.25rem .75rem}
-.d-uname{font-size:14px;font-weight:600;color:var(--navy)}
-.d-uemail{font-size:12px;color:var(--g400);margin-top:2px}
-.d-divider{height:1px;background:var(--g200);margin:.5rem 0}
-.d-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g400);padding:0 1.25rem;margin:.75rem 0 .4rem}
-.d-btn{display:flex;align-items:center;gap:10px;padding:.7rem 1rem;border-radius:9px;margin:2px .5rem;cursor:pointer;border:none;background:none;width:calc(100% - 1rem);font-family:var(--fb);text-align:left;transition:background .15s}
-.d-btn:hover{background:var(--g100)}
-.d-btn.active{background:var(--gold-pale)}
-.d-btn svg{width:16px;height:16px;stroke:var(--g400);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;transition:stroke .15s}
-.d-btn.active svg{stroke:var(--gold)}
-.d-btn span{font-size:13px;font-weight:500;color:var(--g600);transition:color .15s}
-.d-btn.active span{color:var(--navy);font-weight:600}
-.d-badge{margin-left:auto;font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border-radius:4px;background:var(--g100);color:var(--g400)}
-.d-btn.active .d-badge{background:rgba(201,146,58,.15);color:var(--gold)}
+/* TOP NAV */
+.top-nav{height:56px;background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 1.25rem;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.06)}
+.top-logo{font-family:var(--fd);font-size:18px;color:#fff}
+.top-logo span{color:var(--gold-light)}
+.top-nav-center{display:flex;gap:2px}
+.top-nav-btn{display:flex;align-items:center;gap:6px;padding:.5rem .875rem;border-radius:7px;border:none;background:none;color:rgba(255,255,255,.5);font-size:13px;font-weight:500;cursor:pointer;font-family:var(--fb);transition:all .15s}
+.top-nav-btn:hover{background:rgba(255,255,255,.08);color:#fff}
+.top-nav-btn.active{background:rgba(201,146,58,.15);color:var(--gold-light)}
+.top-nav-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.top-right{display:flex;align-items:center;gap:10px}
+.user-badge{font-size:12px;color:rgba(255,255,255,.5)}
+.top-add-btn{display:flex;align-items:center;gap:6px;padding:.5rem 14px;border-radius:7px;border:none;background:var(--gold);color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:background .15s}
+.top-add-btn:hover{background:var(--gold-light)}
+.logout-btn{font-size:12px;color:rgba(255,255,255,.35);background:none;border:none;cursor:pointer;font-family:var(--fb)}
+.logout-btn:hover{color:#fff}
 
-/* Main */
-.d-main{flex:1;overflow-y:auto;padding:2rem}
-.d-panel{display:none;max-width:760px}
-.d-panel.active{display:block}
-.d-ph{font-family:var(--fd);font-size:26px;color:var(--navy);margin-bottom:.25rem}
-.d-ps{font-size:14px;color:var(--g600);line-height:1.5;margin-bottom:1.75rem}
-.d-card{background:#fff;border:1px solid var(--g200);border-radius:16px;padding:1.75rem;margin-bottom:1.5rem}
-.d-card-title{font-size:13px;font-weight:700;color:var(--g400);letter-spacing:.05em;text-transform:uppercase;margin-bottom:1.25rem}
-.d-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1rem}
-.d-fields.full{grid-template-columns:1fr}
-.d-field{display:flex;flex-direction:column;gap:5px}
-.d-field label{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--g400)}
-.d-field input,.d-field select,.d-field textarea{font-size:14px;padding:9px 12px;border-radius:8px;border:1px solid var(--g200);background:var(--cream);color:var(--navy);font-family:var(--fb);resize:vertical;transition:border-color .15s;width:100%}
-.d-field input:focus,.d-field select:focus,.d-field textarea:focus{outline:none;border-color:var(--gold)}
-.d-field textarea{min-height:80px}
-.d-run{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:9px;border:none;background:var(--navy);color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:background .15s}
-.d-run:hover{background:var(--navy-mid)}
-.d-run:disabled{opacity:.45;cursor:not-allowed}
-.d-output{margin-top:1.25rem;background:var(--cream);border:1px solid var(--g200);border-radius:10px;padding:1.25rem;display:none}
-.d-output.show{display:block}
-.d-out-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem}
-.d-out-lbl{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--g400)}
-.d-copy{font-size:11px;color:var(--g600);background:#fff;border:1px solid var(--g200);border-radius:5px;padding:3px 9px;cursor:pointer;font-family:var(--fb)}
-.d-out-text{font-size:14px;color:var(--g800);line-height:1.7;white-space:pre-wrap}
+/* MAIN CONTENT */
+.app-body{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.view{display:none;flex:1;overflow:hidden;flex-direction:column}
+.view.active{display:flex}
 
-/* Welcome tiles */
-.w-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:1.5rem}
-.w-tile{background:#fff;border:1px solid var(--g200);border-radius:14px;padding:1.4rem;cursor:pointer;transition:border-color .15s,box-shadow .15s}
-.w-tile:hover{border-color:var(--gold);box-shadow:0 4px 16px rgba(201,146,58,.1)}
-.w-tile-ico{width:38px;height:38px;border-radius:9px;background:var(--navy);display:flex;align-items:center;justify-content:center;margin-bottom:.9rem}
-.w-tile-ico svg{width:19px;height:19px;stroke:var(--gold-light);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.w-tile h4{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:.2rem}
-.w-tile p{font-size:12px;color:var(--g600);line-height:1.5}
+/* ── DASHBOARD ── */
+.dash-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:1.5rem;flex-shrink:0}
+.dash-stat{background:#fff;border:1px solid var(--g200);border-radius:14px;padding:1.25rem 1.5rem}
+.dash-stat-label{font-size:12px;color:var(--g400);font-weight:500;margin-bottom:.5rem}
+.dash-stat-num{font-family:var(--fd);font-size:32px;color:var(--navy)}
+.dash-stat-sub{font-size:12px;color:var(--g400);margin-top:.25rem}
+.dash-stat.highlight{background:var(--navy)}
+.dash-stat.highlight .dash-stat-label{color:rgba(255,255,255,.5)}
+.dash-stat.highlight .dash-stat-num{color:var(--gold-light)}
+.dash-stat.highlight .dash-stat-sub{color:rgba(255,255,255,.3)}
+.dash-bottom{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:0 1.5rem 1.5rem;flex:1;overflow:hidden}
+.dash-card{background:#fff;border:1px solid var(--g200);border-radius:14px;display:flex;flex-direction:column;overflow:hidden}
+.dash-card-head{padding:1rem 1.25rem;border-bottom:1px solid var(--g100);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.dash-card-title{font-size:14px;font-weight:600;color:var(--navy)}
+.dash-card-body{flex:1;overflow-y:auto;padding:.75rem}
+.dash-lead-item{display:flex;align-items:center;gap:10px;padding:.6rem .5rem;border-radius:8px;cursor:pointer;transition:background .15s}
+.dash-lead-item:hover{background:var(--g100)}
+.lead-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;flex-shrink:0}
+.dash-lead-name{font-size:13px;font-weight:600;color:var(--navy)}
+.dash-lead-sub{font-size:12px;color:var(--g400)}
+.dash-lead-badge{margin-left:auto;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px}
+.task-item{display:flex;align-items:flex-start;gap:10px;padding:.6rem .5rem;border-radius:8px;cursor:pointer;transition:background .15s}
+.task-item:hover{background:var(--g100)}
+.task-check{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--g300);flex-shrink:0;margin-top:1px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.task-check.done{background:var(--green);border-color:var(--green)}
+.task-check.done::after{content:'✓';color:#fff;font-size:11px;font-weight:700}
+.task-text{font-size:13px;color:var(--navy);flex:1}
+.task-due{font-size:11px;color:var(--g400)}
 
-/* History */
-.hist-list{display:flex;flex-direction:column;gap:10px;margin-top:1rem}
-.hist-item{background:var(--cream);border:1px solid var(--g200);border-radius:10px;padding:1rem 1.25rem;cursor:pointer;transition:border-color .15s}
-.hist-item:hover{border-color:var(--gold)}
-.hist-item-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.35rem}
-.hist-tool{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold)}
-.hist-time{font-size:11px;color:var(--g400)}
-.hist-preview{font-size:13px;color:var(--g600);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hist-empty{font-size:14px;color:var(--g400);text-align:center;padding:2rem;font-style:italic}
+/* ── PIPELINE ── */
+.pipeline-toolbar{display:flex;align-items:center;gap:10px;padding:1rem 1.5rem;flex-shrink:0;border-bottom:1px solid var(--g200);background:#fff}
+.pipe-view-toggle{display:flex;background:var(--g100);border-radius:8px;padding:3px;gap:2px}
+.pipe-view-btn{padding:.35rem .75rem;border-radius:6px;border:none;background:none;font-size:12px;font-weight:500;color:var(--g600);cursor:pointer;font-family:var(--fb);transition:all .15s;display:flex;align-items:center;gap:5px}
+.pipe-view-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.pipe-view-btn.active{background:#fff;color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.pipe-filter{display:flex;gap:6px}
+.pipe-filter-btn{padding:.35rem 10px;border-radius:6px;border:1px solid var(--g200);background:#fff;font-size:12px;font-weight:500;color:var(--g600);cursor:pointer;font-family:var(--fb);transition:all .15s}
+.pipe-filter-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.pipe-search{flex:1;max-width:240px;position:relative}
+.pipe-search input{width:100%;padding:.4rem .75rem .4rem 2rem;border-radius:8px;border:1px solid var(--g200);background:var(--cream);font-size:13px;font-family:var(--fb);color:var(--navy)}
+.pipe-search input:focus{outline:none;border-color:var(--gold)}
+.pipe-search-ico{position:absolute;left:.6rem;top:50%;transform:translateY(-50%);width:14px;height:14px;stroke:var(--g400);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
-/* Brand settings */
-.brand-preview{background:var(--navy);border-radius:12px;padding:1.5rem;margin-top:1.25rem}
-.brand-preview-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:.75rem}
-.brand-preview-content{font-size:14px;color:rgba(255,255,255,.8);line-height:1.6}
+/* KANBAN */
+.kanban-wrap{display:flex;gap:12px;padding:1.25rem 1.5rem;overflow-x:auto;flex:1;align-items:flex-start}
+.kanban-col{background:var(--g100);border-radius:14px;width:240px;flex-shrink:0;display:flex;flex-direction:column;max-height:calc(100vh - 200px)}
+.kanban-col-head{padding:.875rem 1rem;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.kanban-col-title{font-size:13px;font-weight:600;color:var(--navy);flex:1}
+.kanban-col-count{font-size:11px;font-weight:700;background:rgba(0,0,0,.08);color:var(--g600);padding:1px 7px;border-radius:999px}
+.kanban-col-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.kanban-cards{padding:0 .5rem .75rem;display:flex;flex-direction:column;gap:8px;overflow-y:auto;flex:1}
+.kanban-card{background:#fff;border:1px solid var(--g200);border-radius:10px;padding:.875rem 1rem;cursor:pointer;transition:all .15s;position:relative}
+.kanban-card:hover{border-color:var(--gold);box-shadow:0 2px 12px rgba(201,146,58,.12);transform:translateY(-1px)}
+.kanban-card-name{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:.25rem}
+.kanban-card-prop{font-size:12px;color:var(--g600);margin-bottom:.5rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kanban-card-footer{display:flex;align-items:center;justify-content:space-between}
+.kanban-card-type{font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:5px}
+.kanban-card-date{font-size:11px;color:var(--g400)}
+.kanban-add{margin:.25rem .5rem .75rem;padding:.5rem;border-radius:8px;border:1.5px dashed var(--g300);background:none;color:var(--g400);font-size:13px;cursor:pointer;font-family:var(--fb);width:calc(100% - 1rem);transition:all .15s;text-align:center}
+.kanban-add:hover{border-color:var(--gold);color:var(--gold);background:var(--gold-pale)}
 
-/* Bulk upload */
-.bulk-drop{border:2px dashed var(--g200);border-radius:12px;padding:2rem;text-align:center;cursor:pointer;transition:border-color .15s;margin-bottom:1rem}
-.bulk-drop:hover,.bulk-drop.drag{border-color:var(--gold);background:var(--gold-pale)}
-.bulk-drop p{font-size:14px;color:var(--g600);margin-top:.5rem}
-.bulk-drop svg{width:32px;height:32px;stroke:var(--g400);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
-.bulk-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:1rem}
-.bulk-table th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--g400);padding:.5rem .75rem;border-bottom:1px solid var(--g200)}
-.bulk-table td{padding:.6rem .75rem;border-bottom:1px solid var(--g100);color:var(--g800)}
-.bulk-table tr:last-child td{border-bottom:none}
+/* LIST VIEW */
+.list-wrap{flex:1;overflow-y:auto}
+.list-table{width:100%;border-collapse:collapse}
+.list-table th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--g400);padding:.75rem 1rem;border-bottom:1px solid var(--g200);background:#fff;position:sticky;top:0;z-index:1}
+.list-table td{padding:.75rem 1rem;border-bottom:1px solid var(--g100);font-size:13px;color:var(--navy);vertical-align:middle}
+.list-table tr:hover td{background:var(--g100);cursor:pointer}
+.list-table tr:last-child td{border-bottom:none}
 
-/* Mobile nav toggle */
-.d-mobile-menu{display:none;background:none;border:none;cursor:pointer;padding:.5rem}
-.d-mobile-menu svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round}
+/* LEAD TYPE BADGES */
+.badge-buyer{background:var(--blue-light);color:var(--blue)}
+.badge-seller{background:var(--purple-light);color:var(--purple)}
+.badge-rental{background:var(--orange-light);color:var(--orange)}
+.badge-both{background:var(--green-light);color:var(--green)}
+.stage-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;letter-spacing:.04em;text-transform:uppercase}
+.stage-new{background:#EFF6FF;color:#2563EB}
+.stage-contacted{background:#F5F3FF;color:#7C3AED}
+.stage-warm{background:var(--gold-pale);color:var(--gold)}
+.stage-showing{background:#FFF7ED;color:#EA580C}
+.stage-offer{background:var(--green-light);color:var(--green)}
+.stage-contract{background:#ECFDF5;color:#059669}
+.stage-closed{background:var(--navy);color:var(--gold-light)}
+.stage-lost{background:var(--red-light);color:var(--red)}
 
-@media(max-width:700px){
-  .pricing-grid{grid-template-columns:1fr}
-  .teaser-platform{grid-template-columns:1fr}
-  .t-sidebar{display:flex;overflow-x:auto;padding:.5rem;gap:4px}
-  .t-nav{border-left:none;border-bottom:3px solid transparent;flex-direction:column;gap:3px;padding:.5rem .75rem;white-space:nowrap;min-width:80px;justify-content:center;align-items:center;text-align:center}
-  .t-nav.active{border-bottom-color:var(--gold);background:rgba(201,146,58,.12)}
-  .d-sidebar{position:fixed;left:-230px;top:62px;bottom:0;z-index:200;transition:left .2s;box-shadow:4px 0 20px rgba(0,0,0,.15)}
-  .d-sidebar.open{left:0}
-  .d-mobile-menu{display:block}
-  .d-main{padding:1.25rem}
-  .d-fields,.ba-grid,.calc-row{grid-template-columns:1fr}
-  .m-nav-links{display:none}
-  .ba-arrow{transform:rotate(90deg)}
-  .d-btn span{font-size:13px}
+/* ── CONTACTS ── */
+.contacts-toolbar{display:flex;align-items:center;gap:10px;padding:1rem 1.5rem;flex-shrink:0;border-bottom:1px solid var(--g200);background:#fff}
+.contacts-search{flex:1;max-width:320px;position:relative}
+.contacts-search input{width:100%;padding:.5rem .875rem .5rem 2.25rem;border-radius:9px;border:1px solid var(--g200);background:var(--cream);font-size:14px;font-family:var(--fb);color:var(--navy)}
+.contacts-search input:focus{outline:none;border-color:var(--gold)}
+.contacts-search-ico{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);width:15px;height:15px;stroke:var(--g400);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.contacts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;padding:1.25rem 1.5rem;overflow-y:auto;flex:1;align-content:start}
+.contact-card{background:#fff;border:1px solid var(--g200);border-radius:14px;padding:1.25rem;cursor:pointer;transition:all .15s}
+.contact-card:hover{border-color:var(--gold);box-shadow:0 3px 16px rgba(201,146,58,.1)}
+.contact-card-top{display:flex;align-items:center;gap:12px;margin-bottom:.875rem}
+.contact-av{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;color:#fff;flex-shrink:0}
+.contact-name{font-size:15px;font-weight:600;color:var(--navy)}
+.contact-email{font-size:12px;color:var(--g400);margin-top:1px}
+.contact-card-mid{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:.75rem}
+.contact-card-foot{display:flex;justify-content:space-between;align-items:center}
+.contact-prop{font-size:12px;color:var(--g600);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px}
+.contact-date{font-size:11px;color:var(--g400)}
+
+/* ── AI TOOLS VIEW ── */
+.ai-tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;padding:1.25rem 1.5rem;overflow-y:auto;flex:1;align-content:start}
+.ai-tool-card{background:#fff;border:1px solid var(--g200);border-radius:16px;overflow:hidden;transition:border-color .15s,box-shadow .15s}
+.ai-tool-card:hover{border-color:var(--gold);box-shadow:0 4px 20px rgba(201,146,58,.1)}
+.ai-tool-head{padding:1.25rem 1.5rem 1rem;border-bottom:1px solid var(--g100)}
+.ai-tool-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem}
+.ai-tool-title{font-size:16px;font-weight:600;color:var(--navy);margin-bottom:.25rem}
+.ai-tool-desc{font-size:13px;color:var(--g600);line-height:1.5}
+.ai-tool-body{padding:1.25rem 1.5rem}
+.ai-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:.875rem}
+.ai-fields.full{grid-template-columns:1fr}
+.ai-field{display:flex;flex-direction:column;gap:4px}
+.ai-field label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--g400)}
+.ai-field input,.ai-field select,.ai-field textarea{font-size:13px;padding:8px 10px;border-radius:7px;border:1px solid var(--g200);background:var(--cream);color:var(--navy);font-family:var(--fb);resize:vertical;transition:border-color .15s;width:100%}
+.ai-field input:focus,.ai-field select:focus,.ai-field textarea:focus{outline:none;border-color:var(--gold)}
+.ai-field textarea{min-height:64px}
+.ai-run{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:10px;border-radius:8px;border:none;background:var(--navy);color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:background .15s}
+.ai-run:hover{background:var(--navy-mid)}
+.ai-run:disabled{opacity:.45;cursor:not-allowed}
+.ai-output{margin-top:1rem;background:var(--cream);border:1px solid var(--g200);border-radius:8px;padding:1rem;display:none}
+.ai-output.show{display:block}
+.ai-output-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem}
+.ai-output-lbl{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--g400)}
+.ai-copy{font-size:11px;color:var(--g600);background:#fff;border:1px solid var(--g200);border-radius:4px;padding:2px 8px;cursor:pointer;font-family:var(--fb)}
+.ai-output-text{font-size:13px;color:var(--g800);line-height:1.7;white-space:pre-wrap}
+
+/* ── LEAD DETAIL MODAL ── */
+.modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(11,27,43,.6);backdrop-filter:blur(4px);display:none;align-items:flex-start;justify-content:flex-end}
+.modal-overlay.open{display:flex}
+.lead-detail{width:580px;height:100vh;background:#fff;display:flex;flex-direction:column;box-shadow:-8px 0 40px rgba(0,0,0,.15);overflow:hidden}
+.ld-head{padding:1.25rem 1.5rem;border-bottom:1px solid var(--g200);display:flex;align-items:center;gap:12px;flex-shrink:0;background:#fff}
+.ld-av{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:600;color:#fff;flex-shrink:0}
+.ld-name{font-size:18px;font-weight:600;color:var(--navy)}
+.ld-email{font-size:13px;color:var(--g400)}
+.ld-close{margin-left:auto;background:none;border:none;cursor:pointer;color:var(--g400);font-size:22px;line-height:1}
+.ld-tabs{display:flex;border-bottom:1px solid var(--g200);padding:0 1.5rem;flex-shrink:0;background:#fff}
+.ld-tab{padding:.75rem 1rem;font-size:13px;font-weight:500;color:var(--g400);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
+.ld-tab.active{color:var(--navy);border-bottom-color:var(--gold)}
+.ld-body{flex:1;overflow-y:auto}
+.ld-section{padding:1.25rem 1.5rem;border-bottom:1px solid var(--g100)}
+.ld-section-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--g400);margin-bottom:.875rem}
+.ld-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.ld-info-item label{font-size:11px;color:var(--g400);font-weight:500;display:block;margin-bottom:3px}
+.ld-info-item span{font-size:14px;color:var(--navy);font-weight:500}
+.ld-info-item input,.ld-info-item select,.ld-info-item textarea{font-size:14px;padding:8px 10px;border-radius:7px;border:1px solid var(--g200);background:var(--cream);color:var(--navy);font-family:var(--fb);width:100%;transition:border-color .15s}
+.ld-info-item input:focus,.ld-info-item select:focus,.ld-info-item textarea:focus{outline:none;border-color:var(--gold)}
+.ld-info-item.full{grid-column:1/-1}
+.note-input{display:flex;gap:8px;margin-bottom:.75rem}
+.note-input textarea{flex:1;font-size:13px;padding:8px 10px;border-radius:8px;border:1px solid var(--g200);background:var(--cream);font-family:var(--fb);resize:none;min-height:60px;transition:border-color .15s}
+.note-input textarea:focus{outline:none;border-color:var(--gold)}
+.note-input button{padding:.5rem .875rem;border-radius:8px;border:none;background:var(--navy);color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fb);align-self:flex-end;white-space:nowrap}
+.note-item{background:var(--g100);border-radius:9px;padding:.875rem 1rem;margin-bottom:.5rem}
+.note-text{font-size:13px;color:var(--navy);line-height:1.5;margin-bottom:.35rem}
+.note-time{font-size:11px;color:var(--g400)}
+.history-item{border:1px solid var(--g200);border-radius:9px;padding:.875rem 1rem;margin-bottom:.5rem;cursor:pointer;transition:border-color .15s}
+.history-item:hover{border-color:var(--gold)}
+.history-tool{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);margin-bottom:.35rem}
+.history-preview{font-size:13px;color:var(--g600);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.history-time{font-size:11px;color:var(--g400);margin-top:.25rem}
+.ld-ai-section{padding:1.25rem 1.5rem}
+.ld-ai-title{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:.875rem}
+.ld-ai-tools{display:flex;flex-direction:column;gap:8px}
+.ld-ai-btn{display:flex;align-items:center;gap:10px;padding:.75rem 1rem;border-radius:10px;border:1px solid var(--g200);background:#fff;cursor:pointer;font-family:var(--fb);transition:all .15s;text-align:left;width:100%}
+.ld-ai-btn:hover{border-color:var(--gold);background:var(--gold-pale)}
+.ld-ai-btn svg{width:18px;height:18px;stroke:var(--gold);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.ld-ai-btn-text{font-size:13px;font-weight:500;color:var(--navy)}
+.ld-ai-btn-sub{font-size:12px;color:var(--g400)}
+.save-btn{display:flex;align-items:center;gap:7px;padding:.6rem 1.25rem;border-radius:8px;border:none;background:var(--navy);color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:background .15s}
+.save-btn:hover{background:var(--navy-mid)}
+
+/* ADD LEAD MODAL */
+.add-modal{position:fixed;inset:0;z-index:600;background:rgba(11,27,43,.7);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:1.5rem}
+.add-modal.open{display:flex}
+.add-box{background:#fff;border-radius:20px;padding:2rem;width:100%;max-width:560px;max-height:90vh;overflow-y:auto}
+.add-box-title{font-family:var(--fd);font-size:22px;color:var(--navy);margin-bottom:1.5rem}
+.add-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1rem}
+.add-grid.full{grid-template-columns:1fr}
+.add-field{display:flex;flex-direction:column;gap:5px}
+.add-field label{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--g400)}
+.add-field input,.add-field select,.add-field textarea{font-size:14px;padding:9px 12px;border-radius:8px;border:1px solid var(--g200);background:var(--cream);color:var(--navy);font-family:var(--fb);width:100%;transition:border-color .15s}
+.add-field input:focus,.add-field select:focus,.add-field textarea:focus{outline:none;border-color:var(--gold)}
+.add-field textarea{min-height:72px;resize:vertical}
+.add-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:1rem}
+.add-cancel{padding:.7rem 1.25rem;border-radius:8px;border:1.5px solid var(--g200);background:none;color:var(--navy);font-size:14px;font-weight:500;cursor:pointer;font-family:var(--fb)}
+.add-submit{padding:.7rem 1.5rem;border-radius:8px;border:none;background:var(--navy);color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--fb)}
+
+/* SETTINGS */
+.settings-wrap{padding:1.5rem;overflow-y:auto;flex:1;max-width:700px}
+.settings-section{background:#fff;border:1px solid var(--g200);border-radius:16px;padding:1.75rem;margin-bottom:1.25rem}
+.settings-title{font-size:15px;font-weight:600;color:var(--navy);margin-bottom:1.25rem;padding-bottom:.75rem;border-bottom:1px solid var(--g100)}
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.s-field{display:flex;flex-direction:column;gap:5px}
+.s-field.full{grid-column:1/-1}
+.s-field label{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--g400)}
+.s-field input,.s-field select,.s-field textarea{font-size:14px;padding:9px 12px;border-radius:8px;border:1px solid var(--g200);background:var(--cream);color:var(--navy);font-family:var(--fb);width:100%}
+.s-field input:focus,.s-field select:focus{outline:none;border-color:var(--gold)}
+.brand-sig-preview{background:var(--navy);border-radius:10px;padding:1.25rem;margin-top:1rem;font-size:13px;color:rgba(255,255,255,.75);line-height:1.7;white-space:pre-wrap}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--navy);color:#fff;font-size:13px;font-weight:500;padding:.75rem 1.5rem;border-radius:999px;z-index:9999;transition:transform .3s;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+@media(max-width:768px){
+  .dash-grid{grid-template-columns:1fr 1fr}
+  .dash-bottom{grid-template-columns:1fr}
+  .top-nav-center{display:none}
+  .ai-tools-grid{grid-template-columns:1fr}
+  .lead-detail{width:100%}
+  .contacts-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
 <body>
 
-<!-- AUTH MODAL -->
-<div class="auth-modal" id="auth-modal">
+<!-- AUTH -->
+<div class="auth-screen" id="auth-screen">
   <div class="auth-box">
-    <button class="auth-close" onclick="closeAuth()">×</button>
     <div class="auth-logo">Agent<span>Edge</span></div>
-    <div id="view-login">
-      <div class="auth-sub">Sign in to your account</div>
+    <div class="auth-tagline">AI-powered CRM for real estate professionals</div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" onclick="authTab('login',this)">Sign in</div>
+      <div class="auth-tab" onclick="authTab('signup',this)">Sign up</div>
+    </div>
+    <div id="auth-login">
       <div class="a-field"><label>Email</label><input type="email" id="l-email" placeholder="you@example.com" onkeydown="if(event.key==='Enter')doLogin()"></div>
       <div class="a-field"><label>Password</label><input type="password" id="l-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
       <button class="a-btn" onclick="doLogin()">Sign in</button>
       <div class="a-err" id="l-err">Incorrect email or password.</div>
-      <div class="a-switch">No account? <button onclick="showView('signup')">Sign up</button></div>
     </div>
-    <div id="view-signup" style="display:none">
-      <div class="auth-sub">Create your AgentEdge account</div>
+    <div id="auth-signup" style="display:none">
       <div class="a-field"><label>Full name</label><input type="text" id="s-name" placeholder="Mike Torres"></div>
       <div class="a-field"><label>Email</label><input type="email" id="s-email" placeholder="you@example.com"></div>
       <div class="a-field"><label>Password</label><input type="password" id="s-pass" placeholder="Min 6 characters"></div>
       <div class="a-field"><label>Plan</label><select id="s-plan"><option value="Solo">Solo — $99/month</option><option value="Pro" selected>Pro — $199/month</option><option value="Brokerage">Brokerage — $499/month</option></select></div>
-      <button class="a-btn" onclick="doSignup()">Create account & get access</button>
-      <div class="a-err" id="s-err">Please fill in all fields (password min 6 chars).</div>
-      <div class="a-switch">Have an account? <button onclick="showView('login')">Sign in</button></div>
+      <button class="a-btn" onclick="doSignup()">Create account</button>
+      <div class="a-err" id="s-err">Please fill in all fields.</div>
     </div>
   </div>
 </div>
 
-<!-- DASHBOARD -->
-<div id="dashboard">
-  <nav class="d-nav">
-    <div style="display:flex;align-items:center;gap:12px">
-      <button class="d-mobile-menu" onclick="toggleSidebar()"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
-      <div class="d-logo">Agent<span>Edge</span></div>
+<!-- APP -->
+<div id="app">
+  <!-- TOP NAV -->
+  <nav class="top-nav">
+    <div class="top-logo">Agent<span>Edge</span></div>
+    <div class="top-nav-center">
+      <button class="top-nav-btn active" onclick="showView('dashboard',this)">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard
+      </button>
+      <button class="top-nav-btn" onclick="showView('pipeline',this)">
+        <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Pipeline
+      </button>
+      <button class="top-nav-btn" onclick="showView('contacts',this)">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Contacts
+      </button>
+      <button class="top-nav-btn" onclick="showView('aitools',this)">
+        <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>AI Tools
+      </button>
+      <button class="top-nav-btn" onclick="showView('settings',this)">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings
+      </button>
     </div>
-    <div class="d-nav-r">
-      <span class="d-plan" id="d-plan-badge">Pro</span>
-      <button class="d-logout" onclick="doLogout()">Sign out</button>
+    <div class="top-right">
+      <span class="user-badge" id="top-user-name"></span>
+      <button class="top-add-btn" onclick="openAddLead()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Lead
+      </button>
+      <button class="logout-btn" onclick="doLogout()">Sign out</button>
     </div>
   </nav>
-  <div class="d-body">
-    <div class="d-sidebar" id="d-sidebar">
-      <div class="d-sidebar-head">
-        <div class="d-uname" id="d-uname">Welcome back</div>
-        <div class="d-uemail" id="d-uemail"></div>
+
+  <div class="app-body">
+
+    <!-- DASHBOARD VIEW -->
+    <div class="view active" id="view-dashboard">
+      <div class="dash-grid" id="dash-stats">
+        <div class="dash-stat highlight"><div class="dash-stat-label">Total Leads</div><div class="dash-stat-num" id="stat-total">0</div><div class="dash-stat-sub">All time</div></div>
+        <div class="dash-stat"><div class="dash-stat-label">Hot Leads</div><div class="dash-stat-num" id="stat-hot">0</div><div class="dash-stat-sub">Need follow-up now</div></div>
+        <div class="dash-stat"><div class="dash-stat-label">Under Contract</div><div class="dash-stat-num" id="stat-contract">0</div><div class="dash-stat-sub">Active deals</div></div>
+        <div class="dash-stat"><div class="dash-stat-label">Closed This Month</div><div class="dash-stat-num" id="stat-closed">0</div><div class="dash-stat-sub">Congratulations 🎉</div></div>
       </div>
-      <div class="d-divider"></div>
-      <div class="d-lbl">AI Tools</div>
-      <button class="d-btn active" onclick="switchD('home',this)"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Home</span></button>
-      <button class="d-btn" onclick="switchD('followup',this)"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Lead Follow-Up</span><span class="d-badge">Core</span></button>
-      <button class="d-btn" onclick="switchD('listing',this)"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg><span>Listing Content</span><span class="d-badge">Core</span></button>
-      <button class="d-btn" onclick="switchD('qualify',this)"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Lead Qualifier</span><span class="d-badge">Core</span></button>
-      <button class="d-btn" onclick="switchD('market',this)"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Market Report</span><span class="d-badge">Core</span></button>
-      <button class="d-btn" onclick="switchD('crm',this)"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg><span>CRM & Admin</span><span class="d-badge">Pro</span></button>
-      <button class="d-btn" onclick="switchD('showing',this)"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span>Showing Coord.</span><span class="d-badge">Pro</span></button>
-      <button class="d-btn" onclick="switchD('drip',this)"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span>Post-Close Drip</span><span class="d-badge">Core</span></button>
-      <div class="d-divider"></div>
-      <div class="d-lbl">Account</div>
-      <button class="d-btn" onclick="switchD('bulk',this)"><svg viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg><span>Bulk Upload</span><span class="d-badge">Pro</span></button>
-      <button class="d-btn" onclick="switchD('history',this)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>Output History</span></button>
-      <button class="d-btn" onclick="switchD('brand',this)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.63-.82-8.94 0-2.58.92-5.01 2.86-7.44 6.32"/></svg><span>Brand Settings</span></button>
+      <div class="dash-bottom">
+        <div class="dash-card">
+          <div class="dash-card-head"><div class="dash-card-title">Recent Leads</div><button class="pipe-view-btn" onclick="showView('contacts',document.querySelector('[onclick*=contacts]'))">View all</button></div>
+          <div class="dash-card-body" id="dash-recent-leads"><div style="text-align:center;padding:2rem;font-size:13px;color:var(--g400)">No leads yet — add your first lead</div></div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-head"><div class="dash-card-title">Tasks & Follow-ups</div></div>
+          <div class="dash-card-body" id="dash-tasks"><div style="text-align:center;padding:2rem;font-size:13px;color:var(--g400)">No tasks yet</div></div>
+        </div>
+      </div>
     </div>
 
-    <div class="d-main">
-
-      <!-- HOME -->
-      <div class="d-panel active" id="dp-home">
-        <div class="d-ph">Welcome back 👋</div>
-        <div class="d-ps">Pick a tool below. Each one solves a specific problem that's costing you time and deals today.</div>
-        <div class="w-grid">
-          <div class="w-tile" onclick="switchDById('followup')"><div class="w-tile-ico"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><h4>Lead Follow-Up</h4><p>5-touch sequences for any lead</p></div>
-          <div class="w-tile" onclick="switchDById('listing')"><div class="w-tile-ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div><h4>Listing Content</h4><p>Full marketing package instantly</p></div>
-          <div class="w-tile" onclick="switchDById('qualify')"><div class="w-tile-ico"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><h4>Lead Qualifier</h4><p>Score every inbound inquiry</p></div>
-          <div class="w-tile" onclick="switchDById('market')"><div class="w-tile-ico"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><h4>Market Report</h4><p>Weekly client email in 60 sec</p></div>
-          <div class="w-tile" onclick="switchDById('crm')"><div class="w-tile-ico"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div><h4>CRM & Admin</h4><p>Raw notes → structured updates</p></div>
-          <div class="w-tile" onclick="switchDById('showing')"><div class="w-tile-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><h4>Showing Coord.</h4><p>Confirmations & feedback</p></div>
-          <div class="w-tile" onclick="switchDById('drip')"><div class="w-tile-ico"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div><h4>Post-Close Drip</h4><p>12-month referral campaign</p></div>
-          <div class="w-tile" onclick="switchDById('bulk')"><div class="w-tile-ico"><svg viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg></div><h4>Bulk Upload</h4><p>Generate sequences for many leads at once</p></div>
+    <!-- PIPELINE VIEW -->
+    <div class="view" id="view-pipeline">
+      <div class="pipeline-toolbar">
+        <div class="pipe-view-toggle">
+          <button class="pipe-view-btn active" id="btn-kanban" onclick="setPipeView('kanban')">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="18"/><rect x="14" y="3" width="7" height="11"/></svg>Board
+          </button>
+          <button class="pipe-view-btn" id="btn-list" onclick="setPipeView('list')">
+            <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>List
+          </button>
+        </div>
+        <div class="pipe-filter" id="pipe-filters">
+          <button class="pipe-filter-btn active" onclick="setPipeFilter('all',this)">All</button>
+          <button class="pipe-filter-btn" onclick="setPipeFilter('Buyer',this)">Buyers</button>
+          <button class="pipe-filter-btn" onclick="setPipeFilter('Seller',this)">Sellers</button>
+          <button class="pipe-filter-btn" onclick="setPipeFilter('Rental',this)">Rentals</button>
+        </div>
+        <div class="pipe-search">
+          <svg class="pipe-search-ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Search leads..." id="pipe-search-input" oninput="renderPipeline()">
         </div>
       </div>
-
-      <!-- FOLLOW-UP -->
-      <div class="d-panel" id="dp-followup">
-        <div class="d-ph">Lead Follow-Up Sequences</div>
-        <div class="d-ps">Generate a personalized 5-touch follow-up (Day 1–30) for any lead at any stage. Email and SMS included.</div>
-        <div class="d-card">
-          <div class="d-fields">
-            <div class="d-field"><label>Lead name</label><input id="fu-name" placeholder="Sarah Johnson"></div>
-            <div class="d-field"><label>Property inquired about</label><input id="fu-prop" placeholder="123 Oak Ave, Austin TX"></div>
-            <div class="d-field"><label>Lead stage</label><select id="fu-stage"><option>Just inquired online</option><option>Toured the home</option><option>Made offer, didn't close</option><option>Gone cold — 30+ days</option><option>Pre-approval stage</option></select></div>
-            <div class="d-field"><label>Channel</label><select id="fu-ch"><option>Email</option><option>Text / SMS</option><option>Both</option></select></div>
-          </div>
-          <div class="d-fields full"><div class="d-field"><label>Your name & brokerage</label><input id="fu-agent" placeholder="Mike Torres, Compass Realty"></div></div>
-          <button class="d-run" id="btn-fu" onclick="dRun('fu','followup')">⚡ Generate 5-touch sequence</button>
-          <div class="d-output" id="do-fu"><div class="d-out-head"><span class="d-out-lbl">Your sequence</span><button class="d-copy" onclick="dCopy('do-fu')">Copy all</button></div><div class="d-out-text" id="do-fu-t"></div></div>
-        </div>
+      <div id="pipe-kanban" style="display:flex;flex:1;overflow:hidden">
+        <div class="kanban-wrap" id="kanban-wrap"></div>
       </div>
-
-      <!-- LISTING -->
-      <div class="d-panel" id="dp-listing">
-        <div class="d-ph">Listing Content Generator</div>
-        <div class="d-ps">Enter property details once — get MLS copy, Instagram caption, buyer email, and SMS blast ready to publish.</div>
-        <div class="d-card">
-          <div class="d-fields full"><div class="d-field"><label>Paste Zillow / MLS URL (optional — auto-fills fields below)</label><input id="li-url" placeholder="https://www.zillow.com/homedetails/..." onblur="parseURL(this.value)"></div></div>
-          <div class="d-fields">
-            <div class="d-field"><label>Property address</label><input id="li-addr" placeholder="123 Oak Ave, Austin TX"></div>
-            <div class="d-field"><label>List price</label><input id="li-price" placeholder="$549,000"></div>
-            <div class="d-field"><label>Beds / Baths / Sqft</label><input id="li-beds" placeholder="3 bed / 2 bath / 1,850 sqft"></div>
-            <div class="d-field"><label>Tone</label><select id="li-tone"><option>Warm & inviting</option><option>Luxury & upscale</option><option>Urgent & exciting</option><option>Friendly & casual</option></select></div>
-          </div>
-          <div class="d-fields full"><div class="d-field"><label>Key features</label><textarea id="li-feat" placeholder="Renovated kitchen, pool & spa, corner lot, new roof 2023, open floor plan"></textarea></div></div>
-          <button class="d-run" id="btn-li" onclick="dRun('li','listing')">⚡ Generate listing package</button>
-          <div class="d-output" id="do-li"><div class="d-out-head"><span class="d-out-lbl">Listing package</span><button class="d-copy" onclick="dCopy('do-li')">Copy all</button></div><div class="d-out-text" id="do-li-t"></div></div>
-        </div>
-      </div>
-
-      <!-- QUALIFY -->
-      <div class="d-panel" id="dp-qualify">
-        <div class="d-ph">Lead Qualifier & Scorer</div>
-        <div class="d-ps">Paste any lead inquiry — get a readiness score, key signals, priority rating, and a suggested first response.</div>
-        <div class="d-card">
-          <div class="d-fields full"><div class="d-field"><label>Lead's inquiry message</label><textarea id="qu-msg" style="min-height:100px" placeholder="Hi, I saw your listing on Zillow. Thinking of moving next year, budget ~$400k, need to sell first..."></textarea></div></div>
-          <div class="d-fields">
-            <div class="d-field"><label>Your market / price range</label><input id="qu-mkt" placeholder="Austin TX · $350k–$700k"></div>
-            <div class="d-field"><label>Lead type</label><select id="qu-type"><option>Unknown — figure it out</option><option>Buyer</option><option>Seller</option><option>Both</option></select></div>
-          </div>
-          <button class="d-run" id="btn-qu" onclick="dRun('qu','qualify')">⚡ Qualify this lead</button>
-          <div class="d-output" id="do-qu"><div class="d-out-head"><span class="d-out-lbl">Lead report</span><button class="d-copy" onclick="dCopy('do-qu')">Copy</button></div><div class="d-out-text" id="do-qu-t"></div></div>
-        </div>
-      </div>
-
-      <!-- MARKET -->
-      <div class="d-panel" id="dp-market">
-        <div class="d-ph">Market Report Builder</div>
-        <div class="d-ps">Enter a few stats for your farm area — get a full branded client email ready to send in 60 seconds.</div>
-        <div class="d-card">
-          <div class="d-fields">
-            <div class="d-field"><label>Neighborhood / zip</label><input id="mr-area" placeholder="South Austin / 78704"></div>
-            <div class="d-field"><label>Avg sale price</label><input id="mr-price" placeholder="$725,000"></div>
-            <div class="d-field"><label>Avg days on market</label><input id="mr-dom" placeholder="18 days"></div>
-            <div class="d-field"><label>Active listings</label><input id="mr-list" placeholder="42 homes"></div>
-            <div class="d-field"><label>Market condition</label><select id="mr-trend"><option>Hot — seller's market</option><option>Cooling toward buyers</option><option>Balanced / stable</option><option>Strong buyer's market</option></select></div>
-            <div class="d-field"><label>Your name</label><input id="mr-agent" placeholder="Mike Torres"></div>
-          </div>
-          <button class="d-run" id="btn-mr" onclick="dRun('mr','market')">⚡ Generate market report email</button>
-          <div class="d-output" id="do-mr"><div class="d-out-head"><span class="d-out-lbl">Market update email</span><button class="d-copy" onclick="dCopy('do-mr')">Copy</button></div><div class="d-out-text" id="do-mr-t"></div></div>
-        </div>
-      </div>
-
-      <!-- CRM -->
-      <div class="d-panel" id="dp-crm">
-        <div class="d-ph">CRM & Admin Assistant</div>
-        <div class="d-ps">Turn messy call notes into structured CRM updates, offer summaries, timelines, and client emails instantly.</div>
-        <div class="d-card">
-          <div class="d-fields">
-            <div class="d-field"><label>Task type</label><select id="cr-type"><option>Summarize call notes into CRM update</option><option>Write offer summary one-pager</option><option>Build transaction timeline & milestones</option><option>Draft client status update email</option><option>Create showing feedback request</option><option>Generate disclosure checklist reminder</option></select></div>
-            <div class="d-field"><label>Client / property</label><input id="cr-client" placeholder="Johnson Family · 123 Oak Ave"></div>
-          </div>
-          <div class="d-fields full"><div class="d-field"><label>Paste your raw notes</label><textarea id="cr-notes" style="min-height:100px" placeholder="Called Sarah. Loves the house, husband hesitant on backyard size. Pre-approved $550k. Must close before July 15. Competing showing Saturday."></textarea></div></div>
-          <button class="d-run" id="btn-cr" onclick="dRun('cr','crm')">⚡ Process with AI</button>
-          <div class="d-output" id="do-cr"><div class="d-out-head"><span class="d-out-lbl">Structured output</span><button class="d-copy" onclick="dCopy('do-cr')">Copy</button></div><div class="d-out-text" id="do-cr-t"></div></div>
-        </div>
-      </div>
-
-      <!-- SHOWING -->
-      <div class="d-panel" id="dp-showing">
-        <div class="d-ph">Showing Coordinator</div>
-        <div class="d-ps">Generate confirmations, reminders, feedback requests, and offer-to-close messages with one click.</div>
-        <div class="d-card">
-          <div class="d-fields">
-            <div class="d-field"><label>Message type</label><select id="sh-type"><option>Showing confirmation (to buyer)</option><option>24-hour showing reminder</option><option>Post-showing feedback request</option><option>Offer received — buyer notification</option><option>Counter-offer communication</option><option>Under contract — milestone update</option><option>Closing day checklist & instructions</option></select></div>
-            <div class="d-field"><label>Client name</label><input id="sh-client" placeholder="The Johnson Family"></div>
-            <div class="d-field"><label>Property address</label><input id="sh-prop" placeholder="123 Oak Ave, Austin TX"></div>
-            <div class="d-field"><label>Date / time</label><input id="sh-date" placeholder="Saturday, June 21 at 2:00 PM"></div>
-          </div>
-          <div class="d-fields full"><div class="d-field"><label>Additional context (optional)</label><textarea id="sh-notes" placeholder="3 competing offers. Seller reviewing Sunday evening."></textarea></div></div>
-          <button class="d-run" id="btn-sh" onclick="dRun('sh','showing')">⚡ Generate message</button>
-          <div class="d-output" id="do-sh"><div class="d-out-head"><span class="d-out-lbl">Your message</span><button class="d-copy" onclick="dCopy('do-sh')">Copy</button></div><div class="d-out-text" id="do-sh-t"></div></div>
-        </div>
-      </div>
-
-      <!-- DRIP -->
-      <div class="d-panel" id="dp-drip">
-        <div class="d-ph">Post-Close Referral Drip</div>
-        <div class="d-ps">A full 12-month campaign that keeps past clients warm and generating referrals all year long.</div>
-        <div class="d-card">
-          <div class="d-fields">
-            <div class="d-field"><label>Client name</label><input id="dr-client" placeholder="The Johnson Family"></div>
-            <div class="d-field"><label>Property closed</label><input id="dr-prop" placeholder="123 Oak Ave, Austin TX"></div>
-            <div class="d-field"><label>Closing date</label><input id="dr-date" placeholder="June 2025"></div>
-            <div class="d-field"><label>Your name & brokerage</label><input id="dr-agent" placeholder="Mike Torres, Compass"></div>
-          </div>
-          <div class="d-fields full"><div class="d-field"><label>Personal details to make it warmer (optional)</label><textarea id="dr-notes" placeholder="Two kids, moved from Chicago, first-time Austin homeowners, love hiking"></textarea></div></div>
-          <button class="d-run" id="btn-dr" onclick="dRun('dr','drip')">⚡ Generate 12-month drip</button>
-          <div class="d-output" id="do-dr"><div class="d-out-head"><span class="d-out-lbl">12-month campaign</span><button class="d-copy" onclick="dCopy('do-dr')">Copy all</button></div><div class="d-out-text" id="do-dr-t"></div></div>
-        </div>
-      </div>
-
-      <!-- BULK UPLOAD -->
-      <div class="d-panel" id="dp-bulk">
-        <div class="d-ph">Bulk Lead Upload</div>
-        <div class="d-ps">Upload a CSV of leads and generate follow-up sequences for all of them at once. Format: Name, Email, Property, Stage.</div>
-        <div class="d-card">
-          <div class="bulk-drop" id="bulk-drop" onclick="document.getElementById('bulk-file').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event)">
-            <svg viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
-            <p>Drop your CSV file here or click to upload</p>
-            <p style="font-size:12px;color:var(--g400);margin-top:.25rem">Columns: Name, Property, Stage, Channel</p>
-          </div>
-          <input type="file" id="bulk-file" accept=".csv" style="display:none" onchange="handleCSV(this)">
-          <div id="bulk-preview"></div>
-          <div id="bulk-actions" style="display:none;margin-top:1rem">
-            <button class="d-run" id="btn-bulk" onclick="runBulk()">⚡ Generate sequences for all leads</button>
-          </div>
-          <div class="d-output" id="do-bulk"><div class="d-out-head"><span class="d-out-lbl">Bulk output</span><button class="d-copy" onclick="dCopy('do-bulk')">Copy all</button></div><div class="d-out-text" id="do-bulk-t"></div></div>
-        </div>
-        <div class="d-card" style="margin-top:0">
-          <div class="d-card-title">CSV format example</div>
-          <table class="bulk-table">
-            <thead><tr><th>Name</th><th>Property</th><th>Stage</th><th>Channel</th></tr></thead>
-            <tbody>
-              <tr><td>Sarah Johnson</td><td>123 Oak Ave</td><td>Just inquired</td><td>Email</td></tr>
-              <tr><td>Marcus Williams</td><td>456 Elm St</td><td>Toured the home</td><td>SMS</td></tr>
-              <tr><td>Lisa Chen</td><td>789 Pine Rd</td><td>Gone cold</td><td>Both</td></tr>
-            </tbody>
+      <div id="pipe-list" style="display:none;flex:1;overflow:hidden">
+        <div class="list-wrap">
+          <table class="list-table">
+            <thead><tr><th>Name</th><th>Type</th><th>Property</th><th>Stage</th><th>Budget</th><th>Last Contact</th></tr></thead>
+            <tbody id="list-tbody"></tbody>
           </table>
         </div>
       </div>
+    </div>
 
+    <!-- CONTACTS VIEW -->
+    <div class="view" id="view-contacts">
+      <div class="contacts-toolbar">
+        <div class="contacts-search">
+          <svg class="contacts-search-ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Search contacts..." id="contacts-search-input" oninput="renderContacts()">
+        </div>
+        <div class="pipe-filter">
+          <button class="pipe-filter-btn active" onclick="setContactFilter('all',this)">All</button>
+          <button class="pipe-filter-btn" onclick="setContactFilter('Buyer',this)">Buyers</button>
+          <button class="pipe-filter-btn" onclick="setContactFilter('Seller',this)">Sellers</button>
+          <button class="pipe-filter-btn" onclick="setContactFilter('Rental',this)">Rentals</button>
+        </div>
+        <span style="font-size:13px;color:var(--g400)" id="contacts-count"></span>
+      </div>
+      <div class="contacts-grid" id="contacts-grid"></div>
+    </div>
+
+    <!-- AI TOOLS VIEW -->
+    <div class="view" id="view-aitools">
+      <div style="padding:1.25rem 1.5rem .5rem;flex-shrink:0">
+        <div style="font-size:13px;color:var(--g600)">Generate AI content for any lead. Select a contact to auto-fill their details, or fill in manually.</div>
+      </div>
+      <div class="ai-tools-grid">
+
+        <div class="ai-tool-card">
+          <div class="ai-tool-head"><div class="ai-tool-label">Core Tool</div><div class="ai-tool-title">Lead Follow-Up Sequences</div><div class="ai-tool-desc">5-touch sequence (Day 1–30) for any lead at any stage</div></div>
+          <div class="ai-tool-body">
+            <div class="ai-fields"><div class="ai-field"><label>Lead name</label><input id="ai-fu-name" placeholder="Sarah Johnson"></div><div class="ai-field"><label>Property</label><input id="ai-fu-prop" placeholder="123 Oak Ave"></div><div class="ai-field"><label>Stage</label><select id="ai-fu-stage"><option>Just inquired</option><option>Toured</option><option>Made offer</option><option>Gone cold</option></select></div><div class="ai-field"><label>Channel</label><select id="ai-fu-ch"><option>Email</option><option>SMS</option><option>Both</option></select></div></div>
+            <button class="ai-run" id="btn-ai-fu" onclick="aiRun('fu','followup')">⚡ Generate sequence</button>
+            <div class="ai-output" id="ai-out-fu"><div class="ai-output-head"><span class="ai-output-lbl">Sequence</span><button class="ai-copy" onclick="aiCopy('ai-out-fu')">Copy</button></div><div class="ai-output-text" id="ai-out-fu-t"></div></div>
+          </div>
+        </div>
+
+        <div class="ai-tool-card">
+          <div class="ai-tool-head"><div class="ai-tool-label">Core Tool</div><div class="ai-tool-title">Listing Content Generator</div><div class="ai-tool-desc">MLS copy, Instagram caption, buyer email & SMS blast</div></div>
+          <div class="ai-tool-body">
+            <div class="ai-fields"><div class="ai-field"><label>Address</label><input id="ai-li-addr" placeholder="123 Oak Ave, Austin TX"></div><div class="ai-field"><label>Price</label><input id="ai-li-price" placeholder="$549,000"></div><div class="ai-field"><label>Beds/Baths</label><input id="ai-li-beds" placeholder="3 bed / 2 bath"></div><div class="ai-field"><label>Tone</label><select id="ai-li-tone"><option>Warm & inviting</option><option>Luxury</option><option>Urgent</option></select></div></div>
+            <div class="ai-fields full"><div class="ai-field"><label>Key features</label><textarea id="ai-li-feat" placeholder="Pool, renovated kitchen, corner lot..."></textarea></div></div>
+            <button class="ai-run" id="btn-ai-li" onclick="aiRun('li','listing')">⚡ Generate listing package</button>
+            <div class="ai-output" id="ai-out-li"><div class="ai-output-head"><span class="ai-output-lbl">Listing package</span><button class="ai-copy" onclick="aiCopy('ai-out-li')">Copy</button></div><div class="ai-output-text" id="ai-out-li-t"></div></div>
+          </div>
+        </div>
+
+        <div class="ai-tool-card">
+          <div class="ai-tool-head"><div class="ai-tool-label">Core Tool</div><div class="ai-tool-title">Lead Qualifier & Scorer</div><div class="ai-tool-desc">Paste any lead inquiry — get score, signals & suggested reply</div></div>
+          <div class="ai-tool-body">
+            <div class="ai-fields full"><div class="ai-field"><label>Lead's message</label><textarea id="ai-qu-msg" style="min-height:80px" placeholder="Hi, I saw your listing on Zillow..."></textarea></div></div>
+            <div class="ai-fields"><div class="ai-field"><label>Your market</label><input id="ai-qu-mkt" placeholder="Austin TX · $350k–$700k"></div><div class="ai-field"><label>Lead type</label><select id="ai-qu-type"><option>Unknown</option><option>Buyer</option><option>Seller</option><option>Rental</option></select></div></div>
+            <button class="ai-run" id="btn-ai-qu" onclick="aiRun('qu','qualify')">⚡ Qualify this lead</button>
+            <div class="ai-output" id="ai-out-qu"><div class="ai-output-head"><span class="ai-output-lbl">Lead report</span><button class="ai-copy" onclick="aiCopy('ai-out-qu')">Copy</button></div><div class="ai-output-text" id="ai-out-qu-t"></div></div>
+          </div>
+        </div>
+
+        <div class="ai-tool-card">
+          <div class="ai-tool-head"><div class="ai-tool-label">Core Tool</div><div class="ai-tool-title">Market Report Builder</div><div class="ai-tool-desc">Full branded client email from a few market stats</div></div>
+          <div class="ai-tool-body">
+            <div class="ai-fields"><div class="ai-field"><label>Neighborhood</label><input id="ai-mr-area" placeholder="South Austin / 78704"></div><div class="ai-field"><label>Avg sale price</label><input id="ai-mr-price" placeholder="$725,000"></div><div class="ai-field"><label>Days on market</label><input id="ai-mr-dom" placeholder="18 days"></div><div class="ai-field"><label>Condition</label><select id="ai-mr-trend"><option>Hot — seller's market</option><option>Cooling</option><option>Balanced</option></select></div></div>
+            <button class="ai-run" id="btn-ai-mr" onclick="aiRun('mr','market')">⚡ Generate market report</button>
+            <div class="ai-output" id="ai-out-mr"><div class="ai-output-head"><span class="ai-output-lbl">Market email</span><button class="ai-copy" onclick="aiCopy('ai-out-mr')">Copy</button></div><div class="ai-output-text" id="ai-out-mr-t"></div></div>
+          </div>
+        </div>
+
+        <div class="ai-tool-card">
+          <div class="ai-tool-head"><div class="ai-tool-label">Pro Tool</div><div class="ai-tool-title">CRM & Admin Assistant</div><div class="ai-tool-desc">Turn raw call notes into structured CRM updates</div></div>
+          <div class="ai-tool-body">
+            <div class="ai-fields"><div class="ai-field"><label>Task type</label><select id="ai-cr-type"><option>CRM update from call notes</option><option>Offer summary one-pager</option><option>Transaction timeline</option><option>Client status email</option></select></div><div class="ai-field"><label>Client</label><input id="ai-cr-client" placeholder="Johnson Family · 123 Oak Ave"></div></div>
+            <div class="ai-fields full"><div class="ai-field"><label>Raw notes</label><textarea id="ai-cr-notes" style="min-height:80px" placeholder="Called Sarah. Loves the house..."></textarea></div></div>
+            <button class="ai-run" id="btn-ai-cr" onclick="aiRun('cr','crm')">⚡ Process with AI</button>
+            <div class="ai-output" id="ai-out-cr"><div class="ai-output-head"><span class="ai-output-lbl">Output</span><button class="ai-copy" onclick="aiCopy('ai-out-cr')">Copy</button></div><div class="ai-output-text" id="ai-out-cr-t"></div></div>
+          </div>
+        </div>
+
+        <div class="ai-tool-card">
+          <div class="ai-tool-head"><div class="ai-tool-label">Pro Tool</div><div class="ai-tool-title">Showing Coordinator</div><div class="ai-tool-desc">Confirmations, reminders, feedback & offer messages</div></div>
+          <div class="ai-tool-body">
+            <div class="ai-fields"><div class="ai-field"><label>Message type</label><select id="ai-sh-type"><option>Showing confirmation</option><option>24hr reminder</option><option>Post-showing feedback</option><option>Offer received</option><option>Under contract update</option><option>Closing day instructions</option></select></div><div class="ai-field"><label>Client</label><input id="ai-sh-client" placeholder="The Johnson Family"></div><div class="ai-field"><label>Property</label><input id="ai-sh-prop" placeholder="123 Oak Ave"></div><div class="ai-field"><label>Date / time</label><input id="ai-sh-date" placeholder="Saturday June 21 at 2pm"></div></div>
+            <button class="ai-run" id="btn-ai-sh" onclick="aiRun('sh','showing')">⚡ Generate message</button>
+            <div class="ai-output" id="ai-out-sh"><div class="ai-output-head"><span class="ai-output-lbl">Message</span><button class="ai-copy" onclick="aiCopy('ai-out-sh')">Copy</button></div><div class="ai-output-text" id="ai-out-sh-t"></div></div>
+          </div>
+        </div>
+
+        <div class="ai-tool-card">
+          <div class="ai-tool-head"><div class="ai-tool-label">Core Tool</div><div class="ai-tool-title">Post-Close Referral Drip</div><div class="ai-tool-desc">12-month campaign to keep past clients generating referrals</div></div>
+          <div class="ai-tool-body">
+            <div class="ai-fields"><div class="ai-field"><label>Client name</label><input id="ai-dr-client" placeholder="The Johnson Family"></div><div class="ai-field"><label>Property closed</label><input id="ai-dr-prop" placeholder="123 Oak Ave"></div><div class="ai-field"><label>Closing date</label><input id="ai-dr-date" placeholder="June 2025"></div><div class="ai-field"><label>Personal details</label><input id="ai-dr-notes" placeholder="Two kids, love hiking..."></div></div>
+            <button class="ai-run" id="btn-ai-dr" onclick="aiRun('dr','drip')">⚡ Generate 12-month drip</button>
+            <div class="ai-output" id="ai-out-dr"><div class="ai-output-head"><span class="ai-output-lbl">12-month campaign</span><button class="ai-copy" onclick="aiCopy('ai-out-dr')">Copy</button></div><div class="ai-output-text" id="ai-out-dr-t"></div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SETTINGS VIEW -->
+    <div class="view" id="view-settings">
+      <div class="settings-wrap">
+        <h2 style="font-family:var(--fd);font-size:24px;color:var(--navy);margin-bottom:1.25rem">Settings</h2>
+        <div class="settings-section">
+          <div class="settings-title">Brand & Signature</div>
+          <div class="settings-grid">
+            <div class="s-field"><label>Your full name</label><input id="br-name" placeholder="Mike Torres" oninput="updateSigPreview()"></div>
+            <div class="s-field"><label>Brokerage</label><input id="br-brokerage" placeholder="Compass Realty" oninput="updateSigPreview()"></div>
+            <div class="s-field"><label>Phone</label><input id="br-phone" placeholder="(512) 555-0123" oninput="updateSigPreview()"></div>
+            <div class="s-field"><label>Email</label><input id="br-email" placeholder="mike@compass.com" oninput="updateSigPreview()"></div>
+            <div class="s-field"><label>Website</label><input id="br-website" placeholder="www.miketorres.com" oninput="updateSigPreview()"></div>
+            <div class="s-field"><label>License #</label><input id="br-license" placeholder="TX-12345678" oninput="updateSigPreview()"></div>
+            <div class="s-field full"><label>Tagline</label><input id="br-tagline" placeholder="Austin's most trusted real estate advisor" oninput="updateSigPreview()"></div>
+          </div>
+          <div class="brand-sig-preview" id="sig-preview">Fill in your details above to preview your signature.</div>
+          <button class="save-btn" style="margin-top:1rem" onclick="saveBrand()">Save brand settings</button>
+        </div>
+        <div class="settings-section">
+          <div class="settings-title">Account</div>
+          <div style="font-size:14px;color:var(--g600)" id="account-info"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /app-body -->
+</div><!-- /app -->
+
+<!-- LEAD DETAIL MODAL -->
+<div class="modal-overlay" id="lead-modal">
+  <div class="lead-detail" id="lead-detail-panel">
+    <div class="ld-head">
+      <div class="lead-av" id="ld-av" style="width:48px;height:48px;font-size:18px"></div>
+      <div>
+        <div class="ld-name" id="ld-name"></div>
+        <div class="ld-email" id="ld-sub"></div>
+      </div>
+      <button class="ld-close" onclick="closeLeadModal()">×</button>
+    </div>
+    <div class="ld-tabs">
+      <div class="ld-tab active" onclick="ldTab('info',this)">Info</div>
+      <div class="ld-tab" onclick="ldTab('notes',this)">Notes</div>
+      <div class="ld-tab" onclick="ldTab('history',this)">AI History</div>
+      <div class="ld-tab" onclick="ldTab('ai',this)">AI Tools</div>
+    </div>
+    <div class="ld-body">
+      <!-- INFO -->
+      <div id="ld-info" class="ld-section">
+        <div class="ld-section-title">Lead Details</div>
+        <div class="ld-info-grid">
+          <div class="ld-info-item"><label>First name</label><input id="ld-fname" onchange="saveLeadField()"></div>
+          <div class="ld-info-item"><label>Last name</label><input id="ld-lname" onchange="saveLeadField()"></div>
+          <div class="ld-info-item"><label>Email</label><input id="ld-email" type="email" onchange="saveLeadField()"></div>
+          <div class="ld-info-item"><label>Phone</label><input id="ld-phone" onchange="saveLeadField()"></div>
+          <div class="ld-info-item"><label>Lead type</label><select id="ld-type" onchange="saveLeadField()"><option>Buyer</option><option>Seller</option><option>Both</option><option>Rental</option></select></div>
+          <div class="ld-info-item"><label>Stage</label><select id="ld-stage" onchange="saveLeadField()"><option>New</option><option>Contacted</option><option>Warm</option><option>Showing</option><option>Offer</option><option>Under Contract</option><option>Closed</option><option>Lost</option></select></div>
+          <div class="ld-info-item full"><label>Property interest</label><input id="ld-prop" onchange="saveLeadField()"></div>
+          <div class="ld-info-item"><label>Budget</label><input id="ld-budget" onchange="saveLeadField()"></div>
+          <div class="ld-info-item"><label>Timeline</label><input id="ld-timeline" onchange="saveLeadField()"></div>
+          <div class="ld-info-item"><label>Lead source</label><select id="ld-source" onchange="saveLeadField()"><option>Zillow</option><option>Realtor.com</option><option>Referral</option><option>Cold outreach</option><option>Website</option><option>Social media</option><option>Open house</option><option>Other</option></select></div>
+          <div class="ld-info-item"><label>Priority</label><select id="ld-priority" onchange="saveLeadField()"><option>Hot</option><option>Warm</option><option>Cold</option><option>Nurture</option></select></div>
+          <div class="ld-info-item full"><label>Additional notes</label><textarea id="ld-addnotes" rows="3" onchange="saveLeadField()" style="resize:vertical"></textarea></div>
+        </div>
+      </div>
+      <!-- NOTES -->
+      <div id="ld-notes" class="ld-section" style="display:none">
+        <div class="note-input">
+          <textarea id="note-text" placeholder="Add a note, call summary, or update..."></textarea>
+          <button onclick="addNote()">Add Note</button>
+        </div>
+        <div id="notes-list"></div>
+      </div>
       <!-- HISTORY -->
-      <div class="d-panel" id="dp-history">
-        <div class="d-ph">Output History</div>
-        <div class="d-ps">Every output you've generated is saved here. Click any item to view the full result.</div>
-        <div class="d-card">
-          <div id="hist-container"><div class="hist-empty">No outputs yet — generate something with any tool above and it will appear here.</div></div>
-        </div>
-        <div class="d-output" id="do-hist"><div class="d-out-head"><span class="d-out-lbl">Saved output</span><button class="d-copy" onclick="dCopy('do-hist')">Copy</button></div><div class="d-out-text" id="do-hist-t"></div></div>
+      <div id="ld-history" class="ld-section" style="display:none">
+        <div id="ai-history-list"><div style="text-align:center;padding:2rem;font-size:13px;color:var(--g400)">No AI outputs yet for this lead.</div></div>
       </div>
-
-      <!-- BRAND SETTINGS -->
-      <div class="d-panel" id="dp-brand">
-        <div class="d-ph">Brand Settings</div>
-        <div class="d-ps">Set your details once — they'll automatically appear in every output you generate across all 7 tools.</div>
-        <div class="d-card">
-          <div class="d-fields">
-            <div class="d-field"><label>Your full name</label><input id="br-name" placeholder="Mike Torres" oninput="updateBrandPreview()"></div>
-            <div class="d-field"><label>Brokerage name</label><input id="br-brokerage" placeholder="Compass Realty" oninput="updateBrandPreview()"></div>
-            <div class="d-field"><label>Phone number</label><input id="br-phone" placeholder="(512) 555-0123" oninput="updateBrandPreview()"></div>
-            <div class="d-field"><label>Email address</label><input id="br-email" placeholder="mike@compassrealty.com" oninput="updateBrandPreview()"></div>
-            <div class="d-field"><label>Website</label><input id="br-website" placeholder="www.miketorres.com" oninput="updateBrandPreview()"></div>
-            <div class="d-field"><label>License number (optional)</label><input id="br-license" placeholder="TX-12345678" oninput="updateBrandPreview()"></div>
-          </div>
-          <div class="d-fields full"><div class="d-field"><label>Tagline / signature line (optional)</label><input id="br-tagline" placeholder="Austin's most trusted real estate advisor" oninput="updateBrandPreview()"></div></div>
-          <button class="d-run" onclick="saveBrand()">Save brand settings</button>
-          <div class="brand-preview">
-            <div class="brand-preview-label">Email signature preview</div>
-            <div class="brand-preview-content" id="brand-preview-content">Fill in your details above to preview your signature.</div>
-          </div>
+      <!-- AI TOOLS -->
+      <div id="ld-ai" class="ld-ai-section" style="display:none">
+        <div class="ld-ai-title">Generate AI content for this lead</div>
+        <div class="ld-ai-tools">
+          <button class="ld-ai-btn" onclick="aiFromLead('followup')"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><div><div class="ld-ai-btn-text">Lead Follow-Up Sequence</div><div class="ld-ai-btn-sub">5-touch Day 1–30 sequence</div></div></button>
+          <button class="ld-ai-btn" onclick="aiFromLead('qualify')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><div><div class="ld-ai-btn-text">Qualify This Lead</div><div class="ld-ai-btn-sub">Score, signals & suggested reply</div></div></button>
+          <button class="ld-ai-btn" onclick="aiFromLead('crm')"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/></svg><div><div class="ld-ai-btn-text">CRM Update</div><div class="ld-ai-btn-sub">Summarize notes into CRM entry</div></div></button>
+          <button class="ld-ai-btn" onclick="aiFromLead('showing')"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><div><div class="ld-ai-btn-text">Showing Message</div><div class="ld-ai-btn-sub">Confirmation, reminder, feedback</div></div></button>
+          <button class="ld-ai-btn" onclick="aiFromLead('drip')"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><div><div class="ld-ai-btn-text">Post-Close Referral Drip</div><div class="ld-ai-btn-sub">12-month follow-up campaign</div></div></button>
+        </div>
+        <div id="ld-ai-output" style="margin-top:1rem;display:none">
+          <div class="ai-output-head" style="margin-bottom:.5rem"><span class="ai-output-lbl" id="ld-ai-output-lbl">Output</span><button class="ai-copy" onclick="aiCopy('ld-ai-output')">Copy</button></div>
+          <div style="background:var(--cream);border:1px solid var(--g200);border-radius:8px;padding:1rem;font-size:13px;color:var(--g800);line-height:1.7;white-space:pre-wrap;max-height:300px;overflow-y:auto" id="ld-ai-output-t"></div>
         </div>
       </div>
-
-    </div><!-- /d-main -->
-  </div><!-- /d-body -->
-</div><!-- /dashboard -->
-
-<!-- MARKETING SITE -->
-<div id="marketing">
-
-<nav class="m-nav">
-  <a href="#" class="m-logo">Agent<span>Edge</span></a>
-  <div class="m-nav-links">
-    <a href="#pain">Why AgentEdge</a>
-    <a href="#tools">Tools</a>
-    <a href="#pricing">Pricing</a>
-  </div>
-  <div class="m-nav-r">
-    <a href="#" class="btn-outline" onclick="openAuth('login');return false">Sign in</a>
-    <button class="btn-gold" onclick="openAuth('signup')" style="padding:9px 20px;font-size:14px">Get started</button>
-  </div>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-badge">⚡ 7 AI tools built for real estate</div>
-  <h1>Stop losing deals to agents who <em>actually follow up</em></h1>
-  <p class="hero-sub">AgentEdge gives individual agents and brokerages a complete AI platform — from first lead to last referral.</p>
-  <div class="hero-btns">
-    <button class="btn-gold" onclick="openAuth('signup')">Get started — from $99/mo</button>
-    <a href="#tools" class="btn-ghost">See all 7 tools</a>
-  </div>
-  <div class="hero-stats">
-    <div><span class="stat-n">7</span><div class="stat-l">AI tools in one login</div></div>
-    <div><span class="stat-n">3×</span><div class="stat-l">more referrals from past clients</div></div>
-    <div><span class="stat-n">4 hrs</span><div class="stat-l">saved per agent per week</div></div>
-    <div><span class="stat-n">60 sec</span><div class="stat-l">full listing package</div></div>
-  </div>
-</section>
-
-<!-- BEFORE / AFTER -->
-<section class="ba-wrap">
-  <div class="inner">
-    <div class="eye">See the difference</div>
-    <h2 class="sec-h">Before AgentEdge vs. After</h2>
-    <p class="sec-p">This is what an agent's Monday morning looks like — before and after.</p>
-    <div class="ba-grid">
-      <div class="ba-card before">
-        <div class="ba-label">✕ Before AgentEdge</div>
-        <div class="ba-content">8:00am — Open laptop, 47 unread emails
-8:15am — Try to remember which leads need follow-up
-8:45am — Write a listing description from scratch
-9:30am — Copy-paste a generic "just checking in" to 6 leads
-10:00am — Realize you forgot to send last week's market report
-10:15am — Spend 40 min building CMA in spreadsheet
-11:00am — Still haven't called back yesterday's new leads
-12:00pm — 4 hours in. Zero new outreach. Zero content done.</div>
-      </div>
-      <div class="ba-card after">
-        <div class="ba-label">✓ After AgentEdge</div>
-        <div class="ba-content">8:00am — Open AgentEdge dashboard
-8:05am — Paste 3 new lead inquiries → qualified + scored instantly
-8:10am — Follow-up sequences generated for all 3 leads
-8:15am — Paste listing details → full marketing package ready
-8:20am — Market report email generated → sent to 200 clients
-8:25am — Call notes from yesterday → CRM update done
-8:30am — 30 minutes in. All outreach done. Ready to show homes.</div>
-      </div>
     </div>
   </div>
-</section>
+</div>
 
-<!-- CALCULATOR -->
-<section class="calc-wrap">
-  <div class="inner">
-    <div class="eye eye-w">The math is simple</div>
-    <h2 class="sec-h sec-h-w">How much commission are you leaving on the table?</h2>
-    <p class="sec-p sec-p-w">Move the sliders. See what bad follow-up is actually costing you every year.</p>
-    <div class="calc-card">
-      <div class="calc-row">
-        <div class="calc-field">
-          <label>Monthly leads received</label>
-          <input type="range" id="calc-leads" min="5" max="100" value="20" oninput="calcUpdate()">
-          <div class="calc-val" id="calc-leads-val">20</div>
-          <div class="calc-desc">leads / month</div>
-        </div>
-        <div class="calc-field">
-          <label>Your avg commission per deal</label>
-          <input type="range" id="calc-comm" min="3000" max="30000" value="8000" step="500" oninput="calcUpdate()">
-          <div class="calc-val" id="calc-comm-val">$8,000</div>
-          <div class="calc-desc">per closing</div>
-        </div>
-        <div class="calc-field">
-          <label>Your current close rate</label>
-          <input type="range" id="calc-close" min="1" max="20" value="5" oninput="calcUpdate()">
-          <div class="calc-val" id="calc-close-val">5%</div>
-          <div class="calc-desc">of leads convert</div>
-        </div>
-        <div class="calc-field">
-          <label>Leads lost to poor follow-up</label>
-          <input type="range" id="calc-lost" min="10" max="70" value="40" oninput="calcUpdate()">
-          <div class="calc-val" id="calc-lost-val">40%</div>
-          <div class="calc-desc">industry average is 60%</div>
-        </div>
-      </div>
-      <div class="calc-result">
-        <span class="calc-result-num" id="calc-result">$0</span>
-        <div class="calc-result-label">estimated commission lost per year to poor follow-up</div>
-        <div class="calc-result-sub">AgentEdge costs <strong style="color:var(--gold-light)">$199/month</strong> — that's <span id="calc-ratio">0×</span> return on investment</div>
-      </div>
-      <div style="text-align:center;margin-top:1.5rem">
-        <button class="btn-gold" onclick="openAuth('signup')">Stop leaving money on the table</button>
-      </div>
+<!-- ADD LEAD MODAL -->
+<div class="add-modal" id="add-modal">
+  <div class="add-box">
+    <div class="add-box-title">Add New Lead</div>
+    <div class="add-grid">
+      <div class="add-field"><label>First name *</label><input id="add-fname" placeholder="Sarah"></div>
+      <div class="add-field"><label>Last name *</label><input id="add-lname" placeholder="Johnson"></div>
+      <div class="add-field"><label>Email</label><input id="add-email" type="email" placeholder="sarah@email.com"></div>
+      <div class="add-field"><label>Phone</label><input id="add-phone" placeholder="(512) 555-0123"></div>
+      <div class="add-field"><label>Lead type *</label><select id="add-type"><option>Buyer</option><option>Seller</option><option>Both</option><option>Rental</option></select></div>
+      <div class="add-field"><label>Stage</label><select id="add-stage"><option>New</option><option>Contacted</option><option>Warm</option><option>Showing</option><option>Offer</option><option>Under Contract</option><option>Closed</option></select></div>
+      <div class="add-field"><label>Priority</label><select id="add-priority"><option>Hot</option><option>Warm</option><option>Cold</option><option>Nurture</option></select></div>
+      <div class="add-field"><label>Lead source</label><select id="add-source"><option>Zillow</option><option>Realtor.com</option><option>Referral</option><option>Cold outreach</option><option>Website</option><option>Social media</option><option>Open house</option><option>Other</option></select></div>
+    </div>
+    <div class="add-grid full">
+      <div class="add-field"><label>Property interest</label><input id="add-prop" placeholder="3 bed / 2 bath in South Austin, under $600k"></div>
+    </div>
+    <div class="add-grid full">
+      <div class="add-field"><label>Budget</label><input id="add-budget" placeholder="$500,000 – $650,000"></div>
+    </div>
+    <div class="add-grid full">
+      <div class="add-field"><label>Timeline</label><input id="add-timeline" placeholder="Wants to move in 3 months"></div>
+    </div>
+    <div class="add-grid full">
+      <div class="add-field"><label>Notes</label><textarea id="add-notes" placeholder="Any additional context about this lead..."></textarea></div>
+    </div>
+    <div class="add-actions">
+      <button class="add-cancel" onclick="closeAddLead()">Cancel</button>
+      <button class="add-submit" onclick="submitLead()">Add Lead</button>
     </div>
   </div>
-</section>
+</div>
 
-<!-- PAIN POINTS -->
-<section class="pain-wrap" id="pain">
-  <div class="inner">
-    <div class="eye">Why agents choose AgentEdge</div>
-    <h2 class="sec-h">The 7 problems killing your real estate business</h2>
-    <p class="sec-p">We mapped every friction point that keeps agents busy and broke — and built a working AI tool for each one.</p>
-    <div class="pain-grid">
-      <div class="pain-card"><div class="pain-ico"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><h3>Lead follow-up falls through</h3><p>Most agents give up after 2 touches. Buyers need 7. Your follow-up is where deals die — not your lead volume.</p><div class="fix-tag">✓ Lead Follow-Up AI</div></div>
-      <div class="pain-card"><div class="pain-ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div><h3>Listing content takes hours</h3><p>MLS copy, Instagram captions, buyer emails — agents spend hours on marketing that should take 60 seconds.</p><div class="fix-tag">✓ Listing Content AI</div></div>
-      <div class="pain-card"><div class="pain-ico"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><h3>Unqualified leads waste hours</h3><p>Differentiating buyers vs sellers and knowing who to call first is a daily time sink with no system.</p><div class="fix-tag">✓ Lead Qualifier AI</div></div>
-      <div class="pain-card"><div class="pain-ico"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div><h3>CRM & admin work crushes time</h3><p>Logging calls, managing paperwork, handling legal docs — 30% of an agent's week on admin that doesn't close deals.</p><div class="fix-tag">✓ CRM & Admin AI</div></div>
-      <div class="pain-card"><div class="pain-ico"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><h3>Market reports never get sent</h3><p>Agents who send weekly market updates get 3× more referrals. Almost none do it because building one takes too long.</p><div class="fix-tag">✓ Market Report AI</div></div>
-      <div class="pain-card"><div class="pain-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><h3>Showing coordination is chaos</h3><p>Scheduling, confirmations, feedback requests, offer-to-close communication — it falls through the cracks every time.</p><div class="fix-tag">✓ Showing Coordinator AI</div></div>
-      <div class="pain-card"><div class="pain-ico"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div><h3>Past clients forget who you are</h3><p>80% say they'd reuse their agent. Only 12% do — because the agent never stayed in touch after closing day.</p><div class="fix-tag">✓ Post-Close Referral AI</div></div>
-    </div>
-  </div>
-</section>
-
-<!-- HOW IT WORKS -->
-<section class="how-wrap">
-  <div class="inner">
-    <div class="eye eye-w">How it works</div>
-    <h2 class="sec-h sec-h-w">Up and running in 10 minutes</h2>
-    <p class="sec-p sec-p-w">No tech skills. No complicated setup. If you can fill in a form, you can use every tool.</p>
-    <div class="steps">
-      <div class="step"><div class="step-n">1</div><h3>Sign up & choose your plan</h3><p>Individual agent or brokerage. Your account is ready the moment you pay.</p></div>
-      <div class="step"><div class="step-n">2</div><h3>Set your brand once</h3><p>Add your name, brokerage, and contact info — it auto-applies to every output forever.</p></div>
-      <div class="step"><div class="step-n">3</div><h3>Pick your tool & fill in fields</h3><p>Seven tools in your sidebar. Plain English inputs. No prompting experience needed.</p></div>
-      <div class="step"><div class="step-n">4</div><h3>Copy, send, close more deals</h3><p>Your output streams in seconds. Every generation is saved to your history automatically.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- TEASER TOOLS -->
-<section class="teaser-wrap" id="tools">
-  <div class="inner">
-    <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:1rem;margin-bottom:2.5rem">
-      <div><div class="eye">Preview the platform</div><h2 class="sec-h">Try any tool — see it work</h2><p class="sec-p">Fill in the form. Your output appears blurred — sign up to unlock the full result.</p></div>
-      <button class="btn-gold" onclick="openAuth('signup')">Get full access</button>
-    </div>
-    <div class="teaser-platform">
-      <div class="t-sidebar">
-        <div class="t-sidebar-lbl">AI Tools</div>
-        <div class="t-nav active" onclick="switchT('followup',this)"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Lead Follow-Up</span></div>
-        <div class="t-nav" onclick="switchT('listing',this)"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg><span>Listing Content</span></div>
-        <div class="t-nav" onclick="switchT('qualify',this)"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Lead Qualifier</span></div>
-        <div class="t-nav" onclick="switchT('market',this)"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Market Report</span></div>
-        <div class="t-nav" onclick="switchT('crm',this)"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg><span>CRM & Admin</span></div>
-        <div class="t-nav" onclick="switchT('showing',this)"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span>Showing Coord.</span></div>
-        <div class="t-nav" onclick="switchT('drip',this)"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span>Post-Close Drip</span></div>
-      </div>
-      <div class="t-panels">
-        <div id="tp-followup" class="t-panel active"><div class="t-ptop"><h2>Lead Follow-Up Sequences</h2><p>5-touch sequence for any lead at any stage.</p></div><div class="t-pbody"><div class="t-fields"><div class="t-field"><label>Lead name</label><input id="tfu-name" placeholder="Sarah Johnson"></div><div class="t-field"><label>Property</label><input id="tfu-prop" placeholder="123 Oak Ave"></div><div class="t-field"><label>Stage</label><select id="tfu-stage"><option>Just inquired</option><option>Toured</option><option>Gone cold</option></select></div><div class="t-field"><label>Channel</label><select id="tfu-ch"><option>Email</option><option>SMS</option></select></div></div><button class="t-run" id="tbtn-followup" onclick="tRun('followup')">⚡ Generate sequence</button><div id="tg-followup"></div></div></div>
-        <div id="tp-listing" class="t-panel"><div class="t-ptop"><h2>Listing Content Generator</h2><p>MLS copy, Instagram caption, buyer email & SMS blast.</p></div><div class="t-pbody"><div class="t-fields"><div class="t-field"><label>Address</label><input id="tli-addr" placeholder="123 Oak Ave, Austin TX"></div><div class="t-field"><label>Price</label><input id="tli-price" placeholder="$549,000"></div><div class="t-field"><label>Beds/Baths</label><input id="tli-beds" placeholder="3 bed / 2 bath"></div><div class="t-field"><label>Tone</label><select id="tli-tone"><option>Warm & inviting</option><option>Luxury</option><option>Urgent</option></select></div></div><div class="t-fields full"><div class="t-field"><label>Key features</label><textarea id="tli-feat" placeholder="Renovated kitchen, pool, corner lot"></textarea></div></div><button class="t-run" id="tbtn-listing" onclick="tRun('listing')">⚡ Generate listing package</button><div id="tg-listing"></div></div></div>
-        <div id="tp-qualify" class="t-panel"><div class="t-ptop"><h2>Lead Qualifier & Scorer</h2><p>Score, signals, priority & suggested reply.</p></div><div class="t-pbody"><div class="t-fields full"><div class="t-field"><label>Lead's message</label><textarea id="tqu-msg" style="min-height:80px" placeholder="Hi, saw your listing. Thinking of moving next year, budget ~$400k, need to sell first..."></textarea></div></div><div class="t-fields"><div class="t-field"><label>Your market</label><input id="tqu-mkt" placeholder="Austin TX · $350k–$700k"></div><div class="t-field"><label>Lead type</label><select id="tqu-type"><option>Unknown</option><option>Buyer</option><option>Seller</option></select></div></div><button class="t-run" id="tbtn-qualify" onclick="tRun('qualify')">⚡ Qualify this lead</button><div id="tg-qualify"></div></div></div>
-        <div id="tp-market" class="t-panel"><div class="t-ptop"><h2>Market Report Builder</h2><p>Full branded client email from a few stats.</p></div><div class="t-pbody"><div class="t-fields"><div class="t-field"><label>Neighborhood</label><input id="tmr-area" placeholder="South Austin / 78704"></div><div class="t-field"><label>Avg sale price</label><input id="tmr-price" placeholder="$725,000"></div><div class="t-field"><label>Days on market</label><input id="tmr-dom" placeholder="18 days"></div><div class="t-field"><label>Condition</label><select id="tmr-trend"><option>Hot — seller's market</option><option>Cooling</option><option>Balanced</option></select></div></div><div class="t-fields full"><div class="t-field"><label>Your name</label><input id="tmr-agent" placeholder="Mike Torres"></div></div><button class="t-run" id="tbtn-market" onclick="tRun('market')">⚡ Generate market report</button><div id="tg-market"></div></div></div>
-        <div id="tp-crm" class="t-panel"><div class="t-ptop"><h2>CRM & Admin Assistant</h2><p>Raw notes → clean CRM update + action items.</p></div><div class="t-pbody"><div class="t-fields"><div class="t-field"><label>Task type</label><select id="tcr-type"><option>CRM update from call notes</option><option>Offer summary</option><option>Client status email</option></select></div><div class="t-field"><label>Client</label><input id="tcr-client" placeholder="Johnson Family · 123 Oak Ave"></div></div><div class="t-fields full"><div class="t-field"><label>Paste raw notes</label><textarea id="tcr-notes" style="min-height:80px" placeholder="Called Sarah. Loves the house, husband hesitant. Pre-approved $550k. July 15 deadline."></textarea></div></div><button class="t-run" id="tbtn-crm" onclick="tRun('crm')">⚡ Process with AI</button><div id="tg-crm"></div></div></div>
-        <div id="tp-showing" class="t-panel"><div class="t-ptop"><h2>Showing Coordinator</h2><p>Confirmations, reminders & offer communications.</p></div><div class="t-pbody"><div class="t-fields"><div class="t-field"><label>Message type</label><select id="tsh-type"><option>Showing confirmation</option><option>24hr reminder</option><option>Feedback request</option><option>Offer notification</option></select></div><div class="t-field"><label>Client</label><input id="tsh-client" placeholder="The Johnson Family"></div><div class="t-field"><label>Property</label><input id="tsh-prop" placeholder="123 Oak Ave"></div><div class="t-field"><label>Date / time</label><input id="tsh-date" placeholder="Saturday June 21 at 2pm"></div></div><button class="t-run" id="tbtn-showing" onclick="tRun('showing')">⚡ Generate message</button><div id="tg-showing"></div></div></div>
-        <div id="tp-drip" class="t-panel"><div class="t-ptop"><h2>Post-Close Referral Drip</h2><p>12-month campaign to keep past clients warm.</p></div><div class="t-pbody"><div class="t-fields"><div class="t-field"><label>Client name</label><input id="tdr-client" placeholder="The Johnson Family"></div><div class="t-field"><label>Property closed</label><input id="tdr-prop" placeholder="123 Oak Ave"></div><div class="t-field"><label>Closing date</label><input id="tdr-date" placeholder="June 2025"></div><div class="t-field"><label>Your name</label><input id="tdr-agent" placeholder="Mike Torres, Compass"></div></div><button class="t-run" id="tbtn-drip" onclick="tRun('drip')">⚡ Generate 12-month drip</button><div id="tg-drip"></div></div></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PRICING -->
-<section class="pricing-wrap" id="pricing">
-  <div class="inner">
-    <div class="eye">Pricing</div>
-    <h2 class="sec-h">Simple pricing. No contracts.</h2>
-    <p class="sec-p">Start as a solo agent. Scale to a full brokerage. Cancel anytime.</p>
-    <div class="pricing-grid">
-      <div class="p-card">
-        <div class="p-pill a">Starter</div><h3>Solo Agent</h3><p class="p-tag">The 4 core tools to close more deals.</p>
-        <div><span class="p-amt">$99</span><span class="p-per"> / month</span></div>
-        <ul class="p-feats" style="margin-top:1.5rem">
-          <li><span class="chk"><svg viewBox="0 0 12 12"><path d="M2 6l2.5 2.5L10 3.5"/></svg></span>Lead follow-up sequences</li>
-          <li><span class="chk"><svg viewBox="0 0 12 12"><path d="M2 6l2.5 2.5L10 3.5"/></svg></span>Listing content generator</li>
-          <li><span class="chk"><svg viewBox="0 0 12 12"><path d="M2 6l2.5 2.5L10 3.5"/></svg></span>Market report builder</li>
-          <li><span class="chk"><svg viewBox="0 0 12 12"><path d="M2 6l2.5 2.5L10 3.5"/></svg></span>Post-close referral drip</li>
-          <li><span class="chk"><svg viewBox="0 0 12 12"><path d="M2 6l2.5 2.5L10 3.5"/></svg></span>Output history</li>
-          <li><span class="chk"><svg viewBox="0 0 12 12"><path d="M2 6l2.5 2.5L10 3.5"/></svg></span>Brand settings</li>
-          <li><span class="chk"><svg viewBox="0 0 12 12"><path d="M2 6l2.5 2.5L10 3.5"/></svg></span>Unlimited generations</li>
-        </ul>
-        <button class="p-btn o" onclick="openAuth('signup')">Get started</button>
-      </div>
-      <div class="p-card pop">
-        <div class="p-pill b">Most popular</div><h3>Pro Agent</h3><p class="p-tag">All 7 tools for the agent serious about scaling.</p>
-        <div><span class="p-amt">$199</span><span class="p-per"> / month</span></div>
-        <ul class="p-feats" style="margin-top:1.5rem">
-          <li><span class="chk"><svg viewBox="0 0 12 12"><path d="M2 6l2.5 2.5L10 3.5"/></svg></span>Everything in Solo</li>
-          <li><span class="chk"><svg viewBox="0 0 12 12"><path d="M2 6l2.5 2.5L10 3.5"/></svg></span>Lead qualifier & scorer</li>
-          <li><span class="chk"><svg viewBox="0 0 12 12"><path d="M2 6l2.5 2.5L10 3.5"/></svg></span>CRM & admin assistant</li>
-          <li><span class="chk"><svg viewBox="0 0 12 12"><path d="M2 6l2.5 2.5L10 3.5"/></svg></span>Showing coordinator</li>
-          <li><span class="chk"><svg viewBox="0 0 12 12"><path d="M2 6l2.5 2.5L10 3.5"/></svg></span>Bulk lead upload (CSV)</li>
-          <li><span class="chk"><svg viewBox="0 0 12 12"><path d="M2 6l2.5 2.5L10 3.5"/></svg></span>Zillow / MLS URL parser</li>
-          <li><span class="chk"><svg viewBox="0 0 12 12"><path d="M2 6l2.5 2.5L10 3.5"/></svg></span>Priority support</li>
-        </ul>
-        <button class="p-btn f" onclick="openAuth('signup')">Get started</button>
-      </div>
-      <div class="p-card">
-        <div class="p-pill c">Brokerage</div><h3>Team / Brokerage</h3><p class="p-tag">Deploy across your entire team.</p>
-        <div><span class="p-amt">$499</span><span class="p-per"> / month</span></div>
-        <div class="p-sub">Up to 10 agents · +$39/agent after</div>
-        <ul class="p-feats">
-          <li><span class="chk"><svg viewBox="0 0 12 12"><path d="M2 6l2.5 2.5L10 3.5"/></svg></span>All 7 tools for every agent</li>
-          <li><span class="chk"><svg viewBox="0 0 12 12"><path d="M2 6l2.5 2.5L10 3.5"/></svg></span>Team admin dashboard</li>
-          <li><span class="chk"><svg viewBox="0 0 12 12"><path d="M2 6l2.5 2.5L10 3.5"/></svg></span>Brokerage brand voice</li>
-          <li><span class="chk"><svg viewBox="0 0 12 12"><path d="M2 6l2.5 2.5L10 3.5"/></svg></span>Per-agent usage analytics</li>
-          <li><span class="chk"><svg viewBox="0 0 12 12"><path d="M2 6l2.5 2.5L10 3.5"/></svg></span>Dedicated onboarding call</li>
-          <li><span class="chk"><svg viewBox="0 0 12 12"><path d="M2 6l2.5 2.5L10 3.5"/></svg></span>Cancel anytime</li>
-        </ul>
-        <button class="p-btn o" onclick="openAuth('signup')">Get started</button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- TESTIMONIALS -->
-<section class="proof-wrap">
-  <div class="inner">
-    <div class="eye">What agents say</div>
-    <h2 class="sec-h">Results that show up in your pipeline</h2>
-    <div class="t-grid">
-      <div class="t-card"><div class="stars">★★★★★</div><p>"I used to drop leads after 2 messages. Now my 30-day sequence runs automatically and I closed a deal last month from a lead I'd written off 3 weeks ago."</p><div class="t-auth"><div class="t-av">JR</div><div><div class="t-name">Jessica R.</div><div class="t-role">RE/MAX, Dallas TX · 14 years</div></div></div></div>
-      <div class="t-card"><div class="stars">★★★★★</div><p>"Two deals from past clients in 90 days because AgentEdge kept me in their inbox all year. That's $24k in commission I would have left behind without the referral drip."</p><div class="t-auth"><div class="t-av">MT</div><div><div class="t-name">Marcus T.</div><div class="t-role">Independent broker, Miami FL</div></div></div></div>
-      <div class="t-card"><div class="stars">★★★★★</div><p>"Our average response time to new leads dropped from 6 hours to 15 minutes. The listing tool saves us 3 hours per listing. Worth every penny of the brokerage plan."</p><div class="t-auth"><div class="t-av">AL</div><div><div class="t-name">Amanda L.</div><div class="t-role">Team lead, Keller Williams Phoenix</div></div></div></div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA -->
-<section class="cta-wrap">
-  <div class="inner">
-    <h2 class="sec-h">Your competitors are already using AI.<br>Start closing more deals today.</h2>
-    <p>All 7 tools. Brand settings. Output history. No contracts.</p>
-    <div class="cta-row">
-      <button class="btn-gold" onclick="openAuth('signup')">Get started — from $99/mo</button>
-      <button class="btn-ghost" onclick="openAuth('login')">Sign in to your account</button>
-    </div>
-    <p class="cta-note">No contracts · Cancel anytime</p>
-  </div>
-</section>
-
-<footer>
-  <div class="f-logo">Agent<span>Edge</span></div>
-  <div class="f-links"><a href="#">Tools</a><a href="#">Pricing</a><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Contact</a></div>
-  <div class="f-copy">© 2026 AgentEdge. All rights reserved.</div>
-</footer>
-
-</div><!-- /marketing -->
+<div class="toast" id="toast"></div>
 
 <script>
 // ══════════════════════════════
-// AUTH — Real Supabase backend
+// STATE
 // ══════════════════════════════
-function openAuth(v){ showView(v); document.getElementById('auth-modal').classList.add('open'); }
-function closeAuth(){ document.getElementById('auth-modal').classList.remove('open'); }
-function showView(v){
-  document.getElementById('view-login').style.display = v==='login'?'block':'none';
-  document.getElementById('view-signup').style.display = v==='signup'?'block':'none';
-}
-document.getElementById('auth-modal').addEventListener('click', e=>{ if(e.target===document.getElementById('auth-modal')) closeAuth(); });
+let currentUser = null;
+let leads = [];
+let currentLeadId = null;
+let pipeView = 'kanban';
+let pipeFilter = 'all';
+let contactFilter = 'all';
+const STAGES = ['New','Contacted','Warm','Showing','Offer','Under Contract','Closed','Lost'];
+const STAGE_COLORS = {New:'#2563EB',Contacted:'#7C3AED',Warm:'#C9923A',Showing:'#EA580C',Offer:'#2D6A4F',Under Contract:'#059669',Closed:'#0B1B2B',Lost:'#c0392b'};
+const TYPE_COLORS = {Buyer:'#2563EB',Seller:'#7C3AED',Both:'#2D6A4F',Rental:'#EA580C'};
+const AVATAR_COLORS = ['#0B1B2B','#2563EB','#7C3AED','#EA580C','#2D6A4F','#C9923A','#059669','#c0392b'];
 
+function avatarColor(name){ let h=0; for(let c of name) h+=c.charCodeAt(0); return AVATAR_COLORS[h%AVATAR_COLORS.length]; }
+function initials(name){ return name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2); }
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
 function getToken(){ return localStorage.getItem('ae_token'); }
-function setToken(t){ localStorage.setItem('ae_token',t); }
-function clearToken(){ localStorage.removeItem('ae_token'); localStorage.removeItem('ae_user'); }
-function getUser(){ try{ return JSON.parse(localStorage.getItem('ae_user')); }catch(e){ return null; } }
-function setUser(u){ localStorage.setItem('ae_user', JSON.stringify(u)); }
+function authHeaders(){ return {'Content-Type':'application/json','Authorization':'Bearer '+getToken()}; }
 
+// ══════════════════════════════
+// AUTH
+// ══════════════════════════════
+function authTab(tab, el){
+  document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('auth-login').style.display = tab==='login'?'block':'none';
+  document.getElementById('auth-signup').style.display = tab==='signup'?'block':'none';
+}
 async function doLogin(){
   const email=document.getElementById('l-email').value.trim().toLowerCase();
   const pass=document.getElementById('l-pass').value;
@@ -882,11 +664,12 @@ async function doLogin(){
     const res=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})});
     const data=await res.json();
     if(!res.ok){ err.textContent=data.error||'Incorrect email or password.'; err.classList.add('show'); return; }
-    setToken(data.token); setUser(data.user);
-    closeAuth(); showDash(data.user);
-  }catch(e){ err.textContent='Connection error. Please try again.'; err.classList.add('show'); }
+    localStorage.setItem('ae_token',data.token);
+    localStorage.setItem('ae_user',JSON.stringify(data.user));
+    currentUser=data.user;
+    launchApp();
+  }catch(e){ err.textContent='Connection error.'; err.classList.add('show'); }
 }
-
 async function doSignup(){
   const name=document.getElementById('s-name').value.trim();
   const email=document.getElementById('s-email').value.trim().toLowerCase();
@@ -894,303 +677,423 @@ async function doSignup(){
   const plan=document.getElementById('s-plan').value;
   const err=document.getElementById('s-err');
   err.classList.remove('show');
-  if(!name||!email||!pass||pass.length<6){ err.textContent='Please fill in all fields (password min 6 chars).'; err.classList.add('show'); return; }
+  if(!name||!email||!pass||pass.length<6){ err.textContent='Please fill in all fields (min 6 char password).'; err.classList.add('show'); return; }
   try{
     const res=await fetch('/api/signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,password:pass,plan})});
     const data=await res.json();
     if(!res.ok){ err.textContent=data.error||'Could not create account.'; err.classList.add('show'); return; }
-    setToken(data.token); setUser(data.user);
-    closeAuth(); showDash(data.user);
-  }catch(e){ err.textContent='Connection error. Please try again.'; err.classList.add('show'); }
+    localStorage.setItem('ae_token',data.token);
+    localStorage.setItem('ae_user',JSON.stringify(data.user));
+    currentUser=data.user;
+    launchApp();
+  }catch(e){ err.textContent='Connection error.'; err.classList.add('show'); }
 }
-
 function doLogout(){
-  clearToken();
-  document.getElementById('dashboard').classList.remove('open');
-  document.getElementById('marketing').style.display='block';
+  localStorage.removeItem('ae_token'); localStorage.removeItem('ae_user'); localStorage.removeItem('ae_leads');
+  currentUser=null; leads=[];
+  document.getElementById('app').classList.remove('show');
+  document.getElementById('auth-screen').classList.remove('hide');
 }
-
-function showDash(u){
-  document.getElementById('marketing').style.display='none';
-  document.getElementById('dashboard').classList.add('open');
-  document.getElementById('d-uname').textContent=u.name||'Welcome back';
-  document.getElementById('d-uemail').textContent=u.email||'';
-  document.getElementById('d-plan-badge').textContent=u.plan||'Pro';
-  loadBrand(); renderHistory();
+function launchApp(){
+  document.getElementById('auth-screen').classList.add('hide');
+  document.getElementById('app').classList.add('show');
+  document.getElementById('top-user-name').textContent = currentUser.name||'';
+  document.getElementById('account-info').innerHTML = `<strong>${currentUser.name}</strong> &nbsp;·&nbsp; ${currentUser.email} &nbsp;·&nbsp; ${currentUser.plan} plan`;
+  loadLeads();
+  loadBrand();
 }
-
 window.addEventListener('DOMContentLoaded',()=>{
-  const u=getUser();
-  if(u && getToken()) showDash(u);
-  calcUpdate();
+  const saved = localStorage.getItem('ae_user');
+  const token = localStorage.getItem('ae_token');
+  if(saved && token){ currentUser = JSON.parse(saved); launchApp(); }
 });
 
-function authHeaders(){
-  return {'Content-Type':'application/json','Authorization':'Bearer '+getToken()};
+// ══════════════════════════════
+// LEADS — localStorage based (fast, works offline)
+// ══════════════════════════════
+function loadLeads(){
+  const saved = localStorage.getItem('ae_leads_'+currentUser.email);
+  leads = saved ? JSON.parse(saved) : [];
+  renderAll();
+}
+function saveLeads(){
+  localStorage.setItem('ae_leads_'+currentUser.email, JSON.stringify(leads));
+}
+function renderAll(){
+  renderDashboard();
+  renderPipeline();
+  renderContacts();
 }
 
-// ══════════════════════════════
-// DASHBOARD NAV
-// ══════════════════════════════
-function toggleSidebar(){ document.getElementById('d-sidebar').classList.toggle('open'); }
-function switchD(id,el){
-  document.querySelectorAll('.d-panel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.d-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('dp-'+id).classList.add('active');
-  el.classList.add('active');
-  document.getElementById('d-sidebar').classList.remove('open');
-  if(id==='history') renderHistory();
-}
-function switchDById(id){
-  document.querySelectorAll('.d-panel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.d-btn').forEach(b=>{ if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+id+"'")) b.classList.add('active'); });
-  document.getElementById('dp-'+id).classList.add('active');
-}
-
-// ══════════════════════════════
-// HISTORY
-// ══════════════════════════════
-async function saveHistory(tool,preview,full){
-  try{
-    await fetch('/api/outputs',{method:'POST',headers:authHeaders(),body:JSON.stringify({tool,preview:preview.slice(0,100),full_output:full})});
-  }catch(e){ console.log('Could not save history'); }
-}
-async function renderHistory(){
-  const c=document.getElementById('hist-container');
-  c.innerHTML='<div class="hist-empty">Loading history...</div>';
-  try{
-    const res=await fetch('/api/outputs',{headers:authHeaders()});
-    const hist=await res.json();
-    if(!hist.length){ c.innerHTML='<div class="hist-empty">No outputs yet — generate something with any tool and it will appear here.</div>'; return; }
-    c.innerHTML='<div class="hist-list">'+hist.map((h,i)=>`<div class="hist-item" onclick="viewHist(${i}, ${JSON.stringify(h.full_output).replace(/'/g,'&#39;')})"><div class="hist-item-top"><span class="hist-tool">${h.tool}</span><span class="hist-time">${new Date(h.created_at).toLocaleString()}</span></div><div class="hist-preview">${h.preview||''}...</div></div>`).join('')+'</div>';
-  }catch(e){ c.innerHTML='<div class="hist-empty">Could not load history.</div>'; }
-}
-function viewHist(i, full){
-  const box=document.getElementById('do-hist'), txt=document.getElementById('do-hist-t');
-  txt.textContent=full;
-  box.classList.add('show');
-  box.scrollIntoView({behavior:'smooth',block:'nearest'});
-}
-
-// ══════════════════════════════
-// BRAND SETTINGS
-// ══════════════════════════════
-async function saveBrand(){
-  const b={name:document.getElementById('br-name').value,brokerage:document.getElementById('br-brokerage').value,phone:document.getElementById('br-phone').value,email:document.getElementById('br-email').value,website:document.getElementById('br-website').value,license:document.getElementById('br-license').value,tagline:document.getElementById('br-tagline').value};
-  try{
-    await fetch('/api/brand',{method:'POST',headers:authHeaders(),body:JSON.stringify(b)});
-    localStorage.setItem('ae_brand',JSON.stringify(b));
-    updateBrandPreview();
-    alert('Brand settings saved!');
-  }catch(e){ alert('Could not save. Please try again.'); }
-}
-async function loadBrand(){
-  try{
-    const res=await fetch('/api/brand',{headers:authHeaders()});
-    const b=await res.json();
-    if(b.name) document.getElementById('br-name').value=b.name||'';
-    if(b.brokerage) document.getElementById('br-brokerage').value=b.brokerage||'';
-    if(b.phone) document.getElementById('br-phone').value=b.phone||'';
-    if(b.email) document.getElementById('br-email').value=b.email||'';
-    if(b.website) document.getElementById('br-website').value=b.website||'';
-    if(b.license) document.getElementById('br-license').value=b.license||'';
-    if(b.tagline) document.getElementById('br-tagline').value=b.tagline||'';
-    localStorage.setItem('ae_brand',JSON.stringify(b));
-    updateBrandPreview();
-  }catch(e){ console.log('Could not load brand'); }
-}
-function getBrand(){
-  return JSON.parse(localStorage.getItem('ae_brand')||'{}');
-}
-function updateBrandPreview(){
-  const name=document.getElementById('br-name').value||'[Your Name]';
-  const brokerage=document.getElementById('br-brokerage').value||'[Brokerage]';
-  const phone=document.getElementById('br-phone').value||'[Phone]';
-  const email=document.getElementById('br-email').value||'[Email]';
-  const website=document.getElementById('br-website').value||'';
-  const license=document.getElementById('br-license').value||'';
-  const tagline=document.getElementById('br-tagline').value||'';
-  document.getElementById('brand-preview-content').textContent=
-    `${name}\n${brokerage}${tagline?'\n'+tagline:''}\n📞 ${phone} · ✉️ ${email}${website?'\n🌐 '+website:''}${license?'\nLic# '+license:''}`;
-}
-
-// ══════════════════════════════
-// BULK UPLOAD
-// ══════════════════════════════
-let bulkLeads=[];
-function handleDrop(e){
-  e.preventDefault(); document.getElementById('bulk-drop').classList.remove('drag');
-  const file=e.dataTransfer.files[0]; if(file) parseCSV(file);
-}
-function handleCSV(input){ if(input.files[0]) parseCSV(input.files[0]); }
-function parseCSV(file){
-  const reader=new FileReader();
-  reader.onload=e=>{
-    const lines=e.target.result.trim().split('\n').filter(l=>l.trim());
-    bulkLeads=lines.slice(1).map(l=>{ const cols=l.split(','); return {name:(cols[0]||'').trim(),prop:(cols[1]||'').trim(),stage:(cols[2]||'Just inquired').trim(),channel:(cols[3]||'Email').trim()}; }).filter(l=>l.name);
-    const preview=document.getElementById('bulk-preview');
-    preview.innerHTML=`<table class="bulk-table"><thead><tr><th>Name</th><th>Property</th><th>Stage</th><th>Channel</th></tr></thead><tbody>${bulkLeads.map(l=>`<tr><td>${l.name}</td><td>${l.prop||'—'}</td><td>${l.stage}</td><td>${l.channel}</td></tr>`).join('')}</tbody></table>`;
-    document.getElementById('bulk-actions').style.display='block';
+function submitLead(){
+  const fname=document.getElementById('add-fname').value.trim();
+  const lname=document.getElementById('add-lname').value.trim();
+  if(!fname){ toast('Please enter a first name'); return; }
+  const lead = {
+    id: Date.now().toString(),
+    fname, lname,
+    name: (fname+' '+lname).trim(),
+    email: document.getElementById('add-email').value.trim(),
+    phone: document.getElementById('add-phone').value.trim(),
+    type: document.getElementById('add-type').value,
+    stage: document.getElementById('add-stage').value,
+    priority: document.getElementById('add-priority').value,
+    source: document.getElementById('add-source').value,
+    prop: document.getElementById('add-prop').value.trim(),
+    budget: document.getElementById('add-budget').value.trim(),
+    timeline: document.getElementById('add-timeline').value.trim(),
+    notes: document.getElementById('add-notes').value.trim(),
+    addnotes: '',
+    created: new Date().toISOString(),
+    lastContact: new Date().toISOString(),
+    notesList: [],
+    aiHistory: []
   };
-  reader.readAsText(file);
+  leads.unshift(lead);
+  saveLeads();
+  renderAll();
+  closeAddLead();
+  toast('Lead added — '+lead.name);
+  ['add-fname','add-lname','add-email','add-phone','add-prop','add-budget','add-timeline','add-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('add-type').value='Buyer';
+  document.getElementById('add-stage').value='New';
 }
-async function runBulk(){
-  if(!bulkLeads.length) return;
-  const btn=document.getElementById('btn-bulk');
-  const box=document.getElementById('do-bulk'), txt=document.getElementById('do-bulk-t');
-  btn.disabled=true; btn.innerHTML='<div class="spin"></div> Generating...';
-  box.classList.add('show'); txt.textContent='';
-  const brand=getBrand();
-  const agentSig=brand.name?(brand.name+(brand.brokerage?', '+brand.brokerage:'')):'Your Agent';
-  for(let i=0;i<bulkLeads.length;i++){
-    const l=bulkLeads[i];
-    txt.textContent+=`\n${'═'.repeat(50)}\nLEAD ${i+1}: ${l.name} — ${l.prop||'No property listed'}\n${'═'.repeat(50)}\n\n`;
-    const prompt=`Write a 5-touch follow-up sequence for:\nLead: ${l.name}\nProperty: ${l.prop}\nStage: ${l.stage}\nChannel: ${l.channel}\nAgent: ${agentSig}\n\nWrite DAY 1, DAY 3, DAY 7, DAY 14, DAY 30. Short, warm, non-pushy.`;
-    try{
-      const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:800,stream:true,messages:[{role:'user',content:prompt}]})});
-      const reader=res.body.getReader(),dec=new TextDecoder(); let buf='';
-      while(true){
-        const{done,value}=await reader.read(); if(done)break;
-        buf+=dec.decode(value,{stream:true});
-        const lines=buf.split('\n'); buf=lines.pop();
-        for(const line of lines){ if(!line.startsWith('data: '))continue; const d=line.slice(6).trim(); if(d==='[DONE]')continue; try{const p=JSON.parse(d);if(p.type==='content_block_delta'&&p.delta?.text)txt.textContent+=p.delta.text;}catch{} }
-      }
-    }catch(e){ txt.textContent+='\n[Error generating for this lead]\n'; }
-    txt.textContent+='\n\n';
-    box.scrollIntoView({behavior:'smooth',block:'nearest'});
-  }
-  saveHistory('Bulk Follow-Up',`${bulkLeads.length} leads processed`,txt.textContent);
-  btn.disabled=false; btn.innerHTML='⚡ Generate sequences for all leads';
+
+function openAddLead(){  document.getElementById('add-modal').classList.add('open'); }
+function closeAddLead(){ document.getElementById('add-modal').classList.remove('open'); }
+document.getElementById('add-modal').addEventListener('click',e=>{ if(e.target===document.getElementById('add-modal')) closeAddLead(); });
+
+// ══════════════════════════════
+// DASHBOARD
+// ══════════════════════════════
+function renderDashboard(){
+  document.getElementById('stat-total').textContent = leads.length;
+  document.getElementById('stat-hot').textContent = leads.filter(l=>l.priority==='Hot').length;
+  document.getElementById('stat-contract').textContent = leads.filter(l=>l.stage==='Under Contract').length;
+  const thisMonth = new Date(); thisMonth.setDate(1);
+  document.getElementById('stat-closed').textContent = leads.filter(l=>l.stage==='Closed'&&new Date(l.lastContact)>=thisMonth).length;
+  const rl = document.getElementById('dash-recent-leads');
+  const recent = leads.slice(0,8);
+  if(!recent.length){ rl.innerHTML='<div style="text-align:center;padding:2rem;font-size:13px;color:var(--g400)">No leads yet — click Add Lead to get started</div>'; return; }
+  rl.innerHTML=recent.map(l=>`<div class="dash-lead-item" onclick="openLead('${l.id}')"><div class="lead-av" style="background:${avatarColor(l.name)};width:34px;height:34px;font-size:12px">${initials(l.name)}</div><div><div class="dash-lead-name">${l.name}</div><div class="dash-lead-sub">${l.type} · ${l.prop||'No property'}</div></div><span class="dash-lead-badge stage-badge stage-${l.stage.toLowerCase().replace(' ','-')}">${l.stage}</span></div>`).join('');
+  const hot = leads.filter(l=>l.priority==='Hot'||l.stage==='New').slice(0,8);
+  const tasks = document.getElementById('dash-tasks');
+  if(!hot.length){ tasks.innerHTML='<div style="text-align:center;padding:2rem;font-size:13px;color:var(--g400)">No urgent follow-ups</div>'; return; }
+  tasks.innerHTML=hot.map(l=>`<div class="task-item" onclick="openLead('${l.id}')"><div class="task-check"></div><div class="task-text">Follow up with ${l.name}</div><span class="dash-lead-badge stage-badge stage-${l.priority.toLowerCase()}" style="font-size:10px;padding:2px 7px;border-radius:5px;background:${l.priority==='Hot'?'#FEF2F2':'var(--gold-pale)'};color:${l.priority==='Hot'?'var(--red)':'var(--gold)'}">${l.priority}</span></div>`).join('');
 }
 
 // ══════════════════════════════
-// ZILLOW URL PARSER
+// PIPELINE
 // ══════════════════════════════
-function parseURL(url){
-  if(!url||!url.includes('zillow')) return;
-  // Extract address from Zillow URL pattern: /homedetails/address-city-st-zip/
-  const match=url.match(/homedetails\/([^/]+)/);
-  if(match){
-    const slug=match[1].replace(/-\d+_zpid/,'').replace(/-/g,' ');
-    document.getElementById('li-addr').value=slug.replace(/\b\w/g,c=>c.toUpperCase());
-    document.getElementById('li-addr').style.borderColor='var(--green)';
-    setTimeout(()=>document.getElementById('li-addr').style.borderColor='',2000);
-  }
+function setPipeView(v){
+  pipeView=v;
+  document.getElementById('btn-kanban').classList.toggle('active',v==='kanban');
+  document.getElementById('btn-list').classList.toggle('active',v==='list');
+  document.getElementById('pipe-kanban').style.display=v==='kanban'?'flex':'none';
+  document.getElementById('pipe-list').style.display=v==='list'?'flex':'none';
+  renderPipeline();
+}
+function setPipeFilter(f,el){ pipeFilter=f; document.querySelectorAll('#pipe-filters .pipe-filter-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); renderPipeline(); }
+function setContactFilter(f,el){ contactFilter=f; document.querySelectorAll('.contacts-toolbar .pipe-filter-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); renderContacts(); }
+
+function filteredLeads(search=''){
+  let fl = leads;
+  if(pipeFilter!=='all') fl=fl.filter(l=>l.type===pipeFilter||l.type==='Both');
+  if(search) fl=fl.filter(l=>l.name.toLowerCase().includes(search)||l.prop?.toLowerCase().includes(search)||l.email?.toLowerCase().includes(search));
+  return fl;
+}
+
+function renderPipeline(){
+  const search = document.getElementById('pipe-search-input')?.value.toLowerCase()||'';
+  const fl = filteredLeads(search);
+  if(pipeView==='kanban') renderKanban(fl);
+  else renderList(fl);
+}
+
+function renderKanban(fl){
+  const wrap = document.getElementById('kanban-wrap');
+  wrap.innerHTML = STAGES.map(stage=>{
+    const cards = fl.filter(l=>l.stage===stage);
+    return `<div class="kanban-col">
+      <div class="kanban-col-head">
+        <div class="kanban-col-dot" style="background:${STAGE_COLORS[stage]}"></div>
+        <div class="kanban-col-title">${stage}</div>
+        <div class="kanban-col-count">${cards.length}</div>
+      </div>
+      <div class="kanban-cards">
+        ${cards.map(l=>`<div class="kanban-card" onclick="openLead('${l.id}')">
+          <div class="kanban-card-name">${l.name}</div>
+          <div class="kanban-card-prop">${l.prop||'No property specified'}</div>
+          <div class="kanban-card-footer">
+            <span class="kanban-card-type badge-${l.type.toLowerCase()}" style="background:${TYPE_COLORS[l.type]||'#666'}22;color:${TYPE_COLORS[l.type]||'#666'}">${l.type}</span>
+            <span class="kanban-card-date">${l.budget||''}</span>
+          </div>
+        </div>`).join('')}
+      </div>
+      <button class="kanban-add" onclick="openAddLead()">+ Add lead</button>
+    </div>`;
+  }).join('');
+}
+
+function renderList(fl){
+  const tbody = document.getElementById('list-tbody');
+  if(!fl.length){ tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--g400)">No leads found</td></tr>'; return; }
+  tbody.innerHTML = fl.map(l=>`<tr onclick="openLead('${l.id}')">
+    <td><div style="display:flex;align-items:center;gap:10px"><div class="lead-av" style="background:${avatarColor(l.name)};width:30px;height:30px;font-size:11px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;flex-shrink:0">${initials(l.name)}</div><div><div style="font-weight:600">${l.name}</div><div style="font-size:12px;color:var(--g400)">${l.email||''}</div></div></div></td>
+    <td><span class="stage-badge badge-${l.type.toLowerCase()}" style="background:${TYPE_COLORS[l.type]||'#666'}22;color:${TYPE_COLORS[l.type]||'#666'}">${l.type}</span></td>
+    <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.prop||'—'}</td>
+    <td><span class="stage-badge stage-${l.stage.toLowerCase().replace(' ','-')}">${l.stage}</span></td>
+    <td>${l.budget||'—'}</td>
+    <td style="color:var(--g400)">${new Date(l.lastContact||l.created).toLocaleDateString()}</td>
+  </tr>`).join('');
 }
 
 // ══════════════════════════════
-// CALCULATOR
+// CONTACTS
 // ══════════════════════════════
-function calcUpdate(){
-  const leads=+document.getElementById('calc-leads').value;
-  const comm=+document.getElementById('calc-comm').value;
-  const close=+document.getElementById('calc-close').value/100;
-  const lost=+document.getElementById('calc-lost').value/100;
-  document.getElementById('calc-leads-val').textContent=leads;
-  document.getElementById('calc-comm-val').textContent='$'+comm.toLocaleString();
-  document.getElementById('calc-close-val').textContent=Math.round(+document.getElementById('calc-close').value)+'%';
-  document.getElementById('calc-lost-val').textContent=Math.round(+document.getElementById('calc-lost').value)+'%';
-  const annualLost=Math.round(leads*12*close*lost*comm);
-  document.getElementById('calc-result').textContent='$'+annualLost.toLocaleString();
-  const roi=annualLost>0?Math.round(annualLost/(199*12))+'×':'∞';
-  document.getElementById('calc-ratio').textContent=roi;
+function renderContacts(){
+  const search = document.getElementById('contacts-search-input')?.value.toLowerCase()||'';
+  let fl = leads;
+  if(contactFilter!=='all') fl=fl.filter(l=>l.type===contactFilter||l.type==='Both');
+  if(search) fl=fl.filter(l=>l.name.toLowerCase().includes(search)||l.email?.toLowerCase().includes(search)||l.prop?.toLowerCase().includes(search));
+  document.getElementById('contacts-count').textContent = fl.length+' contacts';
+  const grid = document.getElementById('contacts-grid');
+  if(!fl.length){ grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:3rem;font-size:14px;color:var(--g400)">No contacts found</div>'; return; }
+  grid.innerHTML = fl.map(l=>`<div class="contact-card" onclick="openLead('${l.id}')">
+    <div class="contact-card-top">
+      <div class="contact-av" style="background:${avatarColor(l.name)}">${initials(l.name)}</div>
+      <div><div class="contact-name">${l.name}</div><div class="contact-email">${l.email||l.phone||'No contact info'}</div></div>
+    </div>
+    <div class="contact-card-mid">
+      <span class="stage-badge badge-${l.type.toLowerCase()}" style="background:${TYPE_COLORS[l.type]||'#666'}22;color:${TYPE_COLORS[l.type]||'#666'}">${l.type}</span>
+      <span class="stage-badge stage-${l.stage.toLowerCase().replace(' ','-')}">${l.stage}</span>
+      <span class="stage-badge" style="background:${l.priority==='Hot'?'#FEF2F2':'var(--g100)'};color:${l.priority==='Hot'?'var(--red)':'var(--g600)'}">${l.priority}</span>
+    </div>
+    <div class="contact-card-foot">
+      <span class="contact-prop">${l.prop||'No property specified'}</span>
+      <span class="contact-date">${new Date(l.created).toLocaleDateString()}</span>
+    </div>
+  </div>`).join('');
 }
 
 // ══════════════════════════════
-// COPY
+// LEAD DETAIL
 // ══════════════════════════════
-function dCopy(id){
-  const text=document.getElementById(id+'-t').innerText;
-  navigator.clipboard.writeText(text).then(()=>{
-    const btn=document.querySelector('#'+id+' .d-copy');
-    const o=btn.textContent; btn.textContent='Copied!';
-    setTimeout(()=>btn.textContent=o,1500);
-  });
+function openLead(id){
+  const lead = leads.find(l=>l.id===id);
+  if(!lead) return;
+  currentLeadId = id;
+  const color = avatarColor(lead.name);
+  document.getElementById('ld-av').style.background = color;
+  document.getElementById('ld-av').textContent = initials(lead.name);
+  document.getElementById('ld-name').textContent = lead.name;
+  document.getElementById('ld-sub').textContent = [lead.email, lead.phone, lead.source].filter(Boolean).join(' · ');
+  document.getElementById('ld-fname').value = lead.fname||'';
+  document.getElementById('ld-lname').value = lead.lname||'';
+  document.getElementById('ld-email').value = lead.email||'';
+  document.getElementById('ld-phone').value = lead.phone||'';
+  document.getElementById('ld-type').value = lead.type||'Buyer';
+  document.getElementById('ld-stage').value = lead.stage||'New';
+  document.getElementById('ld-prop').value = lead.prop||'';
+  document.getElementById('ld-budget').value = lead.budget||'';
+  document.getElementById('ld-timeline').value = lead.timeline||'';
+  document.getElementById('ld-source').value = lead.source||'Other';
+  document.getElementById('ld-priority').value = lead.priority||'Warm';
+  document.getElementById('ld-addnotes').value = lead.addnotes||'';
+  renderNotes(lead);
+  renderAIHistory(lead);
+  ldTab('info', document.querySelector('.ld-tab'));
+  document.getElementById('lead-modal').classList.add('open');
+}
+function closeLeadModal(){ document.getElementById('lead-modal').classList.remove('open'); currentLeadId=null; }
+document.getElementById('lead-modal').addEventListener('click',e=>{ if(e.target===document.getElementById('lead-modal')) closeLeadModal(); });
+
+function ldTab(tab, el){
+  document.querySelectorAll('.ld-tab').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  ['info','notes','history','ai'].forEach(t=>{ document.getElementById('ld-'+t).style.display = t===tab?'block':'none'; });
+}
+
+function saveLeadField(){
+  const lead = leads.find(l=>l.id===currentLeadId);
+  if(!lead) return;
+  lead.fname = document.getElementById('ld-fname').value;
+  lead.lname = document.getElementById('ld-lname').value;
+  lead.name = (lead.fname+' '+lead.lname).trim();
+  lead.email = document.getElementById('ld-email').value;
+  lead.phone = document.getElementById('ld-phone').value;
+  lead.type = document.getElementById('ld-type').value;
+  lead.stage = document.getElementById('ld-stage').value;
+  lead.prop = document.getElementById('ld-prop').value;
+  lead.budget = document.getElementById('ld-budget').value;
+  lead.timeline = document.getElementById('ld-timeline').value;
+  lead.source = document.getElementById('ld-source').value;
+  lead.priority = document.getElementById('ld-priority').value;
+  lead.addnotes = document.getElementById('ld-addnotes').value;
+  lead.lastContact = new Date().toISOString();
+  document.getElementById('ld-name').textContent = lead.name;
+  document.getElementById('ld-av').textContent = initials(lead.name);
+  document.getElementById('ld-av').style.background = avatarColor(lead.name);
+  saveLeads(); renderAll(); toast('Saved');
+}
+
+function addNote(){
+  const text = document.getElementById('note-text').value.trim();
+  if(!text) return;
+  const lead = leads.find(l=>l.id===currentLeadId);
+  if(!lead) return;
+  if(!lead.notesList) lead.notesList=[];
+  lead.notesList.unshift({text, time: new Date().toISOString()});
+  lead.lastContact = new Date().toISOString();
+  document.getElementById('note-text').value='';
+  saveLeads(); renderNotes(lead); toast('Note added');
+}
+function renderNotes(lead){
+  const list = document.getElementById('notes-list');
+  if(!lead.notesList?.length){ list.innerHTML='<div style="text-align:center;padding:1.5rem;font-size:13px;color:var(--g400)">No notes yet</div>'; return; }
+  list.innerHTML = lead.notesList.map(n=>`<div class="note-item"><div class="note-text">${n.text}</div><div class="note-time">${new Date(n.time).toLocaleString()}</div></div>`).join('');
+}
+function renderAIHistory(lead){
+  const list = document.getElementById('ai-history-list');
+  if(!lead.aiHistory?.length){ list.innerHTML='<div style="text-align:center;padding:1.5rem;font-size:13px;color:var(--g400)">No AI outputs yet for this lead.</div>'; return; }
+  list.innerHTML = lead.aiHistory.map((h,i)=>`<div class="history-item" onclick="expandHist(${i})"><div class="history-tool">${h.tool}</div><div class="history-preview">${h.preview}</div><div class="history-time">${new Date(h.time).toLocaleString()}</div></div>`).join('');
+}
+function expandHist(i){
+  const lead = leads.find(l=>l.id===currentLeadId);
+  const h = lead?.aiHistory?.[i];
+  if(!h) return;
+  document.getElementById('ld-ai-output-lbl').textContent = h.tool;
+  document.getElementById('ld-ai-output-t').textContent = h.full;
+  document.getElementById('ld-ai-output').style.display='block';
+  ldTab('ai', null);
+}
+
+function aiFromLead(tool){
+  const lead = leads.find(l=>l.id===currentLeadId);
+  if(!lead) return;
+  const brand = getBrand();
+  const sig = brand.name ? `${brand.name}${brand.brokerage?', '+brand.brokerage:''}${brand.phone?'\n'+brand.phone:''}${brand.email?' · '+brand.email:''}` : '[Agent Name]';
+  let prompt = '';
+  if(tool==='followup') prompt=`You are a real estate sales coach. Write a 5-touch follow-up sequence.\n\nLead: ${lead.name}\nType: ${lead.type}\nProperty: ${lead.prop||'Not specified'}\nBudget: ${lead.budget||'Not specified'}\nTimeline: ${lead.timeline||'Not specified'}\nStage: ${lead.stage}\nAgent: ${sig}\n\nWrite DAY 1, DAY 3, DAY 7, DAY 14, DAY 30. Each with subject line. Short, warm, non-pushy.`;
+  if(tool==='qualify') prompt=`You are a real estate lead qualifier.\n\nLead: ${lead.name}\nType: ${lead.type}\nProperty interest: ${lead.prop||'Unknown'}\nBudget: ${lead.budget||'Unknown'}\nTimeline: ${lead.timeline||'Unknown'}\nSource: ${lead.source}\nNotes: ${lead.addnotes||'None'}\n\nProvide: READINESS SCORE (X/10), KEY SIGNALS, PRIORITY (Hot/Warm/Nurture/Pass), SUGGESTED FIRST RESPONSE.`;
+  if(tool==='crm') prompt=`Create a structured CRM update for:\n\nLead: ${lead.name}\nStage: ${lead.stage}\nPriority: ${lead.priority}\nProperty: ${lead.prop||'TBD'}\nBudget: ${lead.budget||'TBD'}\nTimeline: ${lead.timeline||'TBD'}\nNotes: ${lead.addnotes||lead.notes||'None'}\n\nFormat as clean CRM entry with next action items.`;
+  if(tool==='showing') prompt=`Write a showing confirmation email and SMS for:\n\nClient: ${lead.name}\nEmail: ${lead.email||'[email]'}\nProperty: ${lead.prop||'the property'}\nAgent: ${sig}\n\nWrite EMAIL VERSION (subject + body) and SMS VERSION (under 160 chars).`;
+  if(tool==='drip') prompt=`Write a 12-month post-close referral drip for:\n\nClient: ${lead.name}\nProperty: ${lead.prop||'their new home'}\nAgent: ${sig}\nPersonal notes: ${lead.addnotes||lead.notes||'None'}\n\nWrite 6 messages: 1 WEEK, 1 MONTH, 3 MONTHS, 6 MONTHS, 9 MONTHS, 12 MONTHS. Each with subject line.`;
+
+  const outDiv = document.getElementById('ld-ai-output');
+  const outText = document.getElementById('ld-ai-output-t');
+  const toolNames = {followup:'Follow-Up Sequence',qualify:'Lead Qualification',crm:'CRM Update',showing:'Showing Message',drip:'Post-Close Drip'};
+  document.getElementById('ld-ai-output-lbl').textContent = toolNames[tool]||tool;
+  outDiv.style.display='block'; outText.textContent='Generating...';
+
+  fetch('/api/generate',{method:'POST',headers:authHeaders(),body:JSON.stringify({prompt})})
+  .then(async res=>{
+    outText.textContent='';
+    const reader=res.body.getReader(),dec=new TextDecoder(); let buf=''; let full='';
+    while(true){
+      const{done,value}=await reader.read(); if(done)break;
+      buf+=dec.decode(value,{stream:true});
+      const lines=buf.split('\n'); buf=lines.pop();
+      for(const line of lines){ if(!line.startsWith('data: '))continue; const d=line.slice(6).trim(); if(d==='[DONE]')continue; try{const p=JSON.parse(d);if(p.text){outText.textContent+=p.text;full+=p.text;}}catch{} }
+    }
+    // Save to lead AI history
+    const lead2=leads.find(l=>l.id===currentLeadId);
+    if(lead2){
+      if(!lead2.aiHistory) lead2.aiHistory=[];
+      lead2.aiHistory.unshift({tool:toolNames[tool],preview:full.slice(0,80),full,time:new Date().toISOString()});
+      saveLeads(); renderAIHistory(lead2);
+    }
+  }).catch(e=>{ outText.textContent='Error: '+e.message; });
 }
 
 // ══════════════════════════════
-// DASHBOARD PROMPTS
+// VIEW SWITCHING
 // ══════════════════════════════
-function dPrompt(tool,p){
+function showView(id, el){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.top-nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('view-'+id).classList.add('active');
+  if(el) el.classList.add('active');
+  if(id==='pipeline') renderPipeline();
+  if(id==='contacts') renderContacts();
+  if(id==='dashboard') renderDashboard();
+}
+
+// ══════════════════════════════
+// AI TOOLS (standalone)
+// ══════════════════════════════
+function aiPrompt(tool, p){
   const v=id=>(document.getElementById(p+'-'+id)||{}).value||'';
   const b=getBrand();
-  const sig=b.name?(b.name+(b.brokerage?', '+b.brokerage:'')+(b.phone?'\n'+b.phone:'')+(b.email?' · '+b.email:'')):'[Agent Name]';
-  if(tool==='followup') return `You are a real estate sales coach. Write a 5-touch follow-up sequence.\n\nLead: ${v('name')}\nProperty: ${v('prop')}\nStage: ${v('stage')}\nChannel: ${v('ch')}\nAgent signature:\n${sig}\n\nWrite exactly 5 messages labeled DAY 1, DAY 3, DAY 7, DAY 14, DAY 30. Subject lines for email. Short, warm, non-pushy. End each with the agent signature.`;
-  if(tool==='listing') return `You are a top real estate copywriter.\n\nAddress: ${v('addr')}\nPrice: ${v('price')}\nBeds/Baths/Sqft: ${v('beds')}\nTone: ${v('tone')}\nFeatures: ${v('feat')}\nListing agent: ${sig}\n\nWrite four labeled sections:\nMLS DESCRIPTION (140 words max)\nINSTAGRAM CAPTION (with hashtags)\nBUYER EMAIL (subject line + 3 paragraphs + CTA, sign with agent signature)\nSMS BLAST (under 160 chars)`;
-  if(tool==='qualify') return `You are a real estate lead qualification expert in ${v('mkt')}.\nLead type: ${v('type')}\nAnalyze: "${v('msg')}"\n\nReturn:\nREADINESS SCORE: X/10\nLEAD TYPE: Buyer/Seller/Both\nKEY SIGNALS:\n• Timeline\n• Budget\n• Motivation\n• Obstacles\nPRIORITY: Hot/Warm/Nurture/Pass (with reason)\nSUGGESTED FIRST RESPONSE: (short, personalized, sign as ${b.name||'[Agent]'})`;
-  if(tool==='market') return `Write a weekly real estate market update email.\n\nNeighborhood: ${v('area')}\nAvg price: ${v('price')}\nDays on market: ${v('dom')}\nActive listings: ${v('list')}\nMarket: ${v('trend')}\nFrom: ${sig}\n\nInclude: subject line, warm opening, what this means for sellers, what this means for buyers, brief outlook, soft CTA. Sign with full agent signature.`;
-  if(tool==='crm') return `Real estate admin assistant. Task: ${v('type')}\nClient: ${v('client')}\nNotes: ${v('notes')}\n\nClean structured output with sections and next action items. Agent: ${b.name||'[Agent]'}`;
-  if(tool==='showing') return `Real estate transaction message.\nType: ${v('type')}\nClient: ${v('client')}\nProperty: ${v('prop')}\nDate/Time: ${v('date')}\nContext: ${v('notes')}\nAgent: ${sig}\n\nWrite EMAIL VERSION (subject + body, sign with signature) and SMS VERSION (under 160 chars).`;
-  if(tool==='drip') return `Write a 12-month post-close referral drip campaign.\n\nClient: ${v('client')}\nProperty: ${v('prop')}\nClosed: ${v('date')}\nAgent: ${sig}\nPersonal details: ${v('notes')}\n\nWrite 6 messages: 1 WEEK (thank you), 1 MONTH (check-in), 3 MONTHS (market update), 6 MONTHS (home value), 9 MONTHS (seasonal tips), 12 MONTHS (anniversary + referral ask). Each with subject line. Warm, personal. Sign with agent signature.`;
+  const sig=b.name?`${b.name}${b.brokerage?', '+b.brokerage:''}${b.phone?'\n'+b.phone:''}${b.email?' · '+b.email:''}`:'[Agent Name]';
+  if(tool==='followup') return `You are a real estate sales coach. Write a 5-touch follow-up sequence.\n\nLead: ${v('name')}\nProperty: ${v('prop')}\nStage: ${v('stage')}\nChannel: ${v('ch')}\nAgent: ${sig}\n\nWrite DAY 1, DAY 3, DAY 7, DAY 14, DAY 30. Subject lines for email. Short, warm, non-pushy.`;
+  if(tool==='listing') return `You are a top real estate copywriter.\n\nAddress: ${v('addr')}\nPrice: ${v('price')}\nBeds/Baths: ${v('beds')}\nTone: ${v('tone')}\nFeatures: ${v('feat')}\nAgent: ${sig}\n\nWrite: MLS DESCRIPTION (140 words), INSTAGRAM CAPTION (with hashtags), BUYER EMAIL (subject + 3 paragraphs + CTA), SMS BLAST (160 chars).`;
+  if(tool==='qualify') return `You are a real estate lead qualifier in ${v('mkt')}.\nType: ${v('type')}\nMessage: "${v('msg')}"\n\nProvide: READINESS SCORE (X/10), LEAD TYPE, KEY SIGNALS (timeline/budget/motivation/obstacles), PRIORITY (Hot/Warm/Nurture/Pass), SUGGESTED FIRST RESPONSE.`;
+  if(tool==='market') return `Write a weekly real estate market update email.\n\nNeighborhood: ${v('area')}\nAvg price: ${v('price')}\nDays on market: ${v('dom')}\nCondition: ${v('trend')}\nFrom: ${sig}\n\nInclude: subject line, seller insights, buyer insights, outlook, soft CTA.`;
+  if(tool==='crm') return `Real estate admin. Task: ${v('type')}\nClient: ${v('client')}\nNotes: ${v('notes')}\nAgent: ${b.name||'[Agent]'}\n\nCreate clean structured output with next action items.`;
+  if(tool==='showing') return `Real estate message.\nType: ${v('type')}\nClient: ${v('client')}\nProperty: ${v('prop')}\nDate: ${v('date')}\nAgent: ${sig}\n\nWrite EMAIL VERSION (subject + body) and SMS VERSION (under 160 chars).`;
+  if(tool==='drip') return `Write a 12-month post-close referral drip.\n\nClient: ${v('client')}\nProperty: ${v('prop')}\nClosed: ${v('date')}\nAgent: ${sig}\n\nWrite 6 messages: 1 WEEK, 1 MONTH, 3 MONTHS, 6 MONTHS, 9 MONTHS, 12 MONTHS. Each with subject line.`;
 }
 
-async function dRun(prefix,tool){
-  const btn=document.getElementById('btn-'+prefix);
-  const box=document.getElementById('do-'+prefix);
-  const txt=document.getElementById('do-'+prefix+'-t');
+async function aiRun(prefix, tool){
+  const btn=document.getElementById('btn-ai-'+prefix);
+  const box=document.getElementById('ai-out-'+prefix);
+  const txt=document.getElementById('ai-out-'+prefix+'-t');
   const orig=btn.innerHTML;
   btn.disabled=true; btn.innerHTML='<div class="spin"></div> Generating...';
   box.classList.remove('show'); txt.textContent='';
-  const token=getToken();
-  if(!token){ box.classList.add('show'); txt.textContent='Session expired. Please sign out and sign in again.'; btn.disabled=false; btn.innerHTML=orig; return; }
   try{
-    const res=await fetch('/api/generate',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
-      body:JSON.stringify({prompt:dPrompt(tool,prefix)})
-    });
-    if(res.status===401){ box.classList.add('show'); txt.textContent='Session expired. Please sign out and sign in again.'; btn.disabled=false; btn.innerHTML=orig; return; }
-    if(!res.ok){ const err=await res.json().catch(()=>({error:'Server error'})); box.classList.add('show'); txt.textContent='Error: '+(err.error||'Unknown error'); btn.disabled=false; btn.innerHTML=orig; return; }
+    const res=await fetch('/api/generate',{method:'POST',headers:authHeaders(),body:JSON.stringify({prompt:aiPrompt(tool,'ai-'+prefix)})});
     box.classList.add('show');
     const reader=res.body.getReader(),dec=new TextDecoder(); let buf='';
     while(true){
       const{done,value}=await reader.read(); if(done)break;
       buf+=dec.decode(value,{stream:true});
       const lines=buf.split('\n'); buf=lines.pop();
-      for(const line of lines){
-        if(!line.startsWith('data: '))continue;
-        const d=line.slice(6).trim();
-        if(d==='[DONE]')continue;
-        try{const p=JSON.parse(d);if(p.text)txt.textContent+=p.text;}catch{}
-      }
+      for(const line of lines){ if(!line.startsWith('data: '))continue; const d=line.slice(6).trim(); if(d==='[DONE]')continue; try{const p=JSON.parse(d);if(p.text)txt.textContent+=p.text;}catch{} }
     }
-    if(txt.textContent) saveHistory(tool.charAt(0).toUpperCase()+tool.slice(1),txt.textContent,txt.textContent);
-  }catch(e){
-    box.classList.add('show');
-    txt.textContent='Connection error: '+e.message+'. Please try again.';
-  }
+  }catch(e){ box.classList.add('show'); txt.textContent='Error: '+e.message; }
   btn.disabled=false; btn.innerHTML=orig;
 }
 
+function aiCopy(id){
+  const el=document.getElementById(id+'-t')||document.getElementById(id);
+  const text=el?.innerText||el?.textContent||'';
+  navigator.clipboard.writeText(text).then(()=>toast('Copied!'));
+}
 
 // ══════════════════════════════
-// TEASER (HOMEPAGE)
+// BRAND SETTINGS
 // ══════════════════════════════
-function switchT(id,el){
-  document.querySelectorAll('.t-panel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.t-nav').forEach(n=>n.classList.remove('active'));
-  document.getElementById('tp-'+id).classList.add('active');
-  el.classList.add('active');
+function getBrand(){ try{ return JSON.parse(localStorage.getItem('ae_brand_'+(currentUser?.email||''))||'{}'); }catch(e){ return {}; } }
+async function saveBrand(){
+  const b={name:document.getElementById('br-name').value,brokerage:document.getElementById('br-brokerage').value,phone:document.getElementById('br-phone').value,email:document.getElementById('br-email').value,website:document.getElementById('br-website').value,license:document.getElementById('br-license').value,tagline:document.getElementById('br-tagline').value};
+  localStorage.setItem('ae_brand_'+(currentUser?.email||''),JSON.stringify(b));
+  updateSigPreview();
+  try{ await fetch('/api/brand',{method:'POST',headers:authHeaders(),body:JSON.stringify(b)}); }catch(e){}
+  toast('Brand settings saved!');
 }
-const teasers={
-  followup:`DAY 1 — Subject: Quick note about the property\n\nHi [Lead Name],\n\nJust wanted to reach out personally — I noticed your inquiry and want to make sure you have everything you need...\n\n— [Your Name] | [Brokerage]\n\n---\nDAY 3 — Subject: A few things you might not know...\n\n[Full 5-touch sequence — sign up to unlock]`,
-  listing:`MLS DESCRIPTION\nNestled on a quiet street, this beautifully updated home offers the perfect blend of style and comfort. The open floor plan flows seamlessly into the renovated chef's kitchen...\n\nINSTAGRAM CAPTION\n✨ Just listed! This gem won't last long. 3 bed | 2 bath | renovated throughout 🏡\n\n[Buyer email + SMS blast — sign up to unlock]`,
-  qualify:`READINESS SCORE: 6/10\nLEAD TYPE: Buyer (contingent on sale)\n\nKEY SIGNALS:\n• Timeline: 9–12 months\n• Budget: ~$400k\n• Must sell current home first\n\nPRIORITY: Warm — nurture now, convert in 60–90 days\n\n[Suggested first response — sign up to unlock]`,
-  crm:`CRM UPDATE — Johnson Family · 123 Oak Ave\n━━━━━━━━━━━━━━━━━━━━━━\nOUTCOME: Positive — interested, objection on backyard\nPre-approved: $550,000 · Deadline: July 15\n\nNEXT ACTIONS:\n□ Follow up Monday\n□ Send backyard comps\n\n[Full update + task list — sign up to unlock]`,
-  market:`Subject: South Austin Market Update — This Week\n\nHi [First Name],\n\nThe market continues to move fast — here's what you need to know this week.\n\nFOR SELLERS: With only 42 active listings and homes selling in 18 days...\n\n[Full email — sign up to unlock]`,
-  showing:`EMAIL VERSION\nSubject: Your showing is confirmed ✓\n\nHi [Client], you're all set!\n📍 123 Oak Ave, Austin TX\n📅 Saturday June 21 at 2:00 PM\n\nI'll meet you out front...\n\nSMS VERSION\nShowing confirmed Sat 2pm · 123 Oak Ave · I'll meet you out front — [Agent]\n\n[All 7 message types — sign up to unlock]`,
-  drip:`1 WEEK — Subject: Welcome home! 🏡\n\nHi [Client Name],\n\nIt was such a pleasure working with you. Watching you walk through the door as homeowners is exactly why I love this job...\n\n[Full 12-month campaign with 6 touchpoints — sign up to unlock]`
-};
-async function tRun(tool){
-  const btn=document.getElementById('tbtn-'+tool);
-  const gate=document.getElementById('tg-'+tool);
-  const orig=btn.innerHTML;
-  btn.disabled=true; btn.innerHTML='<div class="spin"></div> Generating...';
-  gate.innerHTML='';
-  await new Promise(r=>setTimeout(r,1300));
-  const p=(teasers[tool]||'').replace(/\n/g,'<br>');
-  gate.innerHTML=`<div class="gate-wrap"><div class="gate-blur">${p}</div><div class="gate-overlay"><div class="gate-lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div class="gate-title">Your output is ready</div><div class="gate-sub">Sign up to unlock the full output and all 7 tools.</div><button class="gate-cta" onclick="openAuth('signup')">Get access — from $99/mo</button><div class="gate-note">Solo · Pro · Brokerage plans</div></div></div>`;
-  btn.disabled=false; btn.innerHTML=orig;
+async function loadBrand(){
+  try{
+    const res=await fetch('/api/brand',{headers:authHeaders()});
+    const b=await res.json();
+    if(b&&b.name){
+      localStorage.setItem('ae_brand_'+(currentUser?.email||''),JSON.stringify(b));
+      ['name','brokerage','phone','email','website','license','tagline'].forEach(k=>{ const el=document.getElementById('br-'+k); if(el&&b[k]) el.value=b[k]; });
+    }
+  }catch(e){}
+  updateSigPreview();
+}
+function updateSigPreview(){
+  const name=document.getElementById('br-name')?.value||'[Your Name]';
+  const brokerage=document.getElementById('br-brokerage')?.value||'[Brokerage]';
+  const phone=document.getElementById('br-phone')?.value||'[Phone]';
+  const email=document.getElementById('br-email')?.value||'[Email]';
+  const website=document.getElementById('br-website')?.value||'';
+  const license=document.getElementById('br-license')?.value||'';
+  const tagline=document.getElementById('br-tagline')?.value||'';
+  const el=document.getElementById('sig-preview');
+  if(el) el.textContent=`${name}\n${brokerage}${tagline?'\n'+tagline:''}\n📞 ${phone} · ✉️ ${email}${website?'\n🌐 '+website:''}${license?'\nLic# '+license:''}`;
 }
 </script>
 </body>
