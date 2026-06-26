@@ -857,14 +857,8 @@ footer{background:var(--g800);padding:3rem 2rem;display:flex;justify-content:spa
 
 <script>
 // ══════════════════════════════
-// AUTH
+// AUTH — Real Supabase backend
 // ══════════════════════════════
-const USERS = JSON.parse(localStorage.getItem('ae_users') || JSON.stringify([
-  {name:'Admin',email:'admin@agentedge.com',pass:'agentedge2026',plan:'Pro'},
-  {name:'Demo Agent',email:'demo@agentedge.com',pass:'demo1234',plan:'Solo'}
-]));
-function saveUsers(){ localStorage.setItem('ae_users', JSON.stringify(USERS)); }
-
 function openAuth(v){ showView(v); document.getElementById('auth-modal').classList.add('open'); }
 function closeAuth(){ document.getElementById('auth-modal').classList.remove('open'); }
 function showView(v){
@@ -873,29 +867,49 @@ function showView(v){
 }
 document.getElementById('auth-modal').addEventListener('click', e=>{ if(e.target===document.getElementById('auth-modal')) closeAuth(); });
 
-function doLogin(){
+function getToken(){ return localStorage.getItem('ae_token'); }
+function setToken(t){ localStorage.setItem('ae_token',t); }
+function clearToken(){ localStorage.removeItem('ae_token'); localStorage.removeItem('ae_user'); }
+function getUser(){ try{ return JSON.parse(localStorage.getItem('ae_user')); }catch(e){ return null; } }
+function setUser(u){ localStorage.setItem('ae_user', JSON.stringify(u)); }
+
+async function doLogin(){
   const email=document.getElementById('l-email').value.trim().toLowerCase();
   const pass=document.getElementById('l-pass').value;
-  const user=USERS.find(u=>u.email===email&&u.pass===pass);
-  if(!user){ document.getElementById('l-err').classList.add('show'); return; }
-  document.getElementById('l-err').classList.remove('show');
-  setSession(user); closeAuth(); showDash(user);
+  const err=document.getElementById('l-err');
+  err.classList.remove('show');
+  try{
+    const res=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})});
+    const data=await res.json();
+    if(!res.ok){ err.textContent=data.error||'Incorrect email or password.'; err.classList.add('show'); return; }
+    setToken(data.token); setUser(data.user);
+    closeAuth(); showDash(data.user);
+  }catch(e){ err.textContent='Connection error. Please try again.'; err.classList.add('show'); }
 }
-function doSignup(){
+
+async function doSignup(){
   const name=document.getElementById('s-name').value.trim();
   const email=document.getElementById('s-email').value.trim().toLowerCase();
   const pass=document.getElementById('s-pass').value;
   const plan=document.getElementById('s-plan').value;
-  if(!name||!email||!pass||pass.length<6){ document.getElementById('s-err').classList.add('show'); return; }
-  document.getElementById('s-err').classList.remove('show');
-  const user={name,email,pass,plan};
-  const idx=USERS.findIndex(u=>u.email===email);
-  if(idx>=0) USERS[idx]=user; else USERS.push(user);
-  saveUsers(); setSession(user); closeAuth(); showDash(user);
+  const err=document.getElementById('s-err');
+  err.classList.remove('show');
+  if(!name||!email||!pass||pass.length<6){ err.textContent='Please fill in all fields (password min 6 chars).'; err.classList.add('show'); return; }
+  try{
+    const res=await fetch('/api/signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,password:pass,plan})});
+    const data=await res.json();
+    if(!res.ok){ err.textContent=data.error||'Could not create account.'; err.classList.add('show'); return; }
+    setToken(data.token); setUser(data.user);
+    closeAuth(); showDash(data.user);
+  }catch(e){ err.textContent='Connection error. Please try again.'; err.classList.add('show'); }
 }
-function setSession(u){ localStorage.setItem('ae_session', JSON.stringify({name:u.name,email:u.email,plan:u.plan})); }
-function getSession(){ try{ return JSON.parse(localStorage.getItem('ae_session')); }catch(e){ return null; } }
-function doLogout(){ localStorage.removeItem('ae_session'); document.getElementById('dashboard').classList.remove('open'); document.getElementById('marketing').style.display='block'; }
+
+function doLogout(){
+  clearToken();
+  document.getElementById('dashboard').classList.remove('open');
+  document.getElementById('marketing').style.display='block';
+}
+
 function showDash(u){
   document.getElementById('marketing').style.display='none';
   document.getElementById('dashboard').classList.add('open');
@@ -904,7 +918,16 @@ function showDash(u){
   document.getElementById('d-plan-badge').textContent=u.plan||'Pro';
   loadBrand(); renderHistory();
 }
-window.addEventListener('DOMContentLoaded',()=>{ const s=getSession(); if(s) showDash(s); calcUpdate(); });
+
+window.addEventListener('DOMContentLoaded',()=>{
+  const u=getUser();
+  if(u && getToken()) showDash(u);
+  calcUpdate();
+});
+
+function authHeaders(){
+  return {'Content-Type':'application/json','Authorization':'Bearer '+getToken()};
+}
 
 // ══════════════════════════════
 // DASHBOARD NAV
@@ -927,22 +950,24 @@ function switchDById(id){
 // ══════════════════════════════
 // HISTORY
 // ══════════════════════════════
-function saveHistory(tool,preview,full){
-  const hist=JSON.parse(localStorage.getItem('ae_hist')||'[]');
-  hist.unshift({tool,preview:preview.slice(0,100),full,time:new Date().toLocaleString()});
-  if(hist.length>50) hist.pop();
-  localStorage.setItem('ae_hist',JSON.stringify(hist));
+async function saveHistory(tool,preview,full){
+  try{
+    await fetch('/api/outputs',{method:'POST',headers:authHeaders(),body:JSON.stringify({tool,preview:preview.slice(0,100),full_output:full})});
+  }catch(e){ console.log('Could not save history'); }
 }
-function renderHistory(){
-  const hist=JSON.parse(localStorage.getItem('ae_hist')||'[]');
+async function renderHistory(){
   const c=document.getElementById('hist-container');
-  if(!hist.length){ c.innerHTML='<div class="hist-empty">No outputs yet — generate something with any tool and it will appear here.</div>'; return; }
-  c.innerHTML='<div class="hist-list">'+hist.map((h,i)=>`<div class="hist-item" onclick="viewHist(${i})"><div class="hist-item-top"><span class="hist-tool">${h.tool}</span><span class="hist-time">${h.time}</span></div><div class="hist-preview">${h.preview}...</div></div>`).join('')+'</div>';
+  c.innerHTML='<div class="hist-empty">Loading history...</div>';
+  try{
+    const res=await fetch('/api/outputs',{headers:authHeaders()});
+    const hist=await res.json();
+    if(!hist.length){ c.innerHTML='<div class="hist-empty">No outputs yet — generate something with any tool and it will appear here.</div>'; return; }
+    c.innerHTML='<div class="hist-list">'+hist.map((h,i)=>`<div class="hist-item" onclick="viewHist(${i}, ${JSON.stringify(h.full_output).replace(/'/g,'&#39;')})"><div class="hist-item-top"><span class="hist-tool">${h.tool}</span><span class="hist-time">${new Date(h.created_at).toLocaleString()}</span></div><div class="hist-preview">${h.preview||''}...</div></div>`).join('')+'</div>';
+  }catch(e){ c.innerHTML='<div class="hist-empty">Could not load history.</div>'; }
 }
-function viewHist(i){
-  const hist=JSON.parse(localStorage.getItem('ae_hist')||'[]');
+function viewHist(i, full){
   const box=document.getElementById('do-hist'), txt=document.getElementById('do-hist-t');
-  txt.textContent=hist[i].full;
+  txt.textContent=full;
   box.classList.add('show');
   box.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
@@ -950,22 +975,29 @@ function viewHist(i){
 // ══════════════════════════════
 // BRAND SETTINGS
 // ══════════════════════════════
-function saveBrand(){
+async function saveBrand(){
   const b={name:document.getElementById('br-name').value,brokerage:document.getElementById('br-brokerage').value,phone:document.getElementById('br-phone').value,email:document.getElementById('br-email').value,website:document.getElementById('br-website').value,license:document.getElementById('br-license').value,tagline:document.getElementById('br-tagline').value};
-  localStorage.setItem('ae_brand',JSON.stringify(b));
-  updateBrandPreview();
-  alert('Brand settings saved! They will auto-apply to all your outputs.');
+  try{
+    await fetch('/api/brand',{method:'POST',headers:authHeaders(),body:JSON.stringify(b)});
+    localStorage.setItem('ae_brand',JSON.stringify(b));
+    updateBrandPreview();
+    alert('Brand settings saved!');
+  }catch(e){ alert('Could not save. Please try again.'); }
 }
-function loadBrand(){
-  const b=JSON.parse(localStorage.getItem('ae_brand')||'{}');
-  if(b.name) document.getElementById('br-name').value=b.name;
-  if(b.brokerage) document.getElementById('br-brokerage').value=b.brokerage;
-  if(b.phone) document.getElementById('br-phone').value=b.phone;
-  if(b.email) document.getElementById('br-email').value=b.email;
-  if(b.website) document.getElementById('br-website').value=b.website;
-  if(b.license) document.getElementById('br-license').value=b.license;
-  if(b.tagline) document.getElementById('br-tagline').value=b.tagline;
-  updateBrandPreview();
+async function loadBrand(){
+  try{
+    const res=await fetch('/api/brand',{headers:authHeaders()});
+    const b=await res.json();
+    if(b.name) document.getElementById('br-name').value=b.name||'';
+    if(b.brokerage) document.getElementById('br-brokerage').value=b.brokerage||'';
+    if(b.phone) document.getElementById('br-phone').value=b.phone||'';
+    if(b.email) document.getElementById('br-email').value=b.email||'';
+    if(b.website) document.getElementById('br-website').value=b.website||'';
+    if(b.license) document.getElementById('br-license').value=b.license||'';
+    if(b.tagline) document.getElementById('br-tagline').value=b.tagline||'';
+    localStorage.setItem('ae_brand',JSON.stringify(b));
+    updateBrandPreview();
+  }catch(e){ console.log('Could not load brand'); }
 }
 function getBrand(){
   return JSON.parse(localStorage.getItem('ae_brand')||'{}');
@@ -1015,13 +1047,13 @@ async function runBulk(){
     txt.textContent+=`\n${'═'.repeat(50)}\nLEAD ${i+1}: ${l.name} — ${l.prop||'No property listed'}\n${'═'.repeat(50)}\n\n`;
     const prompt=`Write a 5-touch follow-up sequence for:\nLead: ${l.name}\nProperty: ${l.prop}\nStage: ${l.stage}\nChannel: ${l.channel}\nAgent: ${agentSig}\n\nWrite DAY 1, DAY 3, DAY 7, DAY 14, DAY 30. Short, warm, non-pushy.`;
     try{
-      const res=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt})});
+      const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:800,stream:true,messages:[{role:'user',content:prompt}]})});
       const reader=res.body.getReader(),dec=new TextDecoder(); let buf='';
       while(true){
         const{done,value}=await reader.read(); if(done)break;
         buf+=dec.decode(value,{stream:true});
         const lines=buf.split('\n'); buf=lines.pop();
-        for(const line of lines){ if(!line.startsWith('data: '))continue; const d=line.slice(6).trim(); if(d==='[DONE]')continue; try{const p=JSON.parse(d);if(p.text)txt.textContent+=p.text;}catch{} }
+        for(const line of lines){ if(!line.startsWith('data: '))continue; const d=line.slice(6).trim(); if(d==='[DONE]')continue; try{const p=JSON.parse(d);if(p.type==='content_block_delta'&&p.delta?.text)txt.textContent+=p.delta.text;}catch{} }
       }
     }catch(e){ txt.textContent+='\n[Error generating for this lead]\n'; }
     txt.textContent+='\n\n';
@@ -1100,14 +1132,14 @@ async function dRun(prefix,tool){
   btn.disabled=true; btn.innerHTML='<div class="spin"></div> Generating...';
   box.classList.remove('show'); txt.textContent='';
   try{
-    const res=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:dPrompt(tool,prefix)})});
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,stream:true,messages:[{role:'user',content:dPrompt(tool,prefix)}]})});
     box.classList.add('show');
     const reader=res.body.getReader(),dec=new TextDecoder(); let buf='';
     while(true){
       const{done,value}=await reader.read(); if(done)break;
       buf+=dec.decode(value,{stream:true});
       const lines=buf.split('\n'); buf=lines.pop();
-      for(const line of lines){ if(!line.startsWith('data: '))continue; const d=line.slice(6).trim(); if(d==='[DONE]')continue; try{const p=JSON.parse(d);if(p.text)txt.textContent+=p.text;}catch{} }
+      for(const line of lines){ if(!line.startsWith('data: '))continue; const d=line.slice(6).trim(); if(d==='[DONE]')continue; try{const p=JSON.parse(d);if(p.type==='content_block_delta'&&p.delta?.text)txt.textContent+=p.delta.text;}catch{} }
     }
     saveHistory(tool.charAt(0).toUpperCase()+tool.slice(1),txt.textContent,txt.textContent);
   }catch(e){ box.classList.add('show'); txt.textContent='Something went wrong. Please try again.'; }
