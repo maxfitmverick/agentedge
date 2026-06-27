@@ -3,10 +3,15 @@ const cors = require('cors');
 const { createClient } = require('@supabase/supabase-js');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const path = require('path');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// ── ROUTING: landing page for visitors, /app for logged-in users ──
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'landing.html')));
+app.get('/app', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 app.use(express.static('public'));
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
@@ -28,26 +33,30 @@ function authMiddleware(req, res, next) {
   }
 }
 
-// ── SIGNUP ──
+// ── SIGNUP ── (sets 7-day trial automatically)
 app.post('/api/signup', async (req, res) => {
   const { name, email, password, plan } = req.body;
   if (!name || !email || !password) return res.status(400).json({ error: 'Missing fields' });
   try {
     const hash = await bcrypt.hash(password, 10);
+    const trialEndsAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     const { data, error } = await supabase
       .from('users')
-      .insert({ name, email: email.toLowerCase(), password: hash, plan: plan || 'Solo' })
+      .insert({ name, email: email.toLowerCase(), password: hash, plan: plan || 'Solo', trial_ends_at: trialEndsAt })
       .select()
       .single();
     if (error) return res.status(400).json({ error: 'Email already exists' });
-    const token = jwt.sign({ id: data.id, email: data.email, name: data.name, plan: data.plan }, JWT_SECRET, { expiresIn: '30d' });
-    res.json({ token, user: { name: data.name, email: data.email, plan: data.plan } });
+    const token = jwt.sign(
+      { id: data.id, email: data.email, name: data.name, plan: data.plan, trial_ends_at: data.trial_ends_at },
+      JWT_SECRET, { expiresIn: '30d' }
+    );
+    res.json({ token, user: { name: data.name, email: data.email, plan: data.plan, trial_ends_at: data.trial_ends_at } });
   } catch (e) {
     res.status(500).json({ error: 'Server error' });
   }
 });
 
-// ── LOGIN ──
+// ── LOGIN ── (returns trial_ends_at so client can show countdown)
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -59,8 +68,11 @@ app.post('/api/login', async (req, res) => {
     if (!user) return res.status(401).json({ error: 'Invalid credentials' });
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) return res.status(401).json({ error: 'Invalid credentials' });
-    const token = jwt.sign({ id: user.id, email: user.email, name: user.name, plan: user.plan }, JWT_SECRET, { expiresIn: '30d' });
-    res.json({ token, user: { name: user.name, email: user.email, plan: user.plan } });
+    const token = jwt.sign(
+      { id: user.id, email: user.email, name: user.name, plan: user.plan, trial_ends_at: user.trial_ends_at },
+      JWT_SECRET, { expiresIn: '30d' }
+    );
+    res.json({ token, user: { name: user.name, email: user.email, plan: user.plan, trial_ends_at: user.trial_ends_at } });
   } catch (e) {
     res.status(500).json({ error: 'Server error' });
   }
