@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 // ── ROUTING: landing page for visitors, /app for logged-in users ──
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'landing.html')));
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 app.get('/app', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 app.use(express.static('public'));
 
