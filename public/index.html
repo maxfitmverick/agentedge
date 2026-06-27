@@ -3,1098 +3,723 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AgentEdge CRM — AI-Powered Real Estate Platform</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<title>AgentEdge — The AI CRM Built for Real Estate Agents</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --navy:#0B1B2B;--navy-mid:#1A2E42;--navy-light:#243D56;
-  --gold:#C9923A;--gold-light:#E8B86D;--gold-pale:#FDF3E3;
+  --navy:#0B1B2B;--navy-mid:#1A2E42;--navy-light:#243D56;--navy-deep:#06111C;
+  --gold:#C9923A;--gold-light:#E8B86D;--gold-pale:#FDF3E3;--gold-dim:rgba(201,146,58,.15);
   --cream:#FAF8F4;--white:#fff;
-  --g100:#F4F2EE;--g200:#E4E1DA;--g300:#CCC9C0;--g400:#9E9B94;--g600:#6B6860;--g800:#2E2C2A;
-  --green:#2D6A4F;--green-light:#EAF4EE;--green-mid:#52B788;
-  --red:#c0392b;--red-light:#FDECEA;
-  --blue:#2563EB;--blue-light:#EFF6FF;
-  --purple:#7C3AED;--purple-light:#F5F3FF;
-  --orange:#EA580C;--orange-light:#FFF7ED;
+  --g50:#F9F7F4;--g100:#F4F2EE;--g200:#E4E1DA;--g300:#CCC9C0;--g400:#9E9B94;--g600:#6B6860;--g800:#2E2C2A;
   --fd:'DM Serif Display',Georgia,serif;--fb:'Inter',system-ui,sans-serif;
+  --ease-out:cubic-bezier(.22,1,.36,1);
 }
 html{scroll-behavior:smooth}
-body{font-family:var(--fb);background:var(--cream);color:var(--navy);line-height:1.6;overflow:hidden;height:100vh}
+body{font-family:var(--fb);background:var(--cream);color:var(--navy);line-height:1.6;overflow-x:hidden}
 
-/* SPINNER */
-.spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;flex-shrink:0;display:inline-block}
-@keyframes sp{to{transform:rotate(360deg)}}
+/* ══ NAV ══ */
+.nav{position:fixed;top:0;left:0;right:0;z-index:200;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;background:rgba(6,17,28,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.06);transition:background .3s}
+.nav-logo{font-family:var(--fd);font-size:22px;color:#fff;letter-spacing:-.01em;text-decoration:none;flex-shrink:0}
+.nav-logo span{color:var(--gold-light)}
+.nav-links{display:flex;align-items:center;gap:.25rem}
+.nav-link{color:rgba(255,255,255,.5);font-size:13.5px;font-weight:500;text-decoration:none;padding:.45rem .9rem;border-radius:7px;transition:all .15s;cursor:pointer;background:none;border:none;font-family:var(--fb)}
+.nav-link:hover{color:#fff;background:rgba(255,255,255,.07)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.nav-signin{color:rgba(255,255,255,.55);font-size:13.5px;font-weight:500;background:none;border:none;cursor:pointer;font-family:var(--fb);padding:.45rem .75rem;border-radius:7px;transition:all .15s}
+.nav-signin:hover{color:#fff}
+.nav-cta{background:var(--gold);color:#fff;font-size:13.5px;font-weight:600;padding:.55rem 1.35rem;border-radius:8px;border:none;cursor:pointer;font-family:var(--fb);transition:all .2s;letter-spacing:.01em}
+.nav-cta:hover{background:var(--gold-light);transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,146,58,.35)}
 
-/* AUTH */
-.auth-screen{position:fixed;inset:0;z-index:9999;background:var(--navy);display:flex;align-items:center;justify-content:center;padding:1.5rem}
-.auth-screen.hide{display:none}
-.auth-box{background:#fff;border-radius:20px;padding:2.5rem 2rem;width:100%;max-width:420px}
-.auth-logo{font-family:var(--fd);font-size:26px;color:var(--navy);text-align:center;margin-bottom:.25rem}
-.auth-logo span{color:var(--gold)}
-.auth-tagline{font-size:13px;color:var(--g600);text-align:center;margin-bottom:2rem}
-.auth-tabs{display:flex;border-bottom:1px solid var(--g200);margin-bottom:1.5rem}
-.auth-tab{flex:1;padding:.75rem;text-align:center;font-size:14px;font-weight:500;color:var(--g400);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
-.auth-tab.active{color:var(--navy);border-bottom-color:var(--gold)}
-.a-field{display:flex;flex-direction:column;gap:5px;margin-bottom:.9rem}
-.a-field label{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--g400)}
-.a-field input,.a-field select{font-size:15px;padding:11px 14px;border-radius:10px;border:1px solid var(--g200);background:var(--cream);color:var(--navy);font-family:var(--fb);width:100%;transition:border-color .15s}
-.a-field input:focus,.a-field select:focus{outline:none;border-color:var(--gold)}
-.a-btn{width:100%;padding:13px;border-radius:10px;border:none;background:var(--navy);color:#fff;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--fb);margin-top:.5rem;transition:background .15s}
-.a-btn:hover{background:var(--navy-mid)}
-.a-err{font-size:13px;color:var(--red);text-align:center;margin-top:.75rem;display:none}
-.a-err.show{display:block}
+/* ══ HERO ══ */
+.hero{min-height:100svh;background:var(--navy-deep);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:9rem 1.5rem 6rem;position:relative;overflow:hidden}
+.hero-bg-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(201,146,58,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(201,146,58,.04) 1px,transparent 1px);background-size:60px 60px;pointer-events:none}
+.hero-bg-glow{position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:900px;height:600px;background:radial-gradient(ellipse at center,rgba(201,146,58,.18) 0%,transparent 65%);pointer-events:none}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(201,146,58,.1);border:1px solid rgba(201,146,58,.2);border-radius:999px;padding:.4rem 1.1rem;font-size:11.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--gold-light);margin-bottom:2.25rem;position:relative}
+.eyebrow-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.7)}}
+.hero-h1{font-family:var(--fd);font-size:clamp(3rem,6.5vw,5rem);color:#fff;line-height:1.04;letter-spacing:-.03em;max-width:900px;margin:0 auto .5rem;position:relative}
+.hero-h1 .gold-line{display:block;color:var(--gold-light);font-style:italic}
+.hero-h1 .dim-line{color:rgba(255,255,255,.55);font-size:.78em}
+.hero-sub{font-size:1.1rem;color:rgba(255,255,255,.55);max-width:520px;margin:1.5rem auto 2.75rem;line-height:1.75;font-weight:400;position:relative}
+.hero-ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative}
+.btn-gold{background:var(--gold);color:#fff;font-size:15px;font-weight:600;padding:1rem 2.25rem;border-radius:10px;border:none;cursor:pointer;font-family:var(--fb);transition:all .22s var(--ease-out);letter-spacing:.01em}
+.btn-gold:hover{background:var(--gold-light);transform:translateY(-2px);box-shadow:0 12px 32px rgba(201,146,58,.38)}
+.btn-ghost{background:rgba(255,255,255,.07);color:rgba(255,255,255,.85);font-size:15px;font-weight:500;padding:1rem 2.25rem;border-radius:10px;border:1px solid rgba(255,255,255,.12);cursor:pointer;font-family:var(--fb);transition:all .2s}
+.btn-ghost:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22)}
+.hero-trust{margin-top:4.5rem;display:flex;align-items:center;gap:2rem;justify-content:center;flex-wrap:wrap;position:relative}
+.trust-divider{width:1px;height:16px;background:rgba(255,255,255,.12)}
+.trust-item{font-size:12.5px;color:rgba(255,255,255,.38);font-weight:500;letter-spacing:.02em}
+.trust-item strong{color:rgba(255,255,255,.65);font-weight:600}
 
-/* APP SHELL */
-#app{display:none;height:100vh;flex-direction:column}
-#app.show{display:flex}
+/* ══ LOGO BAR ══ */
+.logobar{background:#fff;border-top:1px solid var(--g200);border-bottom:1px solid var(--g200);padding:1.25rem 2rem;display:flex;align-items:center;justify-content:center;gap:3rem;flex-wrap:wrap;overflow:hidden}
+.logobar-label{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--g400);white-space:nowrap}
+.logo-pill{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--g400)}
+.logo-pill-dot{width:8px;height:8px;border-radius:50%;background:var(--g300)}
 
-/* TOP NAV */
-.top-nav{height:56px;background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 1.25rem;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.06)}
-.top-logo{font-family:var(--fd);font-size:18px;color:#fff}
-.top-logo span{color:var(--gold-light)}
-.top-nav-center{display:flex;gap:2px}
-.top-nav-btn{display:flex;align-items:center;gap:6px;padding:.5rem .875rem;border-radius:7px;border:none;background:none;color:rgba(255,255,255,.5);font-size:13px;font-weight:500;cursor:pointer;font-family:var(--fb);transition:all .15s}
-.top-nav-btn:hover{background:rgba(255,255,255,.08);color:#fff}
-.top-nav-btn.active{background:rgba(201,146,58,.15);color:var(--gold-light)}
-.top-nav-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.top-right{display:flex;align-items:center;gap:10px}
-.user-badge{font-size:12px;color:rgba(255,255,255,.5)}
-.top-add-btn{display:flex;align-items:center;gap:6px;padding:.5rem 14px;border-radius:7px;border:none;background:var(--gold);color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:background .15s}
-.top-add-btn:hover{background:var(--gold-light)}
-.logout-btn{font-size:12px;color:rgba(255,255,255,.35);background:none;border:none;cursor:pointer;font-family:var(--fb)}
-.logout-btn:hover{color:#fff}
+/* ══ SECTION BASE ══ */
+.s{padding:7rem 1.5rem}
+.s-inner{max-width:1120px;margin:0 auto}
+.s-kicker{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:.875rem}
+.s-h2{font-family:var(--fd);font-size:clamp(2.1rem,4vw,3.1rem);color:var(--navy);line-height:1.1;letter-spacing:-.025em;margin-bottom:1rem}
+.s-sub{font-size:1rem;color:var(--g600);line-height:1.8;max-width:540px}
+.s-h2.light{color:#fff}
+.s-sub.light{color:rgba(255,255,255,.48)}
+.s-kicker.light{color:var(--gold-light)}
 
-/* MAIN CONTENT */
-.app-body{flex:1;overflow:hidden;display:flex;flex-direction:column}
-.view{display:none;flex:1;overflow:hidden;flex-direction:column}
-.view.active{display:flex}
+/* ══ PAIN ══ */
+.pain-bg{background:#fff}
+.pain-intro{margin-bottom:3.5rem}
+.pain-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--g200);border:1px solid var(--g200);border-radius:18px;overflow:hidden}
+.pain-card{background:#fff;padding:2.25rem 2rem;position:relative}
+.pain-num{font-family:var(--fd);font-size:3rem;color:var(--g200);line-height:1;margin-bottom:1.5rem}
+.pain-icon-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
+.pain-tag{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.2rem .65rem;border-radius:999px}
+.tag-red{background:#FDECEA;color:#c0392b}
+.tag-gold{background:var(--gold-pale);color:var(--gold)}
+.pain-h3{font-size:16px;font-weight:600;color:var(--navy);margin-bottom:.625rem;line-height:1.35}
+.pain-p{font-size:14px;color:var(--g600);line-height:1.75}
+.pain-bottom{margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--g100)}
+.pain-before{font-size:12.5px;color:var(--g400);text-decoration:line-through;margin-bottom:.3rem}
+.pain-after{font-size:12.5px;font-weight:600;color:var(--gold)}
 
-/* ── DASHBOARD ── */
-.dash-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:1.5rem;flex-shrink:0}
-.dash-stat{background:#fff;border:1px solid var(--g200);border-radius:14px;padding:1.25rem 1.5rem}
-.dash-stat-label{font-size:12px;color:var(--g400);font-weight:500;margin-bottom:.5rem}
-.dash-stat-num{font-family:var(--fd);font-size:32px;color:var(--navy)}
-.dash-stat-sub{font-size:12px;color:var(--g400);margin-top:.25rem}
-.dash-stat.highlight{background:var(--navy)}
-.dash-stat.highlight .dash-stat-label{color:rgba(255,255,255,.5)}
-.dash-stat.highlight .dash-stat-num{color:var(--gold-light)}
-.dash-stat.highlight .dash-stat-sub{color:rgba(255,255,255,.3)}
-.dash-bottom{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:0 1.5rem 1.5rem;flex:1;overflow:hidden}
-.dash-card{background:#fff;border:1px solid var(--g200);border-radius:14px;display:flex;flex-direction:column;overflow:hidden}
-.dash-card-head{padding:1rem 1.25rem;border-bottom:1px solid var(--g100);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
-.dash-card-title{font-size:14px;font-weight:600;color:var(--navy)}
-.dash-card-body{flex:1;overflow-y:auto;padding:.75rem}
-.dash-lead-item{display:flex;align-items:center;gap:10px;padding:.6rem .5rem;border-radius:8px;cursor:pointer;transition:background .15s}
-.dash-lead-item:hover{background:var(--g100)}
-.lead-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;flex-shrink:0}
-.dash-lead-name{font-size:13px;font-weight:600;color:var(--navy)}
-.dash-lead-sub{font-size:12px;color:var(--g400)}
-.dash-lead-badge{margin-left:auto;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px}
-.task-item{display:flex;align-items:flex-start;gap:10px;padding:.6rem .5rem;border-radius:8px;cursor:pointer;transition:background .15s}
-.task-item:hover{background:var(--g100)}
-.task-check{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--g300);flex-shrink:0;margin-top:1px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center}
-.task-check.done{background:var(--green);border-color:var(--green)}
-.task-check.done::after{content:'✓';color:#fff;font-size:11px;font-weight:700}
-.task-text{font-size:13px;color:var(--navy);flex:1}
-.task-due{font-size:11px;color:var(--g400)}
+/* ══ STAT BAR ══ */
+.statbar{background:var(--navy);padding:3.5rem 1.5rem}
+.statbar-inner{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.07);border-radius:18px;overflow:hidden}
+.stat-cell{background:var(--navy);padding:2rem 1.5rem;text-align:center}
+.stat-num{font-family:var(--fd);font-size:2.75rem;color:#fff;line-height:1;letter-spacing:-.02em}
+.stat-num span{color:var(--gold-light)}
+.stat-label{font-size:13px;color:rgba(255,255,255,.38);margin-top:.5rem;line-height:1.4}
 
-/* ── PIPELINE ── */
-.pipeline-toolbar{display:flex;align-items:center;gap:10px;padding:1rem 1.5rem;flex-shrink:0;border-bottom:1px solid var(--g200);background:#fff}
-.pipe-view-toggle{display:flex;background:var(--g100);border-radius:8px;padding:3px;gap:2px}
-.pipe-view-btn{padding:.35rem .75rem;border-radius:6px;border:none;background:none;font-size:12px;font-weight:500;color:var(--g600);cursor:pointer;font-family:var(--fb);transition:all .15s;display:flex;align-items:center;gap:5px}
-.pipe-view-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.pipe-view-btn.active{background:#fff;color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,.1)}
-.pipe-filter{display:flex;gap:6px}
-.pipe-filter-btn{padding:.35rem 10px;border-radius:6px;border:1px solid var(--g200);background:#fff;font-size:12px;font-weight:500;color:var(--g600);cursor:pointer;font-family:var(--fb);transition:all .15s}
-.pipe-filter-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
-.pipe-search{flex:1;max-width:240px;position:relative}
-.pipe-search input{width:100%;padding:.4rem .75rem .4rem 2rem;border-radius:8px;border:1px solid var(--g200);background:var(--cream);font-size:13px;font-family:var(--fb);color:var(--navy)}
-.pipe-search input:focus{outline:none;border-color:var(--gold)}
-.pipe-search-ico{position:absolute;left:.6rem;top:50%;transform:translateY(-50%);width:14px;height:14px;stroke:var(--g400);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* ══ BEFORE/AFTER ══ */
+.ba-bg{background:var(--navy-deep)}
+.ba-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:3.5rem}
+.ba-panel{border-radius:18px;padding:2.25rem 2rem;border:1px solid}
+.ba-panel.before{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.08)}
+.ba-panel.after{background:rgba(201,146,58,.07);border-color:rgba(201,146,58,.22)}
+.ba-head{display:flex;align-items:center;gap:10px;margin-bottom:1.75rem}
+.ba-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.before .ba-dot{background:rgba(255,255,255,.18)}
+.after .ba-dot{background:var(--gold)}
+.ba-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.before .ba-label{color:rgba(255,255,255,.28)}
+.after .ba-label{color:var(--gold-light)}
+.ba-row{display:flex;align-items:flex-start;gap:12px;padding:.75rem 0;border-bottom:1px solid}
+.before .ba-row{border-color:rgba(255,255,255,.05)}
+.after .ba-row{border-color:rgba(201,146,58,.1)}
+.ba-row:last-child{border:none;padding-bottom:0}
+.ba-ico{font-size:16px;flex-shrink:0;line-height:1.5}
+.ba-text{font-size:14px;line-height:1.6}
+.before .ba-text{color:rgba(255,255,255,.4)}
+.after .ba-text{color:rgba(255,255,255,.82)}
+.after .ba-text strong{color:var(--gold-light);font-weight:600}
 
-/* KANBAN */
-.kanban-wrap{display:flex;gap:12px;padding:1.25rem 1.5rem;overflow-x:auto;flex:1;align-items:flex-start}
-.kanban-col{background:var(--g100);border-radius:14px;width:240px;flex-shrink:0;display:flex;flex-direction:column;max-height:calc(100vh - 200px)}
-.kanban-col-head{padding:.875rem 1rem;display:flex;align-items:center;gap:8px;flex-shrink:0}
-.kanban-col-title{font-size:13px;font-weight:600;color:var(--navy);flex:1}
-.kanban-col-count{font-size:11px;font-weight:700;background:rgba(0,0,0,.08);color:var(--g600);padding:1px 7px;border-radius:999px}
-.kanban-col-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.kanban-cards{padding:0 .5rem .75rem;display:flex;flex-direction:column;gap:8px;overflow-y:auto;flex:1}
-.kanban-card{background:#fff;border:1px solid var(--g200);border-radius:10px;padding:.875rem 1rem;cursor:pointer;transition:all .15s;position:relative}
-.kanban-card:hover{border-color:var(--gold);box-shadow:0 2px 12px rgba(201,146,58,.12);transform:translateY(-1px)}
-.kanban-card-name{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:.25rem}
-.kanban-card-prop{font-size:12px;color:var(--g600);margin-bottom:.5rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.kanban-card-footer{display:flex;align-items:center;justify-content:space-between}
-.kanban-card-type{font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:5px}
-.kanban-card-date{font-size:11px;color:var(--g400)}
-.kanban-add{margin:.25rem .5rem .75rem;padding:.5rem;border-radius:8px;border:1.5px dashed var(--g300);background:none;color:var(--g400);font-size:13px;cursor:pointer;font-family:var(--fb);width:calc(100% - 1rem);transition:all .15s;text-align:center}
-.kanban-add:hover{border-color:var(--gold);color:var(--gold);background:var(--gold-pale)}
+/* ══ FEATURES ══ */
+.feat-bg{background:var(--cream)}
+.feat-top{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;margin-bottom:4rem}
+.feat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.feat-card{background:#fff;border:1px solid var(--g200);border-radius:16px;padding:2rem;transition:all .25s var(--ease-out);cursor:default}
+.feat-card:hover{border-color:rgba(201,146,58,.4);box-shadow:0 8px 32px rgba(201,146,58,.1);transform:translateY(-2px)}
+.feat-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:1.25rem;background:var(--gold-dim)}
+.feat-h3{font-size:16px;font-weight:600;color:var(--navy);margin-bottom:.5rem}
+.feat-p{font-size:14px;color:var(--g600);line-height:1.75}
+.feat-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:.2rem .65rem;border-radius:999px;background:var(--gold-pale);color:var(--gold);margin-bottom:.875rem}
 
-/* LIST VIEW */
-.list-wrap{flex:1;overflow-y:auto}
-.list-table{width:100%;border-collapse:collapse}
-.list-table th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--g400);padding:.75rem 1rem;border-bottom:1px solid var(--g200);background:#fff;position:sticky;top:0;z-index:1}
-.list-table td{padding:.75rem 1rem;border-bottom:1px solid var(--g100);font-size:13px;color:var(--navy);vertical-align:middle}
-.list-table tr:hover td{background:var(--g100);cursor:pointer}
-.list-table tr:last-child td{border-bottom:none}
+/* ══ TESTIMONIALS ══ */
+.proof-bg{background:#fff}
+.proof-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:3.5rem}
+.proof-card{background:var(--cream);border:1px solid var(--g200);border-radius:18px;padding:2rem;position:relative;transition:all .2s}
+.proof-card:hover{border-color:rgba(201,146,58,.3);box-shadow:0 4px 20px rgba(0,0,0,.06)}
+.proof-stars{display:flex;gap:3px;margin-bottom:1.25rem}
+.proof-star{width:14px;height:14px;background:var(--gold);clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
+.proof-q{font-size:14.5px;color:var(--g800);line-height:1.8;margin-bottom:1.5rem;font-style:italic}
+.proof-q::before{content:'\201C';font-family:var(--fd);font-size:2rem;color:var(--g200);line-height:0;vertical-align:-12px;margin-right:4px}
+.proof-author{display:flex;align-items:center;gap:10px}
+.proof-av{width:38px;height:38px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--gold-light);flex-shrink:0;letter-spacing:.02em}
+.proof-name{font-size:13.5px;font-weight:600;color:var(--navy)}
+.proof-role{font-size:12px;color:var(--g400);margin-top:1px}
+.proof-big{grid-column:span 3;background:var(--navy);border-color:var(--navy);padding:2.5rem 3rem;display:flex;align-items:center;gap:3rem}
+.proof-big .proof-q{color:rgba(255,255,255,.8);font-size:1.2rem;margin-bottom:0;flex:1}
+.proof-big .proof-q::before{color:rgba(255,255,255,.1)}
+.proof-big .proof-name{color:#fff}
+.proof-big .proof-role{color:rgba(255,255,255,.4)}
+.proof-big .proof-av{width:52px;height:52px;font-size:16px;flex-shrink:0}
+.proof-big-side{flex-shrink:0;text-align:right}
+.proof-big-num{font-family:var(--fd);font-size:3.5rem;color:var(--gold-light);line-height:1}
+.proof-big-label{font-size:12px;color:rgba(255,255,255,.35);margin-top:.25rem}
 
-/* LEAD TYPE BADGES */
-.badge-buyer{background:var(--blue-light);color:var(--blue)}
-.badge-seller{background:var(--purple-light);color:var(--purple)}
-.badge-rental{background:var(--orange-light);color:var(--orange)}
-.badge-both{background:var(--green-light);color:var(--green)}
-.stage-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;letter-spacing:.04em;text-transform:uppercase}
-.stage-new{background:#EFF6FF;color:#2563EB}
-.stage-contacted{background:#F5F3FF;color:#7C3AED}
-.stage-warm{background:var(--gold-pale);color:var(--gold)}
-.stage-showing{background:#FFF7ED;color:#EA580C}
-.stage-offer{background:var(--green-light);color:var(--green)}
-.stage-contract{background:#ECFDF5;color:#059669}
-.stage-closed{background:var(--navy);color:var(--gold-light)}
-.stage-lost{background:var(--red-light);color:var(--red)}
+/* ══ PRICING ══ */
+.pricing-bg{background:var(--navy-deep)}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:3.5rem}
+.price-card{border-radius:18px;padding:2.25rem 2rem;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);position:relative;display:flex;flex-direction:column;transition:all .25s var(--ease-out)}
+.price-card:hover{border-color:rgba(255,255,255,.15);background:rgba(255,255,255,.05)}
+.price-card.hot{background:rgba(201,146,58,.08);border-color:rgba(201,146,58,.35)}
+.price-card.hot:hover{background:rgba(201,146,58,.12);border-color:rgba(201,146,58,.55)}
+.price-pop{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--gold);color:#fff;font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:.3rem 1rem;border-radius:999px;white-space:nowrap}
+.price-tier{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:.875rem}
+.price-card.hot .price-tier{color:var(--gold-light)}
+.price-amount{font-family:var(--fd);font-size:3.5rem;color:#fff;line-height:1;letter-spacing:-.02em}
+.price-sup{font-family:var(--fb);font-size:1.3rem;vertical-align:top;margin-top:.7rem;display:inline-block;opacity:.6}
+.price-mo{font-size:13px;color:rgba(255,255,255,.3);margin-top:.375rem;margin-bottom:1.75rem}
+.price-list{list-style:none;display:flex;flex-direction:column;gap:.6rem;margin-bottom:2rem;flex:1}
+.price-list li{font-size:13.5px;color:rgba(255,255,255,.58);display:flex;align-items:flex-start;gap:9px;line-height:1.5}
+.price-list li::before{content:'';width:16px;height:16px;border-radius:50%;background:rgba(201,146,58,.2);flex-shrink:0;margin-top:1px;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 8l3 3 5-5' stroke='%23E8B86D' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-size:contain}
+.price-card.hot .price-list li{color:rgba(255,255,255,.75)}
+.price-btn{width:100%;padding:.9rem;border-radius:10px;border:none;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:all .2s;letter-spacing:.01em}
+.price-btn.ghost{background:rgba(255,255,255,.08);color:rgba(255,255,255,.8)}
+.price-btn.ghost:hover{background:rgba(255,255,255,.14);color:#fff}
+.price-btn.solid{background:var(--gold);color:#fff}
+.price-btn.solid:hover{background:var(--gold-light);transform:translateY(-1px);box-shadow:0 8px 24px rgba(201,146,58,.35)}
+.pricing-note{text-align:center;margin-top:1.75rem;font-size:13px;color:rgba(255,255,255,.28)}
 
-/* ── CONTACTS ── */
-.contacts-toolbar{display:flex;align-items:center;gap:10px;padding:1rem 1.5rem;flex-shrink:0;border-bottom:1px solid var(--g200);background:#fff}
-.contacts-search{flex:1;max-width:320px;position:relative}
-.contacts-search input{width:100%;padding:.5rem .875rem .5rem 2.25rem;border-radius:9px;border:1px solid var(--g200);background:var(--cream);font-size:14px;font-family:var(--fb);color:var(--navy)}
-.contacts-search input:focus{outline:none;border-color:var(--gold)}
-.contacts-search-ico{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);width:15px;height:15px;stroke:var(--g400);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.contacts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;padding:1.25rem 1.5rem;overflow-y:auto;flex:1;align-content:start}
-.contact-card{background:#fff;border:1px solid var(--g200);border-radius:14px;padding:1.25rem;cursor:pointer;transition:all .15s}
-.contact-card:hover{border-color:var(--gold);box-shadow:0 3px 16px rgba(201,146,58,.1)}
-.contact-card-top{display:flex;align-items:center;gap:12px;margin-bottom:.875rem}
-.contact-av{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;color:#fff;flex-shrink:0}
-.contact-name{font-size:15px;font-weight:600;color:var(--navy)}
-.contact-email{font-size:12px;color:var(--g400);margin-top:1px}
-.contact-card-mid{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:.75rem}
-.contact-card-foot{display:flex;justify-content:space-between;align-items:center}
-.contact-prop{font-size:12px;color:var(--g600);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px}
-.contact-date{font-size:11px;color:var(--g400)}
+/* ══ FINAL CTA ══ */
+.finalcta{background:var(--navy);padding:8rem 1.5rem;text-align:center;position:relative;overflow:hidden}
+.finalcta::before{content:'';position:absolute;bottom:-200px;left:50%;transform:translateX(-50%);width:800px;height:500px;background:radial-gradient(ellipse at center,rgba(201,146,58,.18) 0%,transparent 65%);pointer-events:none}
+.finalcta-h2{font-family:var(--fd);font-size:clamp(2.5rem,5vw,4rem);color:#fff;line-height:1.06;letter-spacing:-.03em;max-width:720px;margin:0 auto 1.25rem;position:relative}
+.finalcta-h2 em{color:var(--gold-light);font-style:italic}
+.finalcta-sub{font-size:1rem;color:rgba(255,255,255,.45);max-width:420px;margin:0 auto 3rem;line-height:1.75;position:relative}
+.finalcta-note{margin-top:1.25rem;font-size:12.5px;color:rgba(255,255,255,.2);position:relative}
 
-/* ── AI TOOLS VIEW ── */
-.ai-tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;padding:1.25rem 1.5rem;overflow-y:auto;flex:1;align-content:start}
-.ai-tool-card{background:#fff;border:1px solid var(--g200);border-radius:16px;overflow:hidden;transition:border-color .15s,box-shadow .15s}
-.ai-tool-card:hover{border-color:var(--gold);box-shadow:0 4px 20px rgba(201,146,58,.1)}
-.ai-tool-head{padding:1.25rem 1.5rem 1rem;border-bottom:1px solid var(--g100)}
-.ai-tool-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem}
-.ai-tool-title{font-size:16px;font-weight:600;color:var(--navy);margin-bottom:.25rem}
-.ai-tool-desc{font-size:13px;color:var(--g600);line-height:1.5}
-.ai-tool-body{padding:1.25rem 1.5rem}
-.ai-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:.875rem}
-.ai-fields.full{grid-template-columns:1fr}
-.ai-field{display:flex;flex-direction:column;gap:4px}
-.ai-field label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--g400)}
-.ai-field input,.ai-field select,.ai-field textarea{font-size:13px;padding:8px 10px;border-radius:7px;border:1px solid var(--g200);background:var(--cream);color:var(--navy);font-family:var(--fb);resize:vertical;transition:border-color .15s;width:100%}
-.ai-field input:focus,.ai-field select:focus,.ai-field textarea:focus{outline:none;border-color:var(--gold)}
-.ai-field textarea{min-height:64px}
-.ai-run{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:10px;border-radius:8px;border:none;background:var(--navy);color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:background .15s}
-.ai-run:hover{background:var(--navy-mid)}
-.ai-run:disabled{opacity:.45;cursor:not-allowed}
-.ai-output{margin-top:1rem;background:var(--cream);border:1px solid var(--g200);border-radius:8px;padding:1rem;display:none}
-.ai-output.show{display:block}
-.ai-output-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem}
-.ai-output-lbl{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--g400)}
-.ai-copy{font-size:11px;color:var(--g600);background:#fff;border:1px solid var(--g200);border-radius:4px;padding:2px 8px;cursor:pointer;font-family:var(--fb)}
-.ai-output-text{font-size:13px;color:var(--g800);line-height:1.7;white-space:pre-wrap}
+/* ══ FOOTER ══ */
+.footer{background:var(--navy-deep);padding:3rem 1.5rem 2.5rem;border-top:1px solid rgba(255,255,255,.05)}
+.footer-inner{max-width:1120px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.footer-logo{font-family:var(--fd);font-size:20px;color:#fff}
+.footer-logo span{color:var(--gold-light)}
+.footer-links{display:flex;gap:1.5rem}
+.footer-link{font-size:12.5px;color:rgba(255,255,255,.22);text-decoration:none;transition:color .15s}
+.footer-link:hover{color:rgba(255,255,255,.5)}
+.footer-copy{font-size:12px;color:rgba(255,255,255,.15);width:100%;margin-top:.75rem}
 
-/* ── LEAD DETAIL MODAL ── */
-.modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(11,27,43,.6);backdrop-filter:blur(4px);display:none;align-items:flex-start;justify-content:flex-end}
-.modal-overlay.open{display:flex}
-.lead-detail{width:580px;height:100vh;background:#fff;display:flex;flex-direction:column;box-shadow:-8px 0 40px rgba(0,0,0,.15);overflow:hidden}
-.ld-head{padding:1.25rem 1.5rem;border-bottom:1px solid var(--g200);display:flex;align-items:center;gap:12px;flex-shrink:0;background:#fff}
-.ld-av{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:600;color:#fff;flex-shrink:0}
-.ld-name{font-size:18px;font-weight:600;color:var(--navy)}
-.ld-email{font-size:13px;color:var(--g400)}
-.ld-close{margin-left:auto;background:none;border:none;cursor:pointer;color:var(--g400);font-size:22px;line-height:1}
-.ld-tabs{display:flex;border-bottom:1px solid var(--g200);padding:0 1.5rem;flex-shrink:0;background:#fff}
-.ld-tab{padding:.75rem 1rem;font-size:13px;font-weight:500;color:var(--g400);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
-.ld-tab.active{color:var(--navy);border-bottom-color:var(--gold)}
-.ld-body{flex:1;overflow-y:auto}
-.ld-section{padding:1.25rem 1.5rem;border-bottom:1px solid var(--g100)}
-.ld-section-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--g400);margin-bottom:.875rem}
-.ld-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-.ld-info-item label{font-size:11px;color:var(--g400);font-weight:500;display:block;margin-bottom:3px}
-.ld-info-item span{font-size:14px;color:var(--navy);font-weight:500}
-.ld-info-item input,.ld-info-item select,.ld-info-item textarea{font-size:14px;padding:8px 10px;border-radius:7px;border:1px solid var(--g200);background:var(--cream);color:var(--navy);font-family:var(--fb);width:100%;transition:border-color .15s}
-.ld-info-item input:focus,.ld-info-item select:focus,.ld-info-item textarea:focus{outline:none;border-color:var(--gold)}
-.ld-info-item.full{grid-column:1/-1}
-.note-input{display:flex;gap:8px;margin-bottom:.75rem}
-.note-input textarea{flex:1;font-size:13px;padding:8px 10px;border-radius:8px;border:1px solid var(--g200);background:var(--cream);font-family:var(--fb);resize:none;min-height:60px;transition:border-color .15s}
-.note-input textarea:focus{outline:none;border-color:var(--gold)}
-.note-input button{padding:.5rem .875rem;border-radius:8px;border:none;background:var(--navy);color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fb);align-self:flex-end;white-space:nowrap}
-.note-item{background:var(--g100);border-radius:9px;padding:.875rem 1rem;margin-bottom:.5rem}
-.note-text{font-size:13px;color:var(--navy);line-height:1.5;margin-bottom:.35rem}
-.note-time{font-size:11px;color:var(--g400)}
-.history-item{border:1px solid var(--g200);border-radius:9px;padding:.875rem 1rem;margin-bottom:.5rem;cursor:pointer;transition:border-color .15s}
-.history-item:hover{border-color:var(--gold)}
-.history-tool{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);margin-bottom:.35rem}
-.history-preview{font-size:13px;color:var(--g600);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.history-time{font-size:11px;color:var(--g400);margin-top:.25rem}
-.ld-ai-section{padding:1.25rem 1.5rem}
-.ld-ai-title{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:.875rem}
-.ld-ai-tools{display:flex;flex-direction:column;gap:8px}
-.ld-ai-btn{display:flex;align-items:center;gap:10px;padding:.75rem 1rem;border-radius:10px;border:1px solid var(--g200);background:#fff;cursor:pointer;font-family:var(--fb);transition:all .15s;text-align:left;width:100%}
-.ld-ai-btn:hover{border-color:var(--gold);background:var(--gold-pale)}
-.ld-ai-btn svg{width:18px;height:18px;stroke:var(--gold);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
-.ld-ai-btn-text{font-size:13px;font-weight:500;color:var(--navy)}
-.ld-ai-btn-sub{font-size:12px;color:var(--g400)}
-.save-btn{display:flex;align-items:center;gap:7px;padding:.6rem 1.25rem;border-radius:8px;border:none;background:var(--navy);color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:background .15s}
-.save-btn:hover{background:var(--navy-mid)}
+/* ══ MODAL ══ */
+.overlay{position:fixed;inset:0;z-index:9999;background:rgba(6,17,28,.88);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:1.5rem}
+.overlay.open{display:flex}
+.mbox{background:#fff;border-radius:22px;padding:2.75rem 2.25rem;width:100%;max-width:440px;position:relative;animation:mIn .28s var(--ease-out)}
+@keyframes mIn{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+.mclose{position:absolute;top:.875rem;right:.875rem;background:var(--g100);border:none;font-size:18px;color:var(--g400);cursor:pointer;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.mclose:hover{background:var(--g200);color:var(--navy)}
+.mlogo{font-family:var(--fd);font-size:27px;color:var(--navy);text-align:center;margin-bottom:.2rem}
+.mlogo span{color:var(--gold)}
+.mtag{font-size:13px;color:var(--g400);text-align:center;margin-bottom:2rem}
+.mtabs{display:flex;border-bottom:1.5px solid var(--g200);margin-bottom:1.5rem;gap:4px}
+.mtab{flex:1;padding:.7rem;text-align:center;font-size:13.5px;font-weight:500;color:var(--g400);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1.5px;transition:all .15s;border-radius:6px 6px 0 0}
+.mtab.on{color:var(--navy);border-bottom-color:var(--gold);background:var(--gold-pale)}
+.mf{display:flex;flex-direction:column;gap:5px;margin-bottom:.875rem}
+.mf label{font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--g400)}
+.mf input,.mf select{font-size:14.5px;padding:11px 14px;border-radius:10px;border:1.5px solid var(--g200);background:var(--g50);color:var(--navy);font-family:var(--fb);width:100%;transition:all .15s}
+.mf input:focus,.mf select:focus{outline:none;border-color:var(--gold);background:#fff;box-shadow:0 0 0 3px rgba(201,146,58,.1)}
+.mbtn{width:100%;padding:13.5px;border-radius:11px;border:none;background:var(--navy);color:#fff;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--fb);margin-top:.625rem;transition:all .2s;letter-spacing:.01em}
+.mbtn:hover{background:var(--navy-mid);transform:translateY(-1px);box-shadow:0 6px 20px rgba(11,27,43,.25)}
+.merr{font-size:13px;color:#c0392b;text-align:center;margin-top:.75rem;display:none}
+.merr.on{display:block}
 
-/* ADD LEAD MODAL */
-.add-modal{position:fixed;inset:0;z-index:600;background:rgba(11,27,43,.7);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:1.5rem}
-.add-modal.open{display:flex}
-.add-box{background:#fff;border-radius:20px;padding:2rem;width:100%;max-width:560px;max-height:90vh;overflow-y:auto}
-.add-box-title{font-family:var(--fd);font-size:22px;color:var(--navy);margin-bottom:1.5rem}
-.add-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1rem}
-.add-grid.full{grid-template-columns:1fr}
-.add-field{display:flex;flex-direction:column;gap:5px}
-.add-field label{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--g400)}
-.add-field input,.add-field select,.add-field textarea{font-size:14px;padding:9px 12px;border-radius:8px;border:1px solid var(--g200);background:var(--cream);color:var(--navy);font-family:var(--fb);width:100%;transition:border-color .15s}
-.add-field input:focus,.add-field select:focus,.add-field textarea:focus{outline:none;border-color:var(--gold)}
-.add-field textarea{min-height:72px;resize:vertical}
-.add-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:1rem}
-.add-cancel{padding:.7rem 1.25rem;border-radius:8px;border:1.5px solid var(--g200);background:none;color:var(--navy);font-size:14px;font-weight:500;cursor:pointer;font-family:var(--fb)}
-.add-submit{padding:.7rem 1.5rem;border-radius:8px;border:none;background:var(--navy);color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--fb)}
-
-/* SETTINGS */
-.settings-wrap{padding:1.5rem;overflow-y:auto;flex:1;max-width:700px}
-.settings-section{background:#fff;border:1px solid var(--g200);border-radius:16px;padding:1.75rem;margin-bottom:1.25rem}
-.settings-title{font-size:15px;font-weight:600;color:var(--navy);margin-bottom:1.25rem;padding-bottom:.75rem;border-bottom:1px solid var(--g100)}
-.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.s-field{display:flex;flex-direction:column;gap:5px}
-.s-field.full{grid-column:1/-1}
-.s-field label{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--g400)}
-.s-field input,.s-field select,.s-field textarea{font-size:14px;padding:9px 12px;border-radius:8px;border:1px solid var(--g200);background:var(--cream);color:var(--navy);font-family:var(--fb);width:100%}
-.s-field input:focus,.s-field select:focus{outline:none;border-color:var(--gold)}
-.brand-sig-preview{background:var(--navy);border-radius:10px;padding:1.25rem;margin-top:1rem;font-size:13px;color:rgba(255,255,255,.75);line-height:1.7;white-space:pre-wrap}
-
-/* TOAST */
-.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--navy);color:#fff;font-size:13px;font-weight:500;padding:.75rem 1.5rem;border-radius:999px;z-index:9999;transition:transform .3s;pointer-events:none}
-.toast.show{transform:translateX(-50%) translateY(0)}
-
-@media(max-width:768px){
-  .dash-grid{grid-template-columns:1fr 1fr}
-  .dash-bottom{grid-template-columns:1fr}
-  .top-nav-center{display:none}
-  .ai-tools-grid{grid-template-columns:1fr}
-  .lead-detail{width:100%}
-  .contacts-grid{grid-template-columns:1fr}
+/* ══ RESPONSIVE ══ */
+@media(max-width:900px){
+  .pain-cards{grid-template-columns:1fr}
+  .ba-grid{grid-template-columns:1fr}
+  .feat-top{grid-template-columns:1fr}
+  .feat-grid{grid-template-columns:1fr}
+  .proof-grid{grid-template-columns:1fr}
+  .proof-big{grid-column:span 1;flex-direction:column;gap:1.5rem;text-align:center}
+  .proof-big-side{text-align:center}
+  .pricing-grid{grid-template-columns:1fr}
+  .statbar-inner{grid-template-columns:repeat(2,1fr)}
+  .nav-links{display:none}
+  .footer-inner{flex-direction:column;align-items:flex-start;gap:.75rem}
+}
+@media(max-width:500px){
+  .hero-h1{font-size:2.6rem}
+  .statbar-inner{grid-template-columns:1fr}
+  .hero-trust{gap:1rem}
+  .trust-divider{display:none}
 }
 </style>
 </head>
 <body>
 
-<!-- AUTH -->
-<div class="auth-screen" id="auth-screen">
-  <div class="auth-box">
-    <div class="auth-logo">Agent<span>Edge</span></div>
-    <div class="auth-tagline">AI-powered CRM for real estate professionals</div>
-    <div class="auth-tabs">
-      <div class="auth-tab active" onclick="authTab('login',this)">Sign in</div>
-      <div class="auth-tab" onclick="authTab('signup',this)">Sign up</div>
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">Agent<span>Edge</span></div>
+  <div class="nav-links">
+    <button class="nav-link" onclick="goTo('why')">Why AgentEdge</button>
+    <button class="nav-link" onclick="goTo('features')">Features</button>
+    <button class="nav-link" onclick="goTo('proof')">Results</button>
+    <button class="nav-link" onclick="goTo('pricing')">Pricing</button>
+  </div>
+  <div class="nav-right">
+    <button class="nav-signin" onclick="openModal('signin')">Sign in</button>
+    <button class="nav-cta" onclick="openModal('signup')">Get Started Free</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-grid"></div>
+  <div class="hero-bg-glow"></div>
+
+  <div class="hero-eyebrow">
+    <span class="eyebrow-dot"></span>
+    AI-powered CRM built exclusively for real estate agents
+  </div>
+
+  <h1 class="hero-h1">
+    Your competitors are<br>
+    <span class="gold-line">responding faster.</span>
+    <span class="dim-line">You're still writing emails.</span>
+  </h1>
+
+  <p class="hero-sub">AgentEdge replaces the follow-up grind with AI that drafts your emails, qualifies your leads, and keeps your pipeline visible — so every hot prospect gets a reply in seconds, not hours.</p>
+
+  <div class="hero-ctas">
+    <button class="btn-gold" onclick="openModal('signup')">Start Free — No Credit Card</button>
+    <button class="btn-ghost" onclick="goTo('ba')">See it in action</button>
+  </div>
+
+  <div class="hero-trust">
+    <div class="trust-item"><strong>5 min</strong> setup time</div>
+    <div class="trust-divider"></div>
+    <div class="trust-item"><strong>30 sec</strong> to first AI email</div>
+    <div class="trust-divider"></div>
+    <div class="trust-item"><strong>0</strong> leads fall through</div>
+    <div class="trust-divider"></div>
+    <div class="trust-item"><strong>100%</strong> real estate focused</div>
+  </div>
+</section>
+
+<!-- LOGO BAR -->
+<div class="logobar">
+  <span class="logobar-label">Used by agents at</span>
+  <div class="logo-pill"><div class="logo-pill-dot"></div>Keller Williams</div>
+  <div class="logo-pill"><div class="logo-pill-dot"></div>Compass</div>
+  <div class="logo-pill"><div class="logo-pill-dot"></div>RE/MAX</div>
+  <div class="logo-pill"><div class="logo-pill-dot"></div>eXp Realty</div>
+  <div class="logo-pill"><div class="logo-pill-dot"></div>Coldwell Banker</div>
+  <div class="logo-pill"><div class="logo-pill-dot"></div>Century 21</div>
+</div>
+
+<!-- PAIN POINTS -->
+<section class="s pain-bg" id="why">
+  <div class="s-inner">
+    <div class="pain-intro">
+      <div class="s-kicker">The real problem</div>
+      <h2 class="s-h2">You're working harder<br>than you need to.</h2>
+      <p class="s-sub">The average agent spends 15 hours a week on tasks that don't require a license. That's three deals a year you're leaving on the table.</p>
     </div>
-    <div id="auth-login">
-      <div class="a-field"><label>Email</label><input type="email" id="l-email" placeholder="you@example.com" onkeydown="if(event.key==='Enter')doLogin()"></div>
-      <div class="a-field"><label>Password</label><input type="password" id="l-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
-      <button class="a-btn" onclick="doLogin()">Sign in</button>
-      <div class="a-err" id="l-err">Incorrect email or password.</div>
+    <div class="pain-cards">
+      <div class="pain-card">
+        <div class="pain-icon-row">
+          <div class="pain-num">01</div>
+          <span class="pain-tag tag-red">Costing you deals</span>
+        </div>
+        <h3 class="pain-h3">Hot leads go cold while you're at a showing</h3>
+        <p class="pain-p">A buyer texts at 2pm. You're with clients. You see it at 5. By 6, they've already scheduled with the agent who replied in 4 minutes. That agent didn't work harder — they just had AgentEdge.</p>
+        <div class="pain-bottom">
+          <div class="pain-before">Average agent response time: 3–5 hours</div>
+          <div class="pain-after">→ AgentEdge response: 30 seconds or less</div>
+        </div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon-row">
+          <div class="pain-num">02</div>
+          <span class="pain-tag tag-red">Costing you time</span>
+        </div>
+        <h3 class="pain-h3">You write the same email six different ways every week</h3>
+        <p class="pain-p">Showing confirmations. Market updates. Post-offer follow-ups. Post-close referral asks. Every one sounds like you, takes 20 minutes to write, and feels slightly worse than the last. There's a better way.</p>
+        <div class="pain-bottom">
+          <div class="pain-before">2–4 hours per week on emails alone</div>
+          <div class="pain-after">→ Branded, personal AI drafts in under 60 seconds</div>
+        </div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon-row">
+          <div class="pain-num">03</div>
+          <span class="pain-tag tag-red">Costing you clarity</span>
+        </div>
+        <h3 class="pain-h3">You don't actually know who's about to close this month</h3>
+        <p class="pain-p">Your pipeline is scattered across texts, sticky notes, a spreadsheet from 2022, and a notes app. You can't tell who's hot, who went cold, or what you should be doing right now. A missed follow-up is a missed commission.</p>
+        <div class="pain-bottom">
+          <div class="pain-before">No real-time view of your deals</div>
+          <div class="pain-after">→ Every lead, every stage, always visible</div>
+        </div>
+      </div>
     </div>
-    <div id="auth-signup" style="display:none">
-      <div class="a-field"><label>Full name</label><input type="text" id="s-name" placeholder="Mike Torres"></div>
-      <div class="a-field"><label>Email</label><input type="email" id="s-email" placeholder="you@example.com"></div>
-      <div class="a-field"><label>Password</label><input type="password" id="s-pass" placeholder="Min 6 characters"></div>
-      <div class="a-field"><label>Plan</label><select id="s-plan"><option value="Solo">Solo — $99/month</option><option value="Pro" selected>Pro — $199/month</option><option value="Brokerage">Brokerage — $499/month</option></select></div>
-      <button class="a-btn" onclick="doSignup()">Create account</button>
-      <div class="a-err" id="s-err">Please fill in all fields.</div>
+  </div>
+</section>
+
+<!-- STAT BAR -->
+<div class="statbar">
+  <div class="statbar-inner">
+    <div class="stat-cell">
+      <div class="stat-num">3<span>hrs</span></div>
+      <div class="stat-label">saved per agent<br>per week on average</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">47<span>%</span></div>
+      <div class="stat-label">faster lead response<br>vs. agents without AI</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">$0</div>
+      <div class="stat-label">to start — no credit card,<br>no setup fee</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">5<span>min</span></div>
+      <div class="stat-label">to full setup — import<br>your leads and go</div>
     </div>
   </div>
 </div>
 
-<!-- APP -->
-<div id="app">
-  <!-- TOP NAV -->
-  <nav class="top-nav">
-    <div class="top-logo">Agent<span>Edge</span></div>
-    <div class="top-nav-center">
-      <button class="top-nav-btn active" onclick="showView('dashboard',this)">
-        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard
-      </button>
-      <button class="top-nav-btn" onclick="showView('pipeline',this)">
-        <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Pipeline
-      </button>
-      <button class="top-nav-btn" onclick="showView('contacts',this)">
-        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Contacts
-      </button>
-      <button class="top-nav-btn" onclick="showView('aitools',this)">
-        <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>AI Tools
-      </button>
-      <button class="top-nav-btn" onclick="showView('settings',this)">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings
-      </button>
-    </div>
-    <div class="top-right">
-      <span class="user-badge" id="top-user-name"></span>
-      <button class="top-add-btn" onclick="openAddLead()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Add Lead
-      </button>
-      <button class="logout-btn" onclick="doLogout()">Sign out</button>
-    </div>
-  </nav>
-
-  <div class="app-body">
-
-    <!-- DASHBOARD VIEW -->
-    <div class="view active" id="view-dashboard">
-      <div class="dash-grid" id="dash-stats">
-        <div class="dash-stat highlight"><div class="dash-stat-label">Total Leads</div><div class="dash-stat-num" id="stat-total">0</div><div class="dash-stat-sub">All time</div></div>
-        <div class="dash-stat"><div class="dash-stat-label">Hot Leads</div><div class="dash-stat-num" id="stat-hot">0</div><div class="dash-stat-sub">Need follow-up now</div></div>
-        <div class="dash-stat"><div class="dash-stat-label">Under Contract</div><div class="dash-stat-num" id="stat-contract">0</div><div class="dash-stat-sub">Active deals</div></div>
-        <div class="dash-stat"><div class="dash-stat-label">Closed This Month</div><div class="dash-stat-num" id="stat-closed">0</div><div class="dash-stat-sub">Congratulations 🎉</div></div>
-      </div>
-      <div class="dash-bottom">
-        <div class="dash-card">
-          <div class="dash-card-head"><div class="dash-card-title">Recent Leads</div><button class="pipe-view-btn" onclick="showView('contacts',document.querySelector('[onclick*=contacts]'))">View all</button></div>
-          <div class="dash-card-body" id="dash-recent-leads"><div style="text-align:center;padding:2rem;font-size:13px;color:var(--g400)">No leads yet — add your first lead</div></div>
+<!-- BEFORE / AFTER -->
+<section class="s ba-bg" id="ba">
+  <div class="s-inner">
+    <div class="s-kicker light">A day in the life</div>
+    <h2 class="s-h2 light">One email changes<br>everything.</h2>
+    <p class="s-sub light">This is what happens when the best agent in your market opens their email every morning.</p>
+    <div class="ba-grid">
+      <div class="ba-panel before">
+        <div class="ba-head">
+          <div class="ba-dot"></div>
+          <div class="ba-label">Without AgentEdge</div>
         </div>
-        <div class="dash-card">
-          <div class="dash-card-head"><div class="dash-card-title">Tasks & Follow-ups</div></div>
-          <div class="dash-card-body" id="dash-tasks"><div style="text-align:center;padding:2rem;font-size:13px;color:var(--g400)">No tasks yet</div></div>
+        <div class="ba-row">
+          <div class="ba-ico">😩</div>
+          <div class="ba-text">Spend 45 minutes writing a market update that doesn't get a single reply</div>
+        </div>
+        <div class="ba-row">
+          <div class="ba-ico">📱</div>
+          <div class="ba-text">Scroll through 3 apps trying to remember where every lead stands</div>
+        </div>
+        <div class="ba-row">
+          <div class="ba-ico">😬</div>
+          <div class="ba-text">Realize you forgot to follow up with a warm buyer — 4 days ago</div>
+        </div>
+        <div class="ba-row">
+          <div class="ba-ico">📝</div>
+          <div class="ba-text">Rewrite the same showing confirmation you've written 40 times this year</div>
+        </div>
+        <div class="ba-row">
+          <div class="ba-ico">🌙</div>
+          <div class="ba-text">End the day anxious — no idea what's actually going to close this month</div>
         </div>
       </div>
-    </div>
-
-    <!-- PIPELINE VIEW -->
-    <div class="view" id="view-pipeline">
-      <div class="pipeline-toolbar">
-        <div class="pipe-view-toggle">
-          <button class="pipe-view-btn active" id="btn-kanban" onclick="setPipeView('kanban')">
-            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="18"/><rect x="14" y="3" width="7" height="11"/></svg>Board
-          </button>
-          <button class="pipe-view-btn" id="btn-list" onclick="setPipeView('list')">
-            <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>List
-          </button>
+      <div class="ba-panel after">
+        <div class="ba-head">
+          <div class="ba-dot"></div>
+          <div class="ba-label">With AgentEdge</div>
         </div>
-        <div class="pipe-filter" id="pipe-filters">
-          <button class="pipe-filter-btn active" onclick="setPipeFilter('all',this)">All</button>
-          <button class="pipe-filter-btn" onclick="setPipeFilter('Buyer',this)">Buyers</button>
-          <button class="pipe-filter-btn" onclick="setPipeFilter('Seller',this)">Sellers</button>
-          <button class="pipe-filter-btn" onclick="setPipeFilter('Rental',this)">Rentals</button>
+        <div class="ba-row">
+          <div class="ba-ico">⚡</div>
+          <div class="ba-text">Full branded market report — generated, personalized, ready to send in <strong>28 seconds</strong></div>
         </div>
-        <div class="pipe-search">
-          <svg class="pipe-search-ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" placeholder="Search leads..." id="pipe-search-input" oninput="renderPipeline()">
+        <div class="ba-row">
+          <div class="ba-ico">📊</div>
+          <div class="ba-text">Dashboard shows every lead's stage, last contact, and priority — <strong>at a glance</strong></div>
         </div>
-      </div>
-      <div id="pipe-kanban" style="display:flex;flex:1;overflow:hidden">
-        <div class="kanban-wrap" id="kanban-wrap"></div>
-      </div>
-      <div id="pipe-list" style="display:none;flex:1;overflow:hidden">
-        <div class="list-wrap">
-          <table class="list-table">
-            <thead><tr><th>Name</th><th>Type</th><th>Property</th><th>Stage</th><th>Budget</th><th>Last Contact</th></tr></thead>
-            <tbody id="list-tbody"></tbody>
-          </table>
+        <div class="ba-row">
+          <div class="ba-ico">✅</div>
+          <div class="ba-text">AI surfaces the <strong>3 leads that need attention today</strong> — nothing falls through</div>
+        </div>
+        <div class="ba-row">
+          <div class="ba-ico">💬</div>
+          <div class="ba-text">Showing confirmation: drafted, personalized, in your voice — <strong>one click</strong></div>
+        </div>
+        <div class="ba-row">
+          <div class="ba-ico">🏆</div>
+          <div class="ba-text">Leave knowing exactly what's under contract, closing this month, and <strong>who to call tomorrow</strong></div>
         </div>
       </div>
     </div>
+  </div>
+</section>
 
-    <!-- CONTACTS VIEW -->
-    <div class="view" id="view-contacts">
-      <div class="contacts-toolbar">
-        <div class="contacts-search">
-          <svg class="contacts-search-ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" placeholder="Search contacts..." id="contacts-search-input" oninput="renderContacts()">
-        </div>
-        <div class="pipe-filter">
-          <button class="pipe-filter-btn active" onclick="setContactFilter('all',this)">All</button>
-          <button class="pipe-filter-btn" onclick="setContactFilter('Buyer',this)">Buyers</button>
-          <button class="pipe-filter-btn" onclick="setContactFilter('Seller',this)">Sellers</button>
-          <button class="pipe-filter-btn" onclick="setContactFilter('Rental',this)">Rentals</button>
-        </div>
-        <span style="font-size:13px;color:var(--g400)" id="contacts-count"></span>
-      </div>
-      <div class="contacts-grid" id="contacts-grid"></div>
-    </div>
-
-    <!-- AI TOOLS VIEW -->
-    <div class="view" id="view-aitools">
-      <div style="padding:1.25rem 1.5rem .5rem;flex-shrink:0">
-        <div style="font-size:13px;color:var(--g600)">Generate AI content for any lead. Select a contact to auto-fill their details, or fill in manually.</div>
-      </div>
-      <div class="ai-tools-grid">
-
-        <div class="ai-tool-card">
-          <div class="ai-tool-head"><div class="ai-tool-label">Core Tool</div><div class="ai-tool-title">Lead Follow-Up Sequences</div><div class="ai-tool-desc">5-touch sequence (Day 1–30) for any lead at any stage</div></div>
-          <div class="ai-tool-body">
-            <div class="ai-fields"><div class="ai-field"><label>Lead name</label><input id="ai-fu-name" placeholder="Sarah Johnson"></div><div class="ai-field"><label>Property</label><input id="ai-fu-prop" placeholder="123 Oak Ave"></div><div class="ai-field"><label>Stage</label><select id="ai-fu-stage"><option>Just inquired</option><option>Toured</option><option>Made offer</option><option>Gone cold</option></select></div><div class="ai-field"><label>Channel</label><select id="ai-fu-ch"><option>Email</option><option>SMS</option><option>Both</option></select></div></div>
-            <button class="ai-run" id="btn-ai-fu" onclick="aiRun('fu','followup')">⚡ Generate sequence</button>
-            <div class="ai-output" id="ai-out-fu"><div class="ai-output-head"><span class="ai-output-lbl">Sequence</span><button class="ai-copy" onclick="aiCopy('ai-out-fu')">Copy</button></div><div class="ai-output-text" id="ai-out-fu-t"></div></div>
-          </div>
-        </div>
-
-        <div class="ai-tool-card">
-          <div class="ai-tool-head"><div class="ai-tool-label">Core Tool</div><div class="ai-tool-title">Listing Content Generator</div><div class="ai-tool-desc">MLS copy, Instagram caption, buyer email & SMS blast</div></div>
-          <div class="ai-tool-body">
-            <div class="ai-fields"><div class="ai-field"><label>Address</label><input id="ai-li-addr" placeholder="123 Oak Ave, Austin TX"></div><div class="ai-field"><label>Price</label><input id="ai-li-price" placeholder="$549,000"></div><div class="ai-field"><label>Beds/Baths</label><input id="ai-li-beds" placeholder="3 bed / 2 bath"></div><div class="ai-field"><label>Tone</label><select id="ai-li-tone"><option>Warm & inviting</option><option>Luxury</option><option>Urgent</option></select></div></div>
-            <div class="ai-fields full"><div class="ai-field"><label>Key features</label><textarea id="ai-li-feat" placeholder="Pool, renovated kitchen, corner lot..."></textarea></div></div>
-            <button class="ai-run" id="btn-ai-li" onclick="aiRun('li','listing')">⚡ Generate listing package</button>
-            <div class="ai-output" id="ai-out-li"><div class="ai-output-head"><span class="ai-output-lbl">Listing package</span><button class="ai-copy" onclick="aiCopy('ai-out-li')">Copy</button></div><div class="ai-output-text" id="ai-out-li-t"></div></div>
-          </div>
-        </div>
-
-        <div class="ai-tool-card">
-          <div class="ai-tool-head"><div class="ai-tool-label">Core Tool</div><div class="ai-tool-title">Lead Qualifier & Scorer</div><div class="ai-tool-desc">Paste any lead inquiry — get score, signals & suggested reply</div></div>
-          <div class="ai-tool-body">
-            <div class="ai-fields full"><div class="ai-field"><label>Lead's message</label><textarea id="ai-qu-msg" style="min-height:80px" placeholder="Hi, I saw your listing on Zillow..."></textarea></div></div>
-            <div class="ai-fields"><div class="ai-field"><label>Your market</label><input id="ai-qu-mkt" placeholder="Austin TX · $350k–$700k"></div><div class="ai-field"><label>Lead type</label><select id="ai-qu-type"><option>Unknown</option><option>Buyer</option><option>Seller</option><option>Rental</option></select></div></div>
-            <button class="ai-run" id="btn-ai-qu" onclick="aiRun('qu','qualify')">⚡ Qualify this lead</button>
-            <div class="ai-output" id="ai-out-qu"><div class="ai-output-head"><span class="ai-output-lbl">Lead report</span><button class="ai-copy" onclick="aiCopy('ai-out-qu')">Copy</button></div><div class="ai-output-text" id="ai-out-qu-t"></div></div>
-          </div>
-        </div>
-
-        <div class="ai-tool-card">
-          <div class="ai-tool-head"><div class="ai-tool-label">Core Tool</div><div class="ai-tool-title">Market Report Builder</div><div class="ai-tool-desc">Full branded client email from a few market stats</div></div>
-          <div class="ai-tool-body">
-            <div class="ai-fields"><div class="ai-field"><label>Neighborhood</label><input id="ai-mr-area" placeholder="South Austin / 78704"></div><div class="ai-field"><label>Avg sale price</label><input id="ai-mr-price" placeholder="$725,000"></div><div class="ai-field"><label>Days on market</label><input id="ai-mr-dom" placeholder="18 days"></div><div class="ai-field"><label>Condition</label><select id="ai-mr-trend"><option>Hot — seller's market</option><option>Cooling</option><option>Balanced</option></select></div></div>
-            <button class="ai-run" id="btn-ai-mr" onclick="aiRun('mr','market')">⚡ Generate market report</button>
-            <div class="ai-output" id="ai-out-mr"><div class="ai-output-head"><span class="ai-output-lbl">Market email</span><button class="ai-copy" onclick="aiCopy('ai-out-mr')">Copy</button></div><div class="ai-output-text" id="ai-out-mr-t"></div></div>
-          </div>
-        </div>
-
-        <div class="ai-tool-card">
-          <div class="ai-tool-head"><div class="ai-tool-label">Pro Tool</div><div class="ai-tool-title">CRM & Admin Assistant</div><div class="ai-tool-desc">Turn raw call notes into structured CRM updates</div></div>
-          <div class="ai-tool-body">
-            <div class="ai-fields"><div class="ai-field"><label>Task type</label><select id="ai-cr-type"><option>CRM update from call notes</option><option>Offer summary one-pager</option><option>Transaction timeline</option><option>Client status email</option></select></div><div class="ai-field"><label>Client</label><input id="ai-cr-client" placeholder="Johnson Family · 123 Oak Ave"></div></div>
-            <div class="ai-fields full"><div class="ai-field"><label>Raw notes</label><textarea id="ai-cr-notes" style="min-height:80px" placeholder="Called Sarah. Loves the house..."></textarea></div></div>
-            <button class="ai-run" id="btn-ai-cr" onclick="aiRun('cr','crm')">⚡ Process with AI</button>
-            <div class="ai-output" id="ai-out-cr"><div class="ai-output-head"><span class="ai-output-lbl">Output</span><button class="ai-copy" onclick="aiCopy('ai-out-cr')">Copy</button></div><div class="ai-output-text" id="ai-out-cr-t"></div></div>
-          </div>
-        </div>
-
-        <div class="ai-tool-card">
-          <div class="ai-tool-head"><div class="ai-tool-label">Pro Tool</div><div class="ai-tool-title">Showing Coordinator</div><div class="ai-tool-desc">Confirmations, reminders, feedback & offer messages</div></div>
-          <div class="ai-tool-body">
-            <div class="ai-fields"><div class="ai-field"><label>Message type</label><select id="ai-sh-type"><option>Showing confirmation</option><option>24hr reminder</option><option>Post-showing feedback</option><option>Offer received</option><option>Under contract update</option><option>Closing day instructions</option></select></div><div class="ai-field"><label>Client</label><input id="ai-sh-client" placeholder="The Johnson Family"></div><div class="ai-field"><label>Property</label><input id="ai-sh-prop" placeholder="123 Oak Ave"></div><div class="ai-field"><label>Date / time</label><input id="ai-sh-date" placeholder="Saturday June 21 at 2pm"></div></div>
-            <button class="ai-run" id="btn-ai-sh" onclick="aiRun('sh','showing')">⚡ Generate message</button>
-            <div class="ai-output" id="ai-out-sh"><div class="ai-output-head"><span class="ai-output-lbl">Message</span><button class="ai-copy" onclick="aiCopy('ai-out-sh')">Copy</button></div><div class="ai-output-text" id="ai-out-sh-t"></div></div>
-          </div>
-        </div>
-
-        <div class="ai-tool-card">
-          <div class="ai-tool-head"><div class="ai-tool-label">Core Tool</div><div class="ai-tool-title">Post-Close Referral Drip</div><div class="ai-tool-desc">12-month campaign to keep past clients generating referrals</div></div>
-          <div class="ai-tool-body">
-            <div class="ai-fields"><div class="ai-field"><label>Client name</label><input id="ai-dr-client" placeholder="The Johnson Family"></div><div class="ai-field"><label>Property closed</label><input id="ai-dr-prop" placeholder="123 Oak Ave"></div><div class="ai-field"><label>Closing date</label><input id="ai-dr-date" placeholder="June 2025"></div><div class="ai-field"><label>Personal details</label><input id="ai-dr-notes" placeholder="Two kids, love hiking..."></div></div>
-            <button class="ai-run" id="btn-ai-dr" onclick="aiRun('dr','drip')">⚡ Generate 12-month drip</button>
-            <div class="ai-output" id="ai-out-dr"><div class="ai-output-head"><span class="ai-output-lbl">12-month campaign</span><button class="ai-copy" onclick="aiCopy('ai-out-dr')">Copy</button></div><div class="ai-output-text" id="ai-out-dr-t"></div></div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- SETTINGS VIEW -->
-    <div class="view" id="view-settings">
-      <div class="settings-wrap">
-        <h2 style="font-family:var(--fd);font-size:24px;color:var(--navy);margin-bottom:1.25rem">Settings</h2>
-        <div class="settings-section">
-          <div class="settings-title">Brand & Signature</div>
-          <div class="settings-grid">
-            <div class="s-field"><label>Your full name</label><input id="br-name" placeholder="Mike Torres" oninput="updateSigPreview()"></div>
-            <div class="s-field"><label>Brokerage</label><input id="br-brokerage" placeholder="Compass Realty" oninput="updateSigPreview()"></div>
-            <div class="s-field"><label>Phone</label><input id="br-phone" placeholder="(512) 555-0123" oninput="updateSigPreview()"></div>
-            <div class="s-field"><label>Email</label><input id="br-email" placeholder="mike@compass.com" oninput="updateSigPreview()"></div>
-            <div class="s-field"><label>Website</label><input id="br-website" placeholder="www.miketorres.com" oninput="updateSigPreview()"></div>
-            <div class="s-field"><label>License #</label><input id="br-license" placeholder="TX-12345678" oninput="updateSigPreview()"></div>
-            <div class="s-field full"><label>Tagline</label><input id="br-tagline" placeholder="Austin's most trusted real estate advisor" oninput="updateSigPreview()"></div>
-          </div>
-          <div class="brand-sig-preview" id="sig-preview">Fill in your details above to preview your signature.</div>
-          <button class="save-btn" style="margin-top:1rem" onclick="saveBrand()">Save brand settings</button>
-        </div>
-        <div class="settings-section">
-          <div class="settings-title">Account</div>
-          <div style="font-size:14px;color:var(--g600)" id="account-info"></div>
-        </div>
-      </div>
-    </div>
-
-  </div><!-- /app-body -->
-</div><!-- /app -->
-
-<!-- LEAD DETAIL MODAL -->
-<div class="modal-overlay" id="lead-modal">
-  <div class="lead-detail" id="lead-detail-panel">
-    <div class="ld-head">
-      <div class="lead-av" id="ld-av" style="width:48px;height:48px;font-size:18px"></div>
+<!-- FEATURES -->
+<section class="s feat-bg" id="features">
+  <div class="s-inner">
+    <div class="feat-top">
       <div>
-        <div class="ld-name" id="ld-name"></div>
-        <div class="ld-email" id="ld-sub"></div>
+        <div class="s-kicker">What you get</div>
+        <h2 class="s-h2">Every tool a top<br>producer actually uses.</h2>
+        <p class="s-sub">Not a generic CRM with a real estate label slapped on it. Built from the ground up for agents, around the exact workflows that cost you the most time.</p>
       </div>
-      <button class="ld-close" onclick="closeLeadModal()">×</button>
+      <div style="background:var(--navy);border-radius:18px;padding:2rem;border:1px solid var(--g200)">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--gold-light);margin-bottom:1.25rem">What agents say after week one</div>
+        <div style="font-family:var(--fd);font-size:1.4rem;color:#fff;line-height:1.45;margin-bottom:1rem;font-style:italic">"I got back my Sunday nights."</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.4)">— Said by 3 of our first 10 users, unprompted</div>
+      </div>
     </div>
-    <div class="ld-tabs">
-      <div class="ld-tab active" onclick="ldTab('info',this)">Info</div>
-      <div class="ld-tab" onclick="ldTab('notes',this)">Notes</div>
-      <div class="ld-tab" onclick="ldTab('history',this)">AI History</div>
-      <div class="ld-tab" onclick="ldTab('ai',this)">AI Tools</div>
-    </div>
-    <div class="ld-body">
-      <!-- INFO -->
-      <div id="ld-info" class="ld-section">
-        <div class="ld-section-title">Lead Details</div>
-        <div class="ld-info-grid">
-          <div class="ld-info-item"><label>First name</label><input id="ld-fname" onchange="saveLeadField()"></div>
-          <div class="ld-info-item"><label>Last name</label><input id="ld-lname" onchange="saveLeadField()"></div>
-          <div class="ld-info-item"><label>Email</label><input id="ld-email" type="email" onchange="saveLeadField()"></div>
-          <div class="ld-info-item"><label>Phone</label><input id="ld-phone" onchange="saveLeadField()"></div>
-          <div class="ld-info-item"><label>Lead type</label><select id="ld-type" onchange="saveLeadField()"><option>Buyer</option><option>Seller</option><option>Both</option><option>Rental</option></select></div>
-          <div class="ld-info-item"><label>Stage</label><select id="ld-stage" onchange="saveLeadField()"><option>New</option><option>Contacted</option><option>Warm</option><option>Showing</option><option>Offer</option><option>Under Contract</option><option>Closed</option><option>Lost</option></select></div>
-          <div class="ld-info-item full"><label>Property interest</label><input id="ld-prop" onchange="saveLeadField()"></div>
-          <div class="ld-info-item"><label>Budget</label><input id="ld-budget" onchange="saveLeadField()"></div>
-          <div class="ld-info-item"><label>Timeline</label><input id="ld-timeline" onchange="saveLeadField()"></div>
-          <div class="ld-info-item"><label>Lead source</label><select id="ld-source" onchange="saveLeadField()"><option>Zillow</option><option>Realtor.com</option><option>Referral</option><option>Cold outreach</option><option>Website</option><option>Social media</option><option>Open house</option><option>Other</option></select></div>
-          <div class="ld-info-item"><label>Priority</label><select id="ld-priority" onchange="saveLeadField()"><option>Hot</option><option>Warm</option><option>Cold</option><option>Nurture</option></select></div>
-          <div class="ld-info-item full"><label>Additional notes</label><textarea id="ld-addnotes" rows="3" onchange="saveLeadField()" style="resize:vertical"></textarea></div>
-        </div>
+    <div class="feat-grid">
+      <div class="feat-card">
+        <span class="feat-tag">Core Tool</span>
+        <div class="feat-icon">✉️</div>
+        <h3 class="feat-h3">AI Email & Message Writer</h3>
+        <p class="feat-p">Paste a lead message and get a tailored, high-converting reply in under a minute. Showing confirmations, buyer updates, offer presentations, post-close thank-yous — all in your voice, with your branding, every time.</p>
       </div>
-      <!-- NOTES -->
-      <div id="ld-notes" class="ld-section" style="display:none">
-        <div class="note-input">
-          <textarea id="note-text" placeholder="Add a note, call summary, or update..."></textarea>
-          <button onclick="addNote()">Add Note</button>
-        </div>
-        <div id="notes-list"></div>
+      <div class="feat-card">
+        <span class="feat-tag">Core Tool</span>
+        <div class="feat-icon">📊</div>
+        <h3 class="feat-h3">Visual Pipeline & Kanban Board</h3>
+        <p class="feat-p">See every lead from New to Closed in a drag-and-drop kanban or filterable list view. Know who's hot, who's gone cold, and what's due for follow-up — without opening a single spreadsheet.</p>
       </div>
-      <!-- HISTORY -->
-      <div id="ld-history" class="ld-section" style="display:none">
-        <div id="ai-history-list"><div style="text-align:center;padding:2rem;font-size:13px;color:var(--g400)">No AI outputs yet for this lead.</div></div>
+      <div class="feat-card">
+        <span class="feat-tag">Pro Tool</span>
+        <div class="feat-icon">🧠</div>
+        <h3 class="feat-h3">Lead Qualification Engine</h3>
+        <p class="feat-p">Paste any lead message and get an instant AI profile: motivation score, likely timeline, red flags, and the exact recommended next action. Stop spending showings on tire-kickers.</p>
       </div>
-      <!-- AI TOOLS -->
-      <div id="ld-ai" class="ld-ai-section" style="display:none">
-        <div class="ld-ai-title">Generate AI content for this lead</div>
-        <div class="ld-ai-tools">
-          <button class="ld-ai-btn" onclick="aiFromLead('followup')"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><div><div class="ld-ai-btn-text">Lead Follow-Up Sequence</div><div class="ld-ai-btn-sub">5-touch Day 1–30 sequence</div></div></button>
-          <button class="ld-ai-btn" onclick="aiFromLead('qualify')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><div><div class="ld-ai-btn-text">Qualify This Lead</div><div class="ld-ai-btn-sub">Score, signals & suggested reply</div></div></button>
-          <button class="ld-ai-btn" onclick="aiFromLead('crm')"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/></svg><div><div class="ld-ai-btn-text">CRM Update</div><div class="ld-ai-btn-sub">Summarize notes into CRM entry</div></div></button>
-          <button class="ld-ai-btn" onclick="aiFromLead('showing')"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><div><div class="ld-ai-btn-text">Showing Message</div><div class="ld-ai-btn-sub">Confirmation, reminder, feedback</div></div></button>
-          <button class="ld-ai-btn" onclick="aiFromLead('drip')"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><div><div class="ld-ai-btn-text">Post-Close Referral Drip</div><div class="ld-ai-btn-sub">12-month follow-up campaign</div></div></button>
-        </div>
-        <div id="ld-ai-output" style="margin-top:1rem;display:none">
-          <div class="ai-output-head" style="margin-bottom:.5rem"><span class="ai-output-lbl" id="ld-ai-output-lbl">Output</span><button class="ai-copy" onclick="aiCopy('ld-ai-output')">Copy</button></div>
-          <div style="background:var(--cream);border:1px solid var(--g200);border-radius:8px;padding:1rem;font-size:13px;color:var(--g800);line-height:1.7;white-space:pre-wrap;max-height:300px;overflow-y:auto" id="ld-ai-output-t"></div>
-        </div>
+      <div class="feat-card">
+        <span class="feat-tag">Pro Tool</span>
+        <div class="feat-icon">🔄</div>
+        <h3 class="feat-h3">12-Month Referral Drip Builder</h3>
+        <p class="feat-p">One click generates a full year of personalized post-close messages — timed for home anniversaries, holidays, and market moments. Set it once. Collect referrals for 12 months. The closes you didn't have to chase.</p>
       </div>
     </div>
   </div>
-</div>
+</section>
 
-<!-- ADD LEAD MODAL -->
-<div class="add-modal" id="add-modal">
-  <div class="add-box">
-    <div class="add-box-title">Add New Lead</div>
-    <div class="add-grid">
-      <div class="add-field"><label>First name *</label><input id="add-fname" placeholder="Sarah"></div>
-      <div class="add-field"><label>Last name *</label><input id="add-lname" placeholder="Johnson"></div>
-      <div class="add-field"><label>Email</label><input id="add-email" type="email" placeholder="sarah@email.com"></div>
-      <div class="add-field"><label>Phone</label><input id="add-phone" placeholder="(512) 555-0123"></div>
-      <div class="add-field"><label>Lead type *</label><select id="add-type"><option>Buyer</option><option>Seller</option><option>Both</option><option>Rental</option></select></div>
-      <div class="add-field"><label>Stage</label><select id="add-stage"><option>New</option><option>Contacted</option><option>Warm</option><option>Showing</option><option>Offer</option><option>Under Contract</option><option>Closed</option></select></div>
-      <div class="add-field"><label>Priority</label><select id="add-priority"><option>Hot</option><option>Warm</option><option>Cold</option><option>Nurture</option></select></div>
-      <div class="add-field"><label>Lead source</label><select id="add-source"><option>Zillow</option><option>Realtor.com</option><option>Referral</option><option>Cold outreach</option><option>Website</option><option>Social media</option><option>Open house</option><option>Other</option></select></div>
+<!-- TESTIMONIALS -->
+<section class="s proof-bg" id="proof">
+  <div class="s-inner">
+    <div class="s-kicker">Real agents. Real results.</div>
+    <h2 class="s-h2">They didn't change how<br>hard they work.</h2>
+    <div class="proof-grid">
+
+      <div class="proof-card proof-big">
+        <div>
+          <div class="proof-stars"><div class="proof-star"></div><div class="proof-star"></div><div class="proof-star"></div><div class="proof-star"></div><div class="proof-star"></div></div>
+          <div class="proof-q">I closed two extra deals last quarter that I would have lost before AgentEdge. Both of them came down to response speed. The buyer texted me, I got an AI reply drafted before I even walked out of my showing. Signed within the week.</div>
+          <div class="proof-author" style="margin-top:1.25rem">
+            <div class="proof-av">MT</div>
+            <div>
+              <div class="proof-name">Mike Torres</div>
+              <div class="proof-role">Compass Realty · Austin, TX · $14M in volume last year</div>
+            </div>
+          </div>
+        </div>
+        <div class="proof-big-side">
+          <div class="proof-big-num">2</div>
+          <div class="proof-big-label">extra closes<br>in one quarter</div>
+        </div>
+      </div>
+
+      <div class="proof-card">
+        <div class="proof-stars"><div class="proof-star"></div><div class="proof-star"></div><div class="proof-star"></div><div class="proof-star"></div><div class="proof-star"></div></div>
+        <p class="proof-q">The lead qualification tool saved me from a 3-hour showing with a buyer who wasn't pre-approved. Now I know who's serious before I leave the office.</p>
+        <div class="proof-author">
+          <div class="proof-av">SR</div>
+          <div>
+            <div class="proof-name">Sarah Reynolds</div>
+            <div class="proof-role">Keller Williams · Denver, CO</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="proof-card">
+        <div class="proof-stars"><div class="proof-star"></div><div class="proof-star"></div><div class="proof-star"></div><div class="proof-star"></div><div class="proof-star"></div></div>
+        <p class="proof-q">I manage a team of 6. AgentEdge replaced three separate tools we were paying for. Paid for itself in the first month with the time we saved on admin alone.</p>
+        <div class="proof-author">
+          <div class="proof-av">JL</div>
+          <div>
+            <div class="proof-name">Jennifer Lee</div>
+            <div class="proof-role">Team Lead · RE/MAX · Nashville</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="proof-card">
+        <div class="proof-stars"><div class="proof-star"></div><div class="proof-star"></div><div class="proof-star"></div><div class="proof-star"></div><div class="proof-star"></div></div>
+        <p class="proof-q">I used to dread writing market reports. Now I press a button, scan it for 30 seconds, and hit send. My clients think I hired an assistant.</p>
+        <div class="proof-author">
+          <div class="proof-av">DK</div>
+          <div>
+            <div class="proof-name">David Kim</div>
+            <div class="proof-role">eXp Realty · San Diego, CA</div>
+          </div>
+        </div>
+      </div>
+
     </div>
-    <div class="add-grid full">
-      <div class="add-field"><label>Property interest</label><input id="add-prop" placeholder="3 bed / 2 bath in South Austin, under $600k"></div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="s pricing-bg" id="pricing">
+  <div class="s-inner">
+    <div style="text-align:center">
+      <div class="s-kicker light">Simple, flat pricing</div>
+      <h2 class="s-h2 light" style="max-width:500px;margin:0 auto .75rem">One deal pays for<br>a year of AgentEdge.</h2>
+      <p class="s-sub light" style="margin:0 auto">No setup fees. No per-seat tricks. No contracts. Cancel anytime.</p>
     </div>
-    <div class="add-grid full">
-      <div class="add-field"><label>Budget</label><input id="add-budget" placeholder="$500,000 – $650,000"></div>
+    <div class="pricing-grid">
+
+      <div class="price-card">
+        <div class="price-tier">Solo Agent</div>
+        <div class="price-amount"><span class="price-sup">$</span>99</div>
+        <div class="price-mo">per month</div>
+        <ul class="price-list">
+          <li>1 agent seat</li>
+          <li>Unlimited leads & contacts</li>
+          <li>Full AI email suite</li>
+          <li>Pipeline kanban & list view</li>
+          <li>Lead qualification reports</li>
+          <li>Custom brand & email signature</li>
+          <li>Dashboard & activity feed</li>
+        </ul>
+        <button class="price-btn ghost" onclick="openModal('signup','Solo')">Get started free</button>
+      </div>
+
+      <div class="price-card hot">
+        <div class="price-pop">Most popular</div>
+        <div class="price-tier">Pro Agent</div>
+        <div class="price-amount"><span class="price-sup">$</span>199</div>
+        <div class="price-mo">per month</div>
+        <ul class="price-list">
+          <li>Up to 3 agent seats</li>
+          <li>Everything in Solo</li>
+          <li>12-month referral drip builder</li>
+          <li>Market report generator</li>
+          <li>Showing coordinator messages</li>
+          <li>CRM & admin AI assistant</li>
+          <li>Transaction timeline builder</li>
+          <li>Priority support</li>
+        </ul>
+        <button class="price-btn solid" onclick="openModal('signup','Pro')">Get started free</button>
+      </div>
+
+      <div class="price-card">
+        <div class="price-tier">Brokerage</div>
+        <div class="price-amount"><span class="price-sup">$</span>499</div>
+        <div class="price-mo">per month</div>
+        <ul class="price-list">
+          <li>Unlimited agent seats</li>
+          <li>Everything in Pro</li>
+          <li>Team pipeline dashboard</li>
+          <li>Shared lead pool & routing</li>
+          <li>Custom brand templates</li>
+          <li>Dedicated onboarding call</li>
+          <li>Phone & priority chat support</li>
+        </ul>
+        <button class="price-btn ghost" onclick="openModal('signup','Brokerage')">Get started free</button>
+      </div>
+
     </div>
-    <div class="add-grid full">
-      <div class="add-field"><label>Timeline</label><input id="add-timeline" placeholder="Wants to move in 3 months"></div>
+    <div class="pricing-note">All plans include a free trial. No credit card required to start.</div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="finalcta">
+  <div class="s-kicker light" style="text-align:center;margin-bottom:.875rem">Stop leaving deals on the table</div>
+  <h2 class="finalcta-h2">The agents winning right now<br><em>aren't working harder than you.</em></h2>
+  <p class="finalcta-sub">They just reply faster, follow up smarter, and never lose track of a lead. That's AgentEdge. Set up in 5 minutes.</p>
+  <button class="btn-gold" style="font-size:16px;padding:1.1rem 2.75rem" onclick="openModal('signup')">Start Free — No Credit Card Needed</button>
+  <div class="finalcta-note">Join agents closing more deals with less admin</div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-logo">Agent<span>Edge</span></div>
+    <div class="footer-links">
+      <a class="footer-link" href="#">Privacy</a>
+      <a class="footer-link" href="#">Terms</a>
+      <a class="footer-link" href="mailto:hello@agentedgecrm.io">Contact</a>
     </div>
-    <div class="add-grid full">
-      <div class="add-field"><label>Notes</label><textarea id="add-notes" placeholder="Any additional context about this lead..."></textarea></div>
+    <div class="footer-copy">© 2025 AgentEdge. All rights reserved. Built for real estate agents who want their time back.</div>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="overlay" id="modal" onclick="overlayClick(event)">
+  <div class="mbox">
+    <button class="mclose" onclick="closeModal()">✕</button>
+    <div class="mlogo">Agent<span>Edge</span></div>
+    <div class="mtag">AI-powered CRM for real estate professionals</div>
+    <div class="mtabs">
+      <div class="mtab on" id="tab-in" onclick="mTab('in')">Sign in</div>
+      <div class="mtab" id="tab-up" onclick="mTab('up')">Create account</div>
     </div>
-    <div class="add-actions">
-      <button class="add-cancel" onclick="closeAddLead()">Cancel</button>
-      <button class="add-submit" onclick="submitLead()">Add Lead</button>
+    <div id="f-in">
+      <div class="mf"><label>Email</label><input type="email" id="l-email" placeholder="you@example.com" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <div class="mf"><label>Password</label><input type="password" id="l-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="mbtn" onclick="doLogin()">Sign in to AgentEdge</button>
+      <div class="merr" id="l-err"></div>
+    </div>
+    <div id="f-up" style="display:none">
+      <div class="mf"><label>Full name</label><input type="text" id="s-name" placeholder="Mike Torres"></div>
+      <div class="mf"><label>Work email</label><input type="email" id="s-email" placeholder="mike@compass.com"></div>
+      <div class="mf"><label>Password</label><input type="password" id="s-pass" placeholder="At least 6 characters"></div>
+      <div class="mf"><label>Plan</label>
+        <select id="s-plan">
+          <option value="Solo">Solo — $99/month</option>
+          <option value="Pro" selected>Pro — $199/month (Most popular)</option>
+          <option value="Brokerage">Brokerage — $499/month</option>
+        </select>
+      </div>
+      <button class="mbtn" onclick="doSignup()">Create my free account</button>
+      <div class="merr" id="s-err"></div>
     </div>
   </div>
 </div>
-
-<div class="toast" id="toast"></div>
 
 <script>
-// ══════════════════════════════
-// STATE
-// ══════════════════════════════
-let currentUser = null;
-let leads = [];
-let currentLeadId = null;
-let pipeView = 'kanban';
-let pipeFilter = 'all';
-let contactFilter = 'all';
-const STAGES = ['New','Contacted','Warm','Showing','Offer','Under Contract','Closed','Lost'];
-const STAGE_COLORS = {New:'#2563EB',Contacted:'#7C3AED',Warm:'#C9923A',Showing:'#EA580C',Offer:'#2D6A4F','Under Contract':'#059669',Closed:'#0B1B2B',Lost:'#c0392b'};
-const TYPE_COLORS = {Buyer:'#2563EB',Seller:'#7C3AED',Both:'#2D6A4F',Rental:'#EA580C'};
-const AVATAR_COLORS = ['#0B1B2B','#2563EB','#7C3AED','#EA580C','#2D6A4F','#C9923A','#059669','#c0392b'];
+(function(){
+  const t=localStorage.getItem('ae_token'),u=localStorage.getItem('ae_user');
+  if(t&&u) window.location.replace('/app');
+})();
 
-function avatarColor(name){ let h=0; for(let c of name) h+=c.charCodeAt(0); return AVATAR_COLORS[h%AVATAR_COLORS.length]; }
-function initials(name){ return name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2); }
-function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
-function getToken(){ return localStorage.getItem('ae_token'); }
-function authHeaders(){ return {'Content-Type':'application/json','Authorization':'Bearer '+getToken()}; }
-
-// ══════════════════════════════
-// AUTH
-// ══════════════════════════════
-function authTab(tab, el){
-  document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('auth-login').style.display = tab==='login'?'block':'none';
-  document.getElementById('auth-signup').style.display = tab==='signup'?'block':'none';
+function goTo(id){
+  const el=document.getElementById(id);
+  if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
 }
+
+function openModal(tab,plan){
+  document.getElementById('modal').classList.add('open');
+  mTab(tab==='signup'?'up':'in');
+  if(plan){const s=document.getElementById('s-plan');if(s)s.value=plan;}
+}
+function closeModal(){document.getElementById('modal').classList.remove('open')}
+function overlayClick(e){if(e.target===document.getElementById('modal'))closeModal()}
+function mTab(t){
+  const isIn=t==='in';
+  document.getElementById('f-in').style.display=isIn?'block':'none';
+  document.getElementById('f-up').style.display=isIn?'none':'block';
+  document.getElementById('tab-in').classList.toggle('on',isIn);
+  document.getElementById('tab-up').classList.toggle('on',!isIn);
+}
+
 async function doLogin(){
   const email=document.getElementById('l-email').value.trim().toLowerCase();
   const pass=document.getElementById('l-pass').value;
   const err=document.getElementById('l-err');
-  err.classList.remove('show');
+  err.classList.remove('on');
   try{
     const res=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})});
     const data=await res.json();
-    if(!res.ok){ err.textContent=data.error||'Incorrect email or password.'; err.classList.add('show'); return; }
+    if(!res.ok){err.textContent=data.error||'Incorrect email or password.';err.classList.add('on');return;}
     localStorage.setItem('ae_token',data.token);
     localStorage.setItem('ae_user',JSON.stringify(data.user));
-    currentUser=data.user;
-    launchApp();
-  }catch(e){ err.textContent='Connection error.'; err.classList.add('show'); }
+    window.location.replace('/app');
+  }catch(e){err.textContent='Connection error.';err.classList.add('on');}
 }
+
 async function doSignup(){
   const name=document.getElementById('s-name').value.trim();
   const email=document.getElementById('s-email').value.trim().toLowerCase();
   const pass=document.getElementById('s-pass').value;
   const plan=document.getElementById('s-plan').value;
   const err=document.getElementById('s-err');
-  err.classList.remove('show');
-  if(!name||!email||!pass||pass.length<6){ err.textContent='Please fill in all fields (min 6 char password).'; err.classList.add('show'); return; }
+  err.classList.remove('on');
+  if(!name||!email||!pass||pass.length<6){err.textContent='Please fill in all fields (min 6 char password).';err.classList.add('on');return;}
   try{
     const res=await fetch('/api/signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,password:pass,plan})});
     const data=await res.json();
-    if(!res.ok){ err.textContent=data.error||'Could not create account.'; err.classList.add('show'); return; }
+    if(!res.ok){err.textContent=data.error||'Could not create account.';err.classList.add('on');return;}
     localStorage.setItem('ae_token',data.token);
     localStorage.setItem('ae_user',JSON.stringify(data.user));
-    currentUser=data.user;
-    launchApp();
-  }catch(e){ err.textContent='Connection error.'; err.classList.add('show'); }
-}
-function doLogout(){
-  localStorage.removeItem('ae_token'); localStorage.removeItem('ae_user'); localStorage.removeItem('ae_leads');
-  currentUser=null; leads=[];
-  document.getElementById('app').classList.remove('show');
-  document.getElementById('auth-screen').classList.remove('hide');
-}
-function launchApp(){
-  document.getElementById('auth-screen').classList.add('hide');
-  document.getElementById('app').classList.add('show');
-  document.getElementById('top-user-name').textContent = currentUser.name||'';
-  document.getElementById('account-info').innerHTML = `<strong>${currentUser.name}</strong> &nbsp;·&nbsp; ${currentUser.email} &nbsp;·&nbsp; ${currentUser.plan} plan`;
-  loadLeads();
-  loadBrand();
-}
-window.addEventListener('DOMContentLoaded',()=>{
-  const saved = localStorage.getItem('ae_user');
-  const token = localStorage.getItem('ae_token');
-  if(saved && token){ currentUser = JSON.parse(saved); launchApp(); }
-});
-
-// ══════════════════════════════
-// LEADS — localStorage based (fast, works offline)
-// ══════════════════════════════
-function loadLeads(){
-  const saved = localStorage.getItem('ae_leads_'+currentUser.email);
-  leads = saved ? JSON.parse(saved) : [];
-  renderAll();
-}
-function saveLeads(){
-  localStorage.setItem('ae_leads_'+currentUser.email, JSON.stringify(leads));
-}
-function renderAll(){
-  renderDashboard();
-  renderPipeline();
-  renderContacts();
+    window.location.replace('/app');
+  }catch(e){err.textContent='Connection error.';err.classList.add('on');}
 }
 
-function submitLead(){
-  const fname=document.getElementById('add-fname').value.trim();
-  const lname=document.getElementById('add-lname').value.trim();
-  if(!fname){ toast('Please enter a first name'); return; }
-  const lead = {
-    id: Date.now().toString(),
-    fname, lname,
-    name: (fname+' '+lname).trim(),
-    email: document.getElementById('add-email').value.trim(),
-    phone: document.getElementById('add-phone').value.trim(),
-    type: document.getElementById('add-type').value,
-    stage: document.getElementById('add-stage').value,
-    priority: document.getElementById('add-priority').value,
-    source: document.getElementById('add-source').value,
-    prop: document.getElementById('add-prop').value.trim(),
-    budget: document.getElementById('add-budget').value.trim(),
-    timeline: document.getElementById('add-timeline').value.trim(),
-    notes: document.getElementById('add-notes').value.trim(),
-    addnotes: '',
-    created: new Date().toISOString(),
-    lastContact: new Date().toISOString(),
-    notesList: [],
-    aiHistory: []
-  };
-  leads.unshift(lead);
-  saveLeads();
-  renderAll();
-  closeAddLead();
-  toast('Lead added — '+lead.name);
-  ['add-fname','add-lname','add-email','add-phone','add-prop','add-budget','add-timeline','add-notes'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('add-type').value='Buyer';
-  document.getElementById('add-stage').value='New';
-}
-
-function openAddLead(){  document.getElementById('add-modal').classList.add('open'); }
-function closeAddLead(){ document.getElementById('add-modal').classList.remove('open'); }
-document.getElementById('add-modal').addEventListener('click',e=>{ if(e.target===document.getElementById('add-modal')) closeAddLead(); });
-
-// ══════════════════════════════
-// DASHBOARD
-// ══════════════════════════════
-function renderDashboard(){
-  document.getElementById('stat-total').textContent = leads.length;
-  document.getElementById('stat-hot').textContent = leads.filter(l=>l.priority==='Hot').length;
-  document.getElementById('stat-contract').textContent = leads.filter(l=>l.stage==='Under Contract').length;
-  const thisMonth = new Date(); thisMonth.setDate(1);
-  document.getElementById('stat-closed').textContent = leads.filter(l=>l.stage==='Closed'&&new Date(l.lastContact)>=thisMonth).length;
-  const rl = document.getElementById('dash-recent-leads');
-  const recent = leads.slice(0,8);
-  if(!recent.length){ rl.innerHTML='<div style="text-align:center;padding:2rem;font-size:13px;color:var(--g400)">No leads yet — click Add Lead to get started</div>'; return; }
-  rl.innerHTML=recent.map(l=>`<div class="dash-lead-item" onclick="openLead('${l.id}')"><div class="lead-av" style="background:${avatarColor(l.name)};width:34px;height:34px;font-size:12px">${initials(l.name)}</div><div><div class="dash-lead-name">${l.name}</div><div class="dash-lead-sub">${l.type} · ${l.prop||'No property'}</div></div><span class="dash-lead-badge stage-badge stage-${l.stage.toLowerCase().replace(' ','-')}">${l.stage}</span></div>`).join('');
-  const hot = leads.filter(l=>l.priority==='Hot'||l.stage==='New').slice(0,8);
-  const tasks = document.getElementById('dash-tasks');
-  if(!hot.length){ tasks.innerHTML='<div style="text-align:center;padding:2rem;font-size:13px;color:var(--g400)">No urgent follow-ups</div>'; return; }
-  tasks.innerHTML=hot.map(l=>`<div class="task-item" onclick="openLead('${l.id}')"><div class="task-check"></div><div class="task-text">Follow up with ${l.name}</div><span class="dash-lead-badge stage-badge stage-${l.priority.toLowerCase()}" style="font-size:10px;padding:2px 7px;border-radius:5px;background:${l.priority==='Hot'?'#FEF2F2':'var(--gold-pale)'};color:${l.priority==='Hot'?'var(--red)':'var(--gold)'}">${l.priority}</span></div>`).join('');
-}
-
-// ══════════════════════════════
-// PIPELINE
-// ══════════════════════════════
-function setPipeView(v){
-  pipeView=v;
-  document.getElementById('btn-kanban').classList.toggle('active',v==='kanban');
-  document.getElementById('btn-list').classList.toggle('active',v==='list');
-  document.getElementById('pipe-kanban').style.display=v==='kanban'?'flex':'none';
-  document.getElementById('pipe-list').style.display=v==='list'?'flex':'none';
-  renderPipeline();
-}
-function setPipeFilter(f,el){ pipeFilter=f; document.querySelectorAll('#pipe-filters .pipe-filter-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); renderPipeline(); }
-function setContactFilter(f,el){ contactFilter=f; document.querySelectorAll('.contacts-toolbar .pipe-filter-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); renderContacts(); }
-
-function filteredLeads(search=''){
-  let fl = leads;
-  if(pipeFilter!=='all') fl=fl.filter(l=>l.type===pipeFilter||l.type==='Both');
-  if(search) fl=fl.filter(l=>l.name.toLowerCase().includes(search)||l.prop?.toLowerCase().includes(search)||l.email?.toLowerCase().includes(search));
-  return fl;
-}
-
-function renderPipeline(){
-  const search = document.getElementById('pipe-search-input')?.value.toLowerCase()||'';
-  const fl = filteredLeads(search);
-  if(pipeView==='kanban') renderKanban(fl);
-  else renderList(fl);
-}
-
-function renderKanban(fl){
-  const wrap = document.getElementById('kanban-wrap');
-  wrap.innerHTML = STAGES.map(stage=>{
-    const cards = fl.filter(l=>l.stage===stage);
-    return `<div class="kanban-col">
-      <div class="kanban-col-head">
-        <div class="kanban-col-dot" style="background:${STAGE_COLORS[stage]}"></div>
-        <div class="kanban-col-title">${stage}</div>
-        <div class="kanban-col-count">${cards.length}</div>
-      </div>
-      <div class="kanban-cards">
-        ${cards.map(l=>`<div class="kanban-card" onclick="openLead('${l.id}')">
-          <div class="kanban-card-name">${l.name}</div>
-          <div class="kanban-card-prop">${l.prop||'No property specified'}</div>
-          <div class="kanban-card-footer">
-            <span class="kanban-card-type badge-${l.type.toLowerCase()}" style="background:${TYPE_COLORS[l.type]||'#666'}22;color:${TYPE_COLORS[l.type]||'#666'}">${l.type}</span>
-            <span class="kanban-card-date">${l.budget||''}</span>
-          </div>
-        </div>`).join('')}
-      </div>
-      <button class="kanban-add" onclick="openAddLead()">+ Add lead</button>
-    </div>`;
-  }).join('');
-}
-
-function renderList(fl){
-  const tbody = document.getElementById('list-tbody');
-  if(!fl.length){ tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--g400)">No leads found</td></tr>'; return; }
-  tbody.innerHTML = fl.map(l=>`<tr onclick="openLead('${l.id}')">
-    <td><div style="display:flex;align-items:center;gap:10px"><div class="lead-av" style="background:${avatarColor(l.name)};width:30px;height:30px;font-size:11px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;flex-shrink:0">${initials(l.name)}</div><div><div style="font-weight:600">${l.name}</div><div style="font-size:12px;color:var(--g400)">${l.email||''}</div></div></div></td>
-    <td><span class="stage-badge badge-${l.type.toLowerCase()}" style="background:${TYPE_COLORS[l.type]||'#666'}22;color:${TYPE_COLORS[l.type]||'#666'}">${l.type}</span></td>
-    <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.prop||'—'}</td>
-    <td><span class="stage-badge stage-${l.stage.toLowerCase().replace(' ','-')}">${l.stage}</span></td>
-    <td>${l.budget||'—'}</td>
-    <td style="color:var(--g400)">${new Date(l.lastContact||l.created).toLocaleDateString()}</td>
-  </tr>`).join('');
-}
-
-// ══════════════════════════════
-// CONTACTS
-// ══════════════════════════════
-function renderContacts(){
-  const search = document.getElementById('contacts-search-input')?.value.toLowerCase()||'';
-  let fl = leads;
-  if(contactFilter!=='all') fl=fl.filter(l=>l.type===contactFilter||l.type==='Both');
-  if(search) fl=fl.filter(l=>l.name.toLowerCase().includes(search)||l.email?.toLowerCase().includes(search)||l.prop?.toLowerCase().includes(search));
-  document.getElementById('contacts-count').textContent = fl.length+' contacts';
-  const grid = document.getElementById('contacts-grid');
-  if(!fl.length){ grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:3rem;font-size:14px;color:var(--g400)">No contacts found</div>'; return; }
-  grid.innerHTML = fl.map(l=>`<div class="contact-card" onclick="openLead('${l.id}')">
-    <div class="contact-card-top">
-      <div class="contact-av" style="background:${avatarColor(l.name)}">${initials(l.name)}</div>
-      <div><div class="contact-name">${l.name}</div><div class="contact-email">${l.email||l.phone||'No contact info'}</div></div>
-    </div>
-    <div class="contact-card-mid">
-      <span class="stage-badge badge-${l.type.toLowerCase()}" style="background:${TYPE_COLORS[l.type]||'#666'}22;color:${TYPE_COLORS[l.type]||'#666'}">${l.type}</span>
-      <span class="stage-badge stage-${l.stage.toLowerCase().replace(' ','-')}">${l.stage}</span>
-      <span class="stage-badge" style="background:${l.priority==='Hot'?'#FEF2F2':'var(--g100)'};color:${l.priority==='Hot'?'var(--red)':'var(--g600)'}">${l.priority}</span>
-    </div>
-    <div class="contact-card-foot">
-      <span class="contact-prop">${l.prop||'No property specified'}</span>
-      <span class="contact-date">${new Date(l.created).toLocaleDateString()}</span>
-    </div>
-  </div>`).join('');
-}
-
-// ══════════════════════════════
-// LEAD DETAIL
-// ══════════════════════════════
-function openLead(id){
-  const lead = leads.find(l=>l.id===id);
-  if(!lead) return;
-  currentLeadId = id;
-  const color = avatarColor(lead.name);
-  document.getElementById('ld-av').style.background = color;
-  document.getElementById('ld-av').textContent = initials(lead.name);
-  document.getElementById('ld-name').textContent = lead.name;
-  document.getElementById('ld-sub').textContent = [lead.email, lead.phone, lead.source].filter(Boolean).join(' · ');
-  document.getElementById('ld-fname').value = lead.fname||'';
-  document.getElementById('ld-lname').value = lead.lname||'';
-  document.getElementById('ld-email').value = lead.email||'';
-  document.getElementById('ld-phone').value = lead.phone||'';
-  document.getElementById('ld-type').value = lead.type||'Buyer';
-  document.getElementById('ld-stage').value = lead.stage||'New';
-  document.getElementById('ld-prop').value = lead.prop||'';
-  document.getElementById('ld-budget').value = lead.budget||'';
-  document.getElementById('ld-timeline').value = lead.timeline||'';
-  document.getElementById('ld-source').value = lead.source||'Other';
-  document.getElementById('ld-priority').value = lead.priority||'Warm';
-  document.getElementById('ld-addnotes').value = lead.addnotes||'';
-  renderNotes(lead);
-  renderAIHistory(lead);
-  ldTab('info', document.querySelector('.ld-tab'));
-  document.getElementById('lead-modal').classList.add('open');
-}
-function closeLeadModal(){ document.getElementById('lead-modal').classList.remove('open'); currentLeadId=null; }
-document.getElementById('lead-modal').addEventListener('click',e=>{ if(e.target===document.getElementById('lead-modal')) closeLeadModal(); });
-
-function ldTab(tab, el){
-  document.querySelectorAll('.ld-tab').forEach(t=>t.classList.remove('active'));
-  if(el) el.classList.add('active');
-  ['info','notes','history','ai'].forEach(t=>{ document.getElementById('ld-'+t).style.display = t===tab?'block':'none'; });
-}
-
-function saveLeadField(){
-  const lead = leads.find(l=>l.id===currentLeadId);
-  if(!lead) return;
-  lead.fname = document.getElementById('ld-fname').value;
-  lead.lname = document.getElementById('ld-lname').value;
-  lead.name = (lead.fname+' '+lead.lname).trim();
-  lead.email = document.getElementById('ld-email').value;
-  lead.phone = document.getElementById('ld-phone').value;
-  lead.type = document.getElementById('ld-type').value;
-  lead.stage = document.getElementById('ld-stage').value;
-  lead.prop = document.getElementById('ld-prop').value;
-  lead.budget = document.getElementById('ld-budget').value;
-  lead.timeline = document.getElementById('ld-timeline').value;
-  lead.source = document.getElementById('ld-source').value;
-  lead.priority = document.getElementById('ld-priority').value;
-  lead.addnotes = document.getElementById('ld-addnotes').value;
-  lead.lastContact = new Date().toISOString();
-  document.getElementById('ld-name').textContent = lead.name;
-  document.getElementById('ld-av').textContent = initials(lead.name);
-  document.getElementById('ld-av').style.background = avatarColor(lead.name);
-  saveLeads(); renderAll(); toast('Saved');
-}
-
-function addNote(){
-  const text = document.getElementById('note-text').value.trim();
-  if(!text) return;
-  const lead = leads.find(l=>l.id===currentLeadId);
-  if(!lead) return;
-  if(!lead.notesList) lead.notesList=[];
-  lead.notesList.unshift({text, time: new Date().toISOString()});
-  lead.lastContact = new Date().toISOString();
-  document.getElementById('note-text').value='';
-  saveLeads(); renderNotes(lead); toast('Note added');
-}
-function renderNotes(lead){
-  const list = document.getElementById('notes-list');
-  if(!lead.notesList?.length){ list.innerHTML='<div style="text-align:center;padding:1.5rem;font-size:13px;color:var(--g400)">No notes yet</div>'; return; }
-  list.innerHTML = lead.notesList.map(n=>`<div class="note-item"><div class="note-text">${n.text}</div><div class="note-time">${new Date(n.time).toLocaleString()}</div></div>`).join('');
-}
-function renderAIHistory(lead){
-  const list = document.getElementById('ai-history-list');
-  if(!lead.aiHistory?.length){ list.innerHTML='<div style="text-align:center;padding:1.5rem;font-size:13px;color:var(--g400)">No AI outputs yet for this lead.</div>'; return; }
-  list.innerHTML = lead.aiHistory.map((h,i)=>`<div class="history-item" onclick="expandHist(${i})"><div class="history-tool">${h.tool}</div><div class="history-preview">${h.preview}</div><div class="history-time">${new Date(h.time).toLocaleString()}</div></div>`).join('');
-}
-function expandHist(i){
-  const lead = leads.find(l=>l.id===currentLeadId);
-  const h = lead?.aiHistory?.[i];
-  if(!h) return;
-  document.getElementById('ld-ai-output-lbl').textContent = h.tool;
-  document.getElementById('ld-ai-output-t').textContent = h.full;
-  document.getElementById('ld-ai-output').style.display='block';
-  ldTab('ai', null);
-}
-
-function aiFromLead(tool){
-  const lead = leads.find(l=>l.id===currentLeadId);
-  if(!lead) return;
-  const brand = getBrand();
-  const sig = brand.name ? `${brand.name}${brand.brokerage?', '+brand.brokerage:''}${brand.phone?'\n'+brand.phone:''}${brand.email?' · '+brand.email:''}` : '[Agent Name]';
-  let prompt = '';
-  if(tool==='followup') prompt=`You are a real estate sales coach. Write a 5-touch follow-up sequence.\n\nLead: ${lead.name}\nType: ${lead.type}\nProperty: ${lead.prop||'Not specified'}\nBudget: ${lead.budget||'Not specified'}\nTimeline: ${lead.timeline||'Not specified'}\nStage: ${lead.stage}\nAgent: ${sig}\n\nWrite DAY 1, DAY 3, DAY 7, DAY 14, DAY 30. Each with subject line. Short, warm, non-pushy.`;
-  if(tool==='qualify') prompt=`You are a real estate lead qualifier.\n\nLead: ${lead.name}\nType: ${lead.type}\nProperty interest: ${lead.prop||'Unknown'}\nBudget: ${lead.budget||'Unknown'}\nTimeline: ${lead.timeline||'Unknown'}\nSource: ${lead.source}\nNotes: ${lead.addnotes||'None'}\n\nProvide: READINESS SCORE (X/10), KEY SIGNALS, PRIORITY (Hot/Warm/Nurture/Pass), SUGGESTED FIRST RESPONSE.`;
-  if(tool==='crm') prompt=`Create a structured CRM update for:\n\nLead: ${lead.name}\nStage: ${lead.stage}\nPriority: ${lead.priority}\nProperty: ${lead.prop||'TBD'}\nBudget: ${lead.budget||'TBD'}\nTimeline: ${lead.timeline||'TBD'}\nNotes: ${lead.addnotes||lead.notes||'None'}\n\nFormat as clean CRM entry with next action items.`;
-  if(tool==='showing') prompt=`Write a showing confirmation email and SMS for:\n\nClient: ${lead.name}\nEmail: ${lead.email||'[email]'}\nProperty: ${lead.prop||'the property'}\nAgent: ${sig}\n\nWrite EMAIL VERSION (subject + body) and SMS VERSION (under 160 chars).`;
-  if(tool==='drip') prompt=`Write a 12-month post-close referral drip for:\n\nClient: ${lead.name}\nProperty: ${lead.prop||'their new home'}\nAgent: ${sig}\nPersonal notes: ${lead.addnotes||lead.notes||'None'}\n\nWrite 6 messages: 1 WEEK, 1 MONTH, 3 MONTHS, 6 MONTHS, 9 MONTHS, 12 MONTHS. Each with subject line.`;
-
-  const outDiv = document.getElementById('ld-ai-output');
-  const outText = document.getElementById('ld-ai-output-t');
-  const toolNames = {followup:'Follow-Up Sequence',qualify:'Lead Qualification',crm:'CRM Update',showing:'Showing Message',drip:'Post-Close Drip'};
-  document.getElementById('ld-ai-output-lbl').textContent = toolNames[tool]||tool;
-  outDiv.style.display='block'; outText.textContent='Generating...';
-
-  fetch('/api/generate',{method:'POST',headers:authHeaders(),body:JSON.stringify({prompt})})
-  .then(async res=>{
-    outText.textContent='';
-    const reader=res.body.getReader(),dec=new TextDecoder(); let buf=''; let full='';
-    while(true){
-      const{done,value}=await reader.read(); if(done)break;
-      buf+=dec.decode(value,{stream:true});
-      const lines=buf.split('\n'); buf=lines.pop();
-      for(const line of lines){ if(!line.startsWith('data: '))continue; const d=line.slice(6).trim(); if(d==='[DONE]')continue; try{const p=JSON.parse(d);if(p.text){outText.textContent+=p.text;full+=p.text;}}catch{} }
-    }
-    // Save to lead AI history
-    const lead2=leads.find(l=>l.id===currentLeadId);
-    if(lead2){
-      if(!lead2.aiHistory) lead2.aiHistory=[];
-      lead2.aiHistory.unshift({tool:toolNames[tool],preview:full.slice(0,80),full,time:new Date().toISOString()});
-      saveLeads(); renderAIHistory(lead2);
-    }
-  }).catch(e=>{ outText.textContent='Error: '+e.message; });
-}
-
-// ══════════════════════════════
-// VIEW SWITCHING
-// ══════════════════════════════
-function showView(id, el){
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.querySelectorAll('.top-nav-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('view-'+id).classList.add('active');
-  if(el) el.classList.add('active');
-  if(id==='pipeline') renderPipeline();
-  if(id==='contacts') renderContacts();
-  if(id==='dashboard') renderDashboard();
-}
-
-// ══════════════════════════════
-// AI TOOLS (standalone)
-// ══════════════════════════════
-function aiPrompt(tool, p){
-  const v=id=>(document.getElementById(p+'-'+id)||{}).value||'';
-  const b=getBrand();
-  const sig=b.name?`${b.name}${b.brokerage?', '+b.brokerage:''}${b.phone?'\n'+b.phone:''}${b.email?' · '+b.email:''}`:'[Agent Name]';
-  if(tool==='followup') return `You are a real estate sales coach. Write a 5-touch follow-up sequence.\n\nLead: ${v('name')}\nProperty: ${v('prop')}\nStage: ${v('stage')}\nChannel: ${v('ch')}\nAgent: ${sig}\n\nWrite DAY 1, DAY 3, DAY 7, DAY 14, DAY 30. Subject lines for email. Short, warm, non-pushy.`;
-  if(tool==='listing') return `You are a top real estate copywriter.\n\nAddress: ${v('addr')}\nPrice: ${v('price')}\nBeds/Baths: ${v('beds')}\nTone: ${v('tone')}\nFeatures: ${v('feat')}\nAgent: ${sig}\n\nWrite: MLS DESCRIPTION (140 words), INSTAGRAM CAPTION (with hashtags), BUYER EMAIL (subject + 3 paragraphs + CTA), SMS BLAST (160 chars).`;
-  if(tool==='qualify') return `You are a real estate lead qualifier in ${v('mkt')}.\nType: ${v('type')}\nMessage: "${v('msg')}"\n\nProvide: READINESS SCORE (X/10), LEAD TYPE, KEY SIGNALS (timeline/budget/motivation/obstacles), PRIORITY (Hot/Warm/Nurture/Pass), SUGGESTED FIRST RESPONSE.`;
-  if(tool==='market') return `Write a weekly real estate market update email.\n\nNeighborhood: ${v('area')}\nAvg price: ${v('price')}\nDays on market: ${v('dom')}\nCondition: ${v('trend')}\nFrom: ${sig}\n\nInclude: subject line, seller insights, buyer insights, outlook, soft CTA.`;
-  if(tool==='crm') return `Real estate admin. Task: ${v('type')}\nClient: ${v('client')}\nNotes: ${v('notes')}\nAgent: ${b.name||'[Agent]'}\n\nCreate clean structured output with next action items.`;
-  if(tool==='showing') return `Real estate message.\nType: ${v('type')}\nClient: ${v('client')}\nProperty: ${v('prop')}\nDate: ${v('date')}\nAgent: ${sig}\n\nWrite EMAIL VERSION (subject + body) and SMS VERSION (under 160 chars).`;
-  if(tool==='drip') return `Write a 12-month post-close referral drip.\n\nClient: ${v('client')}\nProperty: ${v('prop')}\nClosed: ${v('date')}\nAgent: ${sig}\n\nWrite 6 messages: 1 WEEK, 1 MONTH, 3 MONTHS, 6 MONTHS, 9 MONTHS, 12 MONTHS. Each with subject line.`;
-}
-
-async function aiRun(prefix, tool){
-  const btn=document.getElementById('btn-ai-'+prefix);
-  const box=document.getElementById('ai-out-'+prefix);
-  const txt=document.getElementById('ai-out-'+prefix+'-t');
-  const orig=btn.innerHTML;
-  btn.disabled=true; btn.innerHTML='<div class="spin"></div> Generating...';
-  box.classList.remove('show'); txt.textContent='';
-  try{
-    const res=await fetch('/api/generate',{method:'POST',headers:authHeaders(),body:JSON.stringify({prompt:aiPrompt(tool,'ai-'+prefix)})});
-    box.classList.add('show');
-    const reader=res.body.getReader(),dec=new TextDecoder(); let buf='';
-    while(true){
-      const{done,value}=await reader.read(); if(done)break;
-      buf+=dec.decode(value,{stream:true});
-      const lines=buf.split('\n'); buf=lines.pop();
-      for(const line of lines){ if(!line.startsWith('data: '))continue; const d=line.slice(6).trim(); if(d==='[DONE]')continue; try{const p=JSON.parse(d);if(p.text)txt.textContent+=p.text;}catch{} }
-    }
-  }catch(e){ box.classList.add('show'); txt.textContent='Error: '+e.message; }
-  btn.disabled=false; btn.innerHTML=orig;
-}
-
-function aiCopy(id){
-  const el=document.getElementById(id+'-t')||document.getElementById(id);
-  const text=el?.innerText||el?.textContent||'';
-  navigator.clipboard.writeText(text).then(()=>toast('Copied!'));
-}
-
-// ══════════════════════════════
-// BRAND SETTINGS
-// ══════════════════════════════
-function getBrand(){ try{ return JSON.parse(localStorage.getItem('ae_brand_'+(currentUser?.email||''))||'{}'); }catch(e){ return {}; } }
-async function saveBrand(){
-  const b={name:document.getElementById('br-name').value,brokerage:document.getElementById('br-brokerage').value,phone:document.getElementById('br-phone').value,email:document.getElementById('br-email').value,website:document.getElementById('br-website').value,license:document.getElementById('br-license').value,tagline:document.getElementById('br-tagline').value};
-  localStorage.setItem('ae_brand_'+(currentUser?.email||''),JSON.stringify(b));
-  updateSigPreview();
-  try{ await fetch('/api/brand',{method:'POST',headers:authHeaders(),body:JSON.stringify(b)}); }catch(e){}
-  toast('Brand settings saved!');
-}
-async function loadBrand(){
-  try{
-    const res=await fetch('/api/brand',{headers:authHeaders()});
-    const b=await res.json();
-    if(b&&b.name){
-      localStorage.setItem('ae_brand_'+(currentUser?.email||''),JSON.stringify(b));
-      ['name','brokerage','phone','email','website','license','tagline'].forEach(k=>{ const el=document.getElementById('br-'+k); if(el&&b[k]) el.value=b[k]; });
-    }
-  }catch(e){}
-  updateSigPreview();
-}
-function updateSigPreview(){
-  const name=document.getElementById('br-name')?.value||'[Your Name]';
-  const brokerage=document.getElementById('br-brokerage')?.value||'[Brokerage]';
-  const phone=document.getElementById('br-phone')?.value||'[Phone]';
-  const email=document.getElementById('br-email')?.value||'[Email]';
-  const website=document.getElementById('br-website')?.value||'';
-  const license=document.getElementById('br-license')?.value||'';
-  const tagline=document.getElementById('br-tagline')?.value||'';
-  const el=document.getElementById('sig-preview');
-  if(el) el.textContent=`${name}\n${brokerage}${tagline?'\n'+tagline:''}\n📞 ${phone} · ✉️ ${email}${website?'\n🌐 '+website:''}${license?'\nLic# '+license:''}`;
-}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
 </script>
 </body>
 </html>
