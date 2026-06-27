@@ -10,8 +10,6 @@ app.use(cors());
 app.use(express.json());
 
 // ── ROUTING: landing page for visitors, /app for logged-in users ──
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
-app.get('/app', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 app.use(express.static('public'));
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
@@ -78,6 +76,22 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+// ── CHECK TRIAL STATUS (server-side enforcement) ──
+app.get('/api/me', authMiddleware, async (req, res) => {
+  try {
+    const { data: user } = await supabase
+      .from('users')
+      .select('name, email, plan, trial_ends_at')
+      .eq('id', req.user.id)
+      .single();
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    const trialExpired = user.trial_ends_at && new Date(user.trial_ends_at) < new Date();
+    res.json({ ...user, trial_expired: trialExpired });
+  } catch (e) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // ── SAVE OUTPUT ──
 app.post('/api/outputs', authMiddleware, async (req, res) => {
   const { tool, preview, full_output } = req.body;
@@ -135,6 +149,33 @@ app.get('/api/brand', authMiddleware, async (req, res) => {
     res.json(data || {});
   } catch (e) {
     res.json({});
+  }
+});
+
+
+// ── /api/me — verify trial status server-side (prevents localStorage manipulation) ──
+app.get('/api/me', authMiddleware, async (req, res) => {
+  try {
+    const { data: user } = await supabase
+      .from('users')
+      .select('name, email, plan, trial_ends_at')
+      .eq('id', req.user.id)
+      .single();
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    const now = new Date();
+    const trialEnd = user.trial_ends_at ? new Date(user.trial_ends_at) : null;
+    const trialExpired = trialEnd ? now > trialEnd : false;
+
+    res.json({
+      name: user.name,
+      email: user.email,
+      plan: user.plan,
+      trial_ends_at: user.trial_ends_at,
+      trial_expired: trialExpired
+    });
+  } catch (e) {
+    res.status(500).json({ error: 'Server error' });
   }
 });
 
