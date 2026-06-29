@@ -42,11 +42,10 @@ app.post('/api/signup', async (req, res) => {
   if (!name || !email || !password) return res.status(400).json({ error: 'Missing fields' });
   try {
     const hash = await bcrypt.hash(password, 10);
-    const trialEndsAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     const chosenPlan = plan || 'Solo';
     const { data: user, error: userErr } = await supabase
       .from('users')
-      .insert({ name, email: email.toLowerCase(), password: hash, plan: chosenPlan, trial_ends_at: trialEndsAt, role: 'owner' })
+      .insert({ name, email: email.toLowerCase(), password: hash, plan: chosenPlan, role: 'owner' })
       .select().single();
     if (userErr) return res.status(400).json({ error: 'Email already exists' });
     const { data: org, error: orgErr } = await supabase
@@ -56,7 +55,7 @@ app.post('/api/signup', async (req, res) => {
     if (orgErr) throw orgErr;
     await supabase.from('users').update({ org_id: org.id }).eq('id', user.id);
     const fullUser = { ...user, org_id: org.id };
-    res.json({ token: makeToken(fullUser), user: { name: user.name, email: user.email, plan: user.plan, org_id: org.id, role: 'owner', trial_ends_at: trialEndsAt } });
+    res.json({ token: makeToken(fullUser), user: { name: user.name, email: user.email, plan: user.plan, org_id: org.id, role: 'owner' } });
   } catch (e) { console.error(e); res.status(500).json({ error: 'Server error' }); }
 });
 
