@@ -848,7 +848,7 @@ body{font-family:var(--fb);background:var(--cream);color:var(--navy);line-height
 <!-- AUTH -->
 <div class="auth-screen" id="auth-screen">
   <div class="auth-box">
-    <div class="auth-logo">Agent<span>Edge</span></div>
+    <div class="auth-logo" onclick="showMarketing()" style="cursor:pointer" title="Back to home">Agent<span>Edge</span></div>
     <div class="auth-tagline">AI-powered CRM for real estate professionals</div>
     <div class="auth-tabs">
       <div class="auth-tab active" onclick="authTab('login',this)">Sign in</div>
@@ -1853,6 +1853,11 @@ function updateSigPreview(){
 // ══════════════════════════════
 // MARKETING PAGE
 // ══════════════════════════════
+function showMarketing(){
+  document.getElementById('auth-screen').classList.add('hide');
+  document.getElementById('mkt-page').classList.add('show');
+  window.scrollTo(0,0);
+}
 function mktScroll(id){
   const el=document.getElementById(id);
   if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
