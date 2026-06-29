@@ -601,17 +601,15 @@ body{font-family:var(--fb);background:var(--cream);color:var(--navy);line-height
     </h1>
     <p class="mkt-sub">AgentEdge drafts your follow-ups, qualifies your leads, and keeps your pipeline visible — so every hot prospect gets a reply in seconds, not hours.</p>
     <div class="mkt-btns">
-      <button class="mkt-btn-gold" onclick="mktShowAuth('signup')">Start Free — 7 Day Trial</button>
+      <button class="mkt-btn-gold" onclick="mktShowAuth('signup')">Get Started Today</button>
       <button class="mkt-btn-ghost" onclick="mktScroll('mkt-ba')">See it in action</button>
     </div>
     <div class="mkt-trust">
-      <div class="mkt-trust-item"><strong>7-day</strong> free trial</div>
-      <div class="mkt-trust-div"></div>
       <div class="mkt-trust-item"><strong>5 min</strong> setup</div>
       <div class="mkt-trust-div"></div>
       <div class="mkt-trust-item"><strong>30 sec</strong> to first AI email</div>
       <div class="mkt-trust-div"></div>
-      <div class="mkt-trust-item"><strong>No</strong> credit card needed</div>
+      <div class="mkt-trust-item"><strong>Instant</strong> access after payment</div>
     </div>
   </section>
 
@@ -784,7 +782,7 @@ body{font-family:var(--fb);background:var(--cream);color:var(--navy);line-height
             <li>Lead qualification reports</li>
             <li>Brand & signature settings</li>
           </ul>
-          <button class="mkt-price-btn ghost" onclick="mktShowAuth('signup','Solo')">Start free trial</button>
+          <button class="mkt-price-btn ghost" onclick="mktGoStripe('Solo')">Get started</button>
         </div>
         <div class="mkt-price-card hot">
           <div class="mkt-price-pop">Most popular</div>
@@ -800,7 +798,7 @@ body{font-family:var(--fb);background:var(--cream);color:var(--navy);line-height
             <li>CRM & admin AI assistant</li>
             <li>Priority support</li>
           </ul>
-          <button class="mkt-price-btn solid" onclick="mktShowAuth('signup','Pro')">Start free trial</button>
+          <button class="mkt-price-btn solid" onclick="mktGoStripe('Pro')">Get started</button>
         </div>
         <div class="mkt-price-card">
           <div class="mkt-price-tier">Brokerage</div>
@@ -815,10 +813,10 @@ body{font-family:var(--fb);background:var(--cream);color:var(--navy);line-height
             <li>Dedicated onboarding call</li>
             <li>Phone & priority support</li>
           </ul>
-          <button class="mkt-price-btn ghost" onclick="mktShowAuth('signup','Brokerage')">Start free trial</button>
+          <button class="mkt-price-btn ghost" onclick="mktGoStripe('Brokerage')">Get started</button>
         </div>
       </div>
-      <div class="mkt-price-note">All plans include a 7-day free trial. No credit card required.</div>
+      <div class="mkt-price-note">Cancel anytime. Questions? Email hello@agentedgecrm.io</div>
     </div>
   </section>
 
@@ -827,8 +825,8 @@ body{font-family:var(--fb);background:var(--cream);color:var(--navy);line-height
     <div class="mkt-kicker lt" style="text-align:center;margin-bottom:.875rem">Stop leaving deals on the table</div>
     <h2 class="mkt-final-h2">The agents winning right now<br><em>aren't working harder than you.</em></h2>
     <p class="mkt-final-sub">They just reply faster, follow up smarter, and never lose track of a lead. Set up in 5 minutes.</p>
-    <button class="mkt-btn-gold" style="font-size:16px;padding:1.1rem 2.75rem" onclick="mktShowAuth('signup')">Start Your Free Trial</button>
-    <div class="mkt-final-note">7 days free · No credit card · Cancel anytime</div>
+    <button class="mkt-btn-gold" style="font-size:16px;padding:1.1rem 2.75rem" onclick="mktShowAuth('signup')">Get Started Today</button>
+    <div class="mkt-final-note">No setup fees · Cancel anytime</div>
   </section>
 
   <!-- FOOTER -->
@@ -876,9 +874,9 @@ body{font-family:var(--fb);background:var(--cream);color:var(--navy);line-height
 <!-- TRIAL EXPIRED PAYWALL -->
 <div class="paywall" id="paywall">
   <div class="paywall-box">
-    <div class="paywall-icon">⏰</div>
-    <h2 class="paywall-h2">Your free trial has ended</h2>
-    <p class="paywall-sub">You've had 7 days to see what AgentEdge can do. Ready to keep closing more deals? Choose a plan to continue — one closed deal more than pays for the year.</p>
+    <div class="paywall-icon">🏆</div>
+    <h2 class="paywall-h2">Choose a plan to get started</h2>
+    <p class="paywall-sub">Choose a plan and start closing more deals today. One commission more than pays for the entire year.</p>
     <div class="paywall-plans">
       <div class="paywall-plan" onclick="selectPlan('Solo',this)">
         <div class="paywall-plan-name">Solo</div>
@@ -905,12 +903,7 @@ body{font-family:var(--fb);background:var(--cream);color:var(--navy);line-height
 
 <!-- APP -->
 <div id="app">
-  <!-- TRIAL BANNER (shown inside app when trial is active) -->
-  <div class="trial-banner" id="trial-banner">
-    <div class="trial-banner-dot"></div>
-    <span id="trial-banner-text"></span>
-    <button class="trial-upgrade-btn" onclick="showPaywall()">Upgrade Now</button>
-  </div>
+
   <!-- TOP NAV -->
   <nav class="top-nav">
     <div class="top-logo">Agent<span>Edge</span></div>
@@ -1145,7 +1138,7 @@ body{font-family:var(--fb);background:var(--cream);color:var(--navy);line-height
 
           <div id="team-upgrade-nudge" class="upgrade-nudge" style="display:none">
             <p>Your <strong id="nudge-plan"></strong> plan is full. Upgrade to add more agents.</p>
-            <button class="upgrade-nudge-btn" onclick="showPaywall()">Upgrade Plan</button>
+            <button class="upgrade-nudge-btn" onclick="goToStripe(teamData?.plan)">Upgrade Plan</button>
           </div>
 
           <div class="team-msg" id="team-msg"></div>
@@ -1357,7 +1350,6 @@ function launchApp(){
   document.getElementById('account-info').innerHTML = `<strong>${currentUser.name}</strong> &nbsp;·&nbsp; ${currentUser.email} &nbsp;·&nbsp; ${currentUser.plan} plan`;
   loadLeads();
   loadBrand();
-  initTrial();
 }
 
 // ══════════════════════════════
@@ -1424,12 +1416,17 @@ function selectPlan(plan, el){
   el.classList.add('selected');
 }
 
+const STRIPE_LINKS = {
+  Solo: 'https://buy.stripe.com/aFabIU29Fgon4ysa9pfw400',
+  Pro: 'https://buy.stripe.com/5kQ8wI9C70ppc0U5T9fw401',
+  Brokerage: 'https://buy.stripe.com/28E3co5lR4FF0ic5T9fw402'
+};
+
 function paywallUpgrade(){
-  // For now, direct them to email to arrange payment
-  // TODO: wire up Stripe checkout when ready
-  const subject = encodeURIComponent('AgentEdge Upgrade — ' + paywallSelectedPlan + ' Plan');
-  const body = encodeURIComponent('Hi, I\'d like to upgrade my AgentEdge account to the ' + paywallSelectedPlan + ' plan ($' + (paywallSelectedPlan==='Solo'?'99':paywallSelectedPlan==='Pro'?'199':'499') + '/month).\n\nAccount email: ' + (currentUser?.email||''));
-  window.open('mailto:hello@agentedgecrm.io?subject=' + subject + '&body=' + body);
+  const link = STRIPE_LINKS[paywallSelectedPlan] || STRIPE_LINKS['Pro'];
+  // Append prefilled email if available
+  const email = currentUser?.email ? '?prefilled_email=' + encodeURIComponent(currentUser.email) : '';
+  window.open(link + email, '_blank');
 }
 window.addEventListener('DOMContentLoaded',()=>{
   const saved = localStorage.getItem('ae_user');
@@ -1839,6 +1836,14 @@ function mktScroll(id){
   const el=document.getElementById(id);
   if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
 }
+function mktGoStripe(plan){
+  const links = {
+    Solo: 'https://buy.stripe.com/aFabIU29Fgon4ysa9pfw400',
+    Pro: 'https://buy.stripe.com/5kQ8wI9C70ppc0U5T9fw401',
+    Brokerage: 'https://buy.stripe.com/28E3co5lR4FF0ic5T9fw402'
+  };
+  window.open(links[plan] || links['Pro'], '_blank');
+}
 function mktShowAuth(tab, plan){
   // Hide marketing page, show auth screen
   document.getElementById('mkt-page').classList.remove('show');
@@ -2024,6 +2029,12 @@ function showTeamMsg(msg, type){
   const el = document.getElementById('team-msg');
   el.textContent = msg;
   el.className = 'team-msg show ' + type;
+}
+
+function goToStripe(plan){
+  const link = STRIPE_LINKS[plan] || STRIPE_LINKS['Pro'];
+  const email = currentUser?.email ? '?prefilled_email=' + encodeURIComponent(currentUser.email) : '';
+  window.open(link + email, '_blank');
 }
 </script>
 </body>
