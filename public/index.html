@@ -1313,9 +1313,16 @@ async function doLogin(){
     localStorage.setItem('ae_token',data.token);
     localStorage.setItem('ae_user',JSON.stringify(data.user));
     currentUser=data.user;
-    launchApp();
+    if(!data.user.paid){ document.getElementById('auth-screen').classList.add('hide'); showPaywall(); }
+    else { launchApp(); }
   }catch(e){ err.textContent='Connection error.'; err.classList.add('show'); }
 }
+const STRIPE_LINKS = {
+  Solo: 'https://buy.stripe.com/aFabIU29Fgon4ysa9pfw400',
+  Pro: 'https://buy.stripe.com/5kQ8wI9C70ppc0U5T9fw401',
+  Brokerage: 'https://buy.stripe.com/28E3co5lR4FF0ic5T9fw402'
+};
+
 async function doSignup(){
   const name=document.getElementById('s-name').value.trim();
   const email=document.getElementById('s-email').value.trim().toLowerCase();
@@ -1328,10 +1335,9 @@ async function doSignup(){
     const res=await fetch('/api/signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,password:pass,plan})});
     const data=await res.json();
     if(!res.ok){ err.textContent=data.error||'Could not create account.'; err.classList.add('show'); return; }
-    localStorage.setItem('ae_token',data.token);
-    localStorage.setItem('ae_user',JSON.stringify(data.user));
-    currentUser=data.user;
-    launchApp();
+    // Account created — now send to Stripe to pay
+    const stripeLink = STRIPE_LINKS[plan] || STRIPE_LINKS['Pro'];
+    window.location.href = stripeLink + '?prefilled_email=' + encodeURIComponent(email);
   }catch(e){ err.textContent='Connection error.'; err.classList.add('show'); }
 }
 function doLogout(){
@@ -1343,7 +1349,25 @@ function doLogout(){
   document.getElementById('mkt-page').classList.add('show');
   window.scrollTo(0,0);
 }
-function launchApp(){
+async function launchApp(){
+  // Verify payment status from server before granting access
+  try {
+    const res = await fetch('/api/me', { headers: authHeaders() });
+    if(res.ok){
+      const me = await res.json();
+      if(!me.paid){
+        // Not paid — show paywall
+        document.getElementById('auth-screen').classList.add('hide');
+        document.getElementById('app').classList.add('show');
+        showPaywall();
+        return;
+      }
+      // Update local user with latest from server
+      currentUser = { ...currentUser, ...me };
+      localStorage.setItem('ae_user', JSON.stringify(currentUser));
+    }
+  } catch(e) { console.log('Could not verify payment status'); }
+
   document.getElementById('auth-screen').classList.add('hide');
   document.getElementById('app').classList.add('show');
   document.getElementById('top-user-name').textContent = currentUser.name||'';
@@ -1416,24 +1440,21 @@ function selectPlan(plan, el){
   el.classList.add('selected');
 }
 
-const STRIPE_LINKS = {
-  Solo: 'https://buy.stripe.com/aFabIU29Fgon4ysa9pfw400',
-  Pro: 'https://buy.stripe.com/5kQ8wI9C70ppc0U5T9fw401',
-  Brokerage: 'https://buy.stripe.com/28E3co5lR4FF0ic5T9fw402'
-};
-
 function paywallUpgrade(){
   const link = STRIPE_LINKS[paywallSelectedPlan] || STRIPE_LINKS['Pro'];
-  // Append prefilled email if available
   const email = currentUser?.email ? '?prefilled_email=' + encodeURIComponent(currentUser.email) : '';
-  window.open(link + email, '_blank');
+  window.location.href = link + email;
 }
 window.addEventListener('DOMContentLoaded',()=>{
   const saved = localStorage.getItem('ae_user');
   const token = localStorage.getItem('ae_token');
   if(saved && token){
     currentUser = JSON.parse(saved);
-    launchApp();
+    if(!currentUser.paid){
+      showPaywall();
+    } else {
+      launchApp();
+    }
   } else {
     // Show marketing landing page
     document.getElementById('mkt-page').classList.add('show');
