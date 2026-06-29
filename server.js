@@ -8,7 +8,18 @@ const crypto = require('crypto');
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+
+// Raw body needed for Stripe webhook verification
+app.use((req, res, next) => {
+  if (req.path === '/api/stripe-webhook') {
+    let data = '';
+    req.setEncoding('utf8');
+    req.on('data', chunk => data += chunk);
+    req.on('end', () => { req.rawBody = data; next(); });
+  } else {
+    express.json()(req, res, next);
+  }
+});
 
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 app.get('/join', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
@@ -22,9 +33,19 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SECRET_KEY);
 
 const SEAT_LIMITS = { Solo: 1, Pro: 3, Brokerage: Infinity };
 
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
+
+// Map Stripe Payment Link IDs to plans
+const PLAN_MAP = {
+  'aFabIU29Fgon4ysa9pfw400': 'Solo',
+  '5kQ8wI9C70ppc0U5T9fw401': 'Pro',
+  '28E3co5lR4FF0ic5T9fw402': 'Brokerage',
+};
+
 function makeToken(user) {
   return jwt.sign(
-    { id: user.id, email: user.email, name: user.name, plan: user.plan, org_id: user.org_id, role: user.role, trial_ends_at: user.trial_ends_at },
+    { id: user.id, email: user.email, name: user.name, plan: user.plan, org_id: user.org_id, role: user.role, paid: user.paid },
     JWT_SECRET, { expiresIn: '30d' }
   );
 }
@@ -55,7 +76,7 @@ app.post('/api/signup', async (req, res) => {
     if (orgErr) throw orgErr;
     await supabase.from('users').update({ org_id: org.id }).eq('id', user.id);
     const fullUser = { ...user, org_id: org.id };
-    res.json({ token: makeToken(fullUser), user: { name: user.name, email: user.email, plan: user.plan, org_id: org.id, role: 'owner' } });
+    res.json({ token: makeToken(fullUser), user: { name: user.name, email: user.email, plan: user.plan, org_id: org.id, role: 'owner', paid: false } });
   } catch (e) { console.error(e); res.status(500).json({ error: 'Server error' }); }
 });
 
@@ -67,7 +88,32 @@ app.post('/api/login', async (req, res) => {
     if (!user) return res.status(401).json({ error: 'Invalid credentials' });
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) return res.status(401).json({ error: 'Invalid credentials' });
-    res.json({ token: makeToken(user), user: { name: user.name, email: user.email, plan: user.plan, org_id: user.org_id, role: user.role, trial_ends_at: user.trial_ends_at } });
+
+    // Check if there's a pending payment for this email (paid before signing up)
+    if (!user.paid) {
+      const { data: pending } = await supabase
+        .from('pending_payments')
+        .select()
+        .eq('email', email.toLowerCase())
+        .single();
+      if (pending) {
+        // Activate their account
+        await supabase.from('users').update({
+          paid: true,
+          plan: pending.plan,
+          stripe_customer_id: pending.stripe_customer_id,
+          trial_ends_at: null
+        }).eq('id', user.id);
+        if (user.org_id) {
+          await supabase.from('organizations').update({ plan: pending.plan }).eq('id', user.org_id);
+        }
+        await supabase.from('pending_payments').delete().eq('email', email.toLowerCase());
+        user.paid = true;
+        user.plan = pending.plan;
+      }
+    }
+
+    res.json({ token: makeToken(user), user: { name: user.name, email: user.email, plan: user.plan, org_id: user.org_id, role: user.role, paid: user.paid } });
   } catch (e) { res.status(500).json({ error: 'Server error' }); }
 });
 
@@ -157,7 +203,7 @@ app.post('/api/team/accept', async (req, res) => {
     }
     await supabase.from('invites').update({ accepted: true }).eq('id', invite.id);
     const { data: user } = await supabase.from('users').select().eq('email', invite.email).single();
-    res.json({ token: makeToken(user), user: { name: user.name, email: user.email, plan: user.plan, org_id: user.org_id, role: user.role, trial_ends_at: user.trial_ends_at } });
+    res.json({ token: makeToken(user), user: { name: user.name, email: user.email, plan: user.plan, org_id: user.org_id, role: user.role, paid: user.paid } });
   } catch (e) { console.error(e); res.status(500).json({ error: 'Server error' }); }
 });
 
@@ -191,6 +237,77 @@ app.get('/api/brand', authMiddleware, async (req, res) => {
     const { data } = await supabase.from('brand_settings').select().eq('user_id', req.user.id).single();
     res.json(data || {});
   } catch (e) { res.json({}); }
+});
+
+
+// ── STRIPE WEBHOOK ──
+app.post('/api/stripe-webhook', async (req, res) => {
+  const sig = req.headers['stripe-signature'];
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(req.rawBody, sig, STRIPE_WEBHOOK_SECRET);
+  } catch (err) {
+    console.error('Webhook signature failed:', err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object;
+    const customerEmail = session.customer_details?.email?.toLowerCase();
+    const customerId = session.customer;
+    const paymentLinkId = session.payment_link;
+
+    // Determine plan from payment link
+    let plan = 'Solo';
+    if (paymentLinkId) {
+      // Extract last part of payment link URL or use ID directly
+      for (const [key, val] of Object.entries(PLAN_MAP)) {
+        if (paymentLinkId.includes(key)) { plan = val; break; }
+      }
+    }
+
+    console.log(`Payment received: ${customerEmail} — Plan: ${plan}`);
+
+    try {
+      if (customerEmail) {
+        // Update user as paid with correct plan
+        const { data: user } = await supabase
+          .from('users')
+          .select('id, org_id')
+          .eq('email', customerEmail)
+          .single();
+
+        if (user) {
+          // Update user
+          await supabase.from('users').update({
+            paid: true,
+            plan,
+            stripe_customer_id: customerId,
+            trial_ends_at: null
+          }).eq('id', user.id);
+
+          // Update org plan too
+          if (user.org_id) {
+            await supabase.from('organizations').update({ plan }).eq('id', user.org_id);
+          }
+          console.log(`Activated account for ${customerEmail} on ${plan} plan`);
+        } else {
+          // User hasn't signed up yet — store pending payment
+          await supabase.from('pending_payments').insert({
+            email: customerEmail,
+            plan,
+            stripe_customer_id: customerId,
+            created_at: new Date()
+          }).select();
+          console.log(`Stored pending payment for ${customerEmail}`);
+        }
+      }
+    } catch (e) {
+      console.error('Error processing webhook:', e);
+    }
+  }
+
+  res.json({ received: true });
 });
 
 // ── AI GENERATE ──
