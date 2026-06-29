@@ -585,7 +585,7 @@ body{font-family:var(--fb);background:var(--cream);color:var(--navy);line-height
     </div>
     <div class="mkt-nav-right">
       <button class="mkt-signin" onclick="mktShowAuth('login')">Sign in</button>
-      <button class="mkt-cta-btn" onclick="mktShowAuth('signup')">Get Started Free</button>
+      <button class="mkt-cta-btn" onclick="mktShowAuth('signup')">Get Started</button>
     </div>
   </nav>
 
@@ -670,7 +670,7 @@ body{font-family:var(--fb);background:var(--cream);color:var(--navy);line-height
     <div class="mkt-stats-grid">
       <div class="mkt-stat"><div class="mkt-stat-num">3<span>hrs</span></div><div class="mkt-stat-label">saved per agent per week on average</div></div>
       <div class="mkt-stat"><div class="mkt-stat-num">47<span>%</span></div><div class="mkt-stat-label">faster lead response vs. agents without AI</div></div>
-      <div class="mkt-stat"><div class="mkt-stat-num">$0</div><div class="mkt-stat-label">to start — no credit card, no setup fee</div></div>
+      <div class="mkt-stat"><div class="mkt-stat-num">$0</div><div class="mkt-stat-label">to start — cancel anytime, no setup fee</div></div>
       <div class="mkt-stat"><div class="mkt-stat-num">5<span>min</span></div><div class="mkt-stat-label">to full setup — import leads and go</div></div>
     </div>
   </div>
@@ -1394,8 +1394,8 @@ async function initTrial(){
     banner.classList.remove('warning');
     banner.classList.add('urgent');
     bannerText.textContent = daysLeft === 1
-      ? '⚠️ Your free trial ends tomorrow — upgrade to keep access'
-      : `⚠️ ${daysLeft} days left in your free trial`;
+      ? '⚠️ Your paid plan ends tomorrow — upgrade to keep access'
+      : `⚠️ ${daysLeft} days left in your paid plan`;
   } else {
     banner.classList.add('warning');
     bannerText.textContent = `🎉 Free trial — ${daysLeft} day${daysLeft !== 1 ? 's' : ''} remaining`;
